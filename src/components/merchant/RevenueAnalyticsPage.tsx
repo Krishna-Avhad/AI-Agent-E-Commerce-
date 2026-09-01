@@ -1,0 +1,162 @@
+import React from 'react';
+import { useApp } from '../../context/AppContext';
+import { MetricCard } from '../common/MetricCard';
+import { 
+  TrendingUp, 
+  DollarSign, 
+  PieChart, 
+  Bot, 
+  Layers, 
+  ArrowUpRight, 
+  Calendar,
+  Download,
+  CreditCard,
+  ShieldCheck
+} from 'lucide-react';
+
+export const RevenueAnalyticsPage: React.FC = () => {
+  const { addToast } = useApp();
+
+  const handleExport = () => {
+    addToast('success', 'Report Exported', 'Downloaded financial report (CSV/PDF) for audit compliance.');
+  };
+
+  return (
+    <div className="space-y-8 pb-16">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-3xl border border-slate-200/90 shadow-sm">
+        <div>
+          <div className="flex items-center space-x-2 text-xs font-bold text-teal-600 uppercase tracking-wider mb-1">
+            <TrendingUp className="w-3.5 h-3.5" />
+            <span>Financial Telemetry</span>
+          </div>
+          <h1 className="font-heading font-extrabold text-2xl text-slate-900 tracking-tight">
+            Revenue & Growth Analytics
+          </h1>
+          <p className="text-xs text-slate-500 mt-1">
+            Breakdown of merchant gross margins, autonomous channel contribution, and settlement metrics.
+          </p>
+        </div>
+
+        <button
+          onClick={handleExport}
+          className="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-xl text-xs font-semibold transition flex items-center space-x-2 self-start sm:self-auto"
+        >
+          <Download className="w-3.5 h-3.5" />
+          <span>Export Financial Statement</span>
+        </button>
+      </div>
+
+      {/* 4 Metric Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        <MetricCard
+          title="Monthly Recurring GMV"
+          value="$148,290"
+          change="+18.4%"
+          isPositive={true}
+          icon={<DollarSign className="w-4 h-4" />}
+          aiAttributed={true}
+          aiPercentage="78.4%"
+        />
+
+        <MetricCard
+          title="Gross Margin %"
+          value="42.8%"
+          change="+3.2%"
+          isPositive={true}
+          icon={<TrendingUp className="w-4 h-4" />}
+          subtitle="Optimized bundle pricing"
+        />
+
+        <MetricCard
+          title="Instant Settlement Rate"
+          value="100.0%"
+          change="0.0%"
+          isPositive={true}
+          icon={<ShieldCheck className="w-4 h-4" />}
+          subtitle="Razorpay T+0 Escrow"
+        />
+
+        <MetricCard
+          title="Customer Lifetime Value (LTV)"
+          value="$890.40"
+          change="+22.1%"
+          isPositive={true}
+          icon={<Bot className="w-4 h-4" />}
+          subtitle="AI cross-sell retention"
+        />
+      </div>
+
+      {/* Channel Breakdown */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        {/* Left: Category Distribution (7 cols) */}
+        <div className="lg:col-span-7 bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-5">
+          <h3 className="font-heading font-bold text-base text-slate-900">
+            Revenue Contribution by Hardware Category
+          </h3>
+
+          <div className="space-y-4 text-xs">
+            {[
+              { cat: 'Audio Systems (Aether Pro & Vortex)', share: '38%', revenue: '$56,350', bar: 'w-[76%]', color: 'bg-teal-500' },
+              { cat: 'Workstation & Displays (Nova 4K & AeroLift)', share: '32%', revenue: '$47,450', bar: 'w-[64%]', color: 'bg-indigo-500' },
+              { cat: 'Ergonomic Keyboards & Mice (Kinesis & Pulse)', share: '20%', revenue: '$29,650', bar: 'w-[40%]', color: 'bg-emerald-500' },
+              { cat: 'Lighting & Modular Accessories (Lumix & Nexus)', share: '10%', revenue: '$14,840', bar: 'w-[20%]', color: 'bg-amber-500' },
+            ].map((item, idx) => (
+              <div key={idx} className="space-y-1.5">
+                <div className="flex justify-between font-semibold text-slate-800">
+                  <span>{item.cat}</span>
+                  <span className="text-slate-900">{item.revenue} ({item.share})</span>
+                </div>
+                <div className="w-full h-2.5 bg-slate-100 rounded-full overflow-hidden">
+                  <div className={`h-full ${item.bar} ${item.color} rounded-full`} />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Right: Channel Breakdown (5 cols) */}
+        <div className="lg:col-span-5 bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-5">
+          <h3 className="font-heading font-bold text-base text-slate-900">
+            Channel Acquisition Distribution
+          </h3>
+
+          <div className="space-y-3 text-xs">
+            <div className="p-4 bg-teal-50/70 border border-teal-200/70 rounded-2xl flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <Bot className="w-5 h-5 text-teal-600" />
+                <div>
+                  <h4 className="font-bold text-teal-950">AI Commerce Assistant</h4>
+                  <span className="text-[11px] text-teal-700">Intent prompts in natural language</span>
+                </div>
+              </div>
+              <strong className="font-bold text-slate-900 text-sm">54%</strong>
+            </div>
+
+            <div className="p-4 bg-indigo-50/70 border border-indigo-200/70 rounded-2xl flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <Layers className="w-5 h-5 text-indigo-600" />
+                <div>
+                  <h4 className="font-bold text-indigo-950">Agent-to-Agent (A2A)</h4>
+                  <span className="text-[11px] text-indigo-700">Autonomous B2B procurement bots</span>
+                </div>
+              </div>
+              <strong className="font-bold text-slate-900 text-sm">24%</strong>
+            </div>
+
+            <div className="p-4 bg-slate-50 border border-slate-200 rounded-2xl flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <CreditCard className="w-5 h-5 text-slate-700" />
+                <div>
+                  <h4 className="font-bold text-slate-900">Direct Web Navigation</h4>
+                  <span className="text-[11px] text-slate-500">Standard catalog browsing</span>
+                </div>
+              </div>
+              <strong className="font-bold text-slate-900 text-sm">22%</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};

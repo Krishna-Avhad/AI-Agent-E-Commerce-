@@ -15,11 +15,14 @@ import {
 } from 'lucide-react';
 
 export const RevenueAnalyticsPage: React.FC = () => {
-  const { addToast } = useApp();
+  const { merchantAnalytics, addToast } = useApp();
 
   const handleExport = () => {
     addToast('success', 'Report Exported', 'Downloaded financial report (CSV/PDF) for audit compliance.');
   };
+
+  const formattedGMV = `$${merchantAnalytics.gmv.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  const formattedLTV = `$${(merchantAnalytics.averageOrderValue * 2.4).toFixed(2)}`;
 
   return (
     <div className="space-y-8 pb-16">
@@ -51,12 +54,12 @@ export const RevenueAnalyticsPage: React.FC = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
         <MetricCard
           title="Monthly Recurring GMV"
-          value="$148,290"
+          value={formattedGMV}
           change="+18.4%"
           isPositive={true}
           icon={<DollarSign className="w-4 h-4" />}
           aiAttributed={true}
-          aiPercentage="78.4%"
+          aiPercentage={`${merchantAnalytics.aiRevenueSharePercent}%`}
         />
 
         <MetricCard
@@ -70,7 +73,7 @@ export const RevenueAnalyticsPage: React.FC = () => {
 
         <MetricCard
           title="Instant Settlement Rate"
-          value="100.0%"
+          value={`${merchantAnalytics.paymentSuccessRate}%`}
           change="0.0%"
           isPositive={true}
           icon={<ShieldCheck className="w-4 h-4" />}
@@ -79,7 +82,7 @@ export const RevenueAnalyticsPage: React.FC = () => {
 
         <MetricCard
           title="Customer Lifetime Value (LTV)"
-          value="$890.40"
+          value={formattedLTV}
           change="+22.1%"
           isPositive={true}
           icon={<Bot className="w-4 h-4" />}

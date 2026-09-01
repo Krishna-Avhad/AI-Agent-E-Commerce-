@@ -49,13 +49,12 @@ export const CheckoutPage: React.FC = () => {
     );
   }
 
-  const handlePay = (e: React.FormEvent) => {
+  const handlePay = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsProcessing(true);
 
-    // Simulate Gateway Handshake & Verification
-    setTimeout(() => {
-      const order = placeOrder({
+    try {
+      const order = await placeOrder({
         customerName: name,
         customerEmail: email,
         shippingAddress: {
@@ -81,7 +80,10 @@ export const CheckoutPage: React.FC = () => {
 
       addToast('success', 'Payment Successful', `Order #${order.id} confirmed via ${paymentMethod}!`);
       setShopperRoute('order-success');
-    }, 1200);
+    } catch (err: any) {
+      setIsProcessing(false);
+      addToast('error', 'Payment Failed', 'Transaction could not be authorized.');
+    }
   };
 
   return (

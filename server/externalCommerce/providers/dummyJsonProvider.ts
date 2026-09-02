@@ -7,7 +7,9 @@ export class DummyJsonProvider implements CommerceProvider {
   private readonly baseUrl = 'https://dummyjson.com/products';
 
   public isConfigured(): boolean {
-    return true; // Publicly accessible open commerce endpoint
+    // Strictly classified as DEMO / TEST provider.
+    // Active only when explicitly enabled for prototyping or automated tests.
+    return process.env.ALLOW_DEMO_COMMERCE_PROVIDER === 'true' || process.env.NODE_ENV === 'test';
   }
 
   public async searchProducts(query: ProductSearchQuery): Promise<ExternalProduct[]> {

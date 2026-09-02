@@ -1,3 +1,7 @@
+import dotenv from 'dotenv';
+dotenv.config();
+process.env.NODE_ENV = 'test';
+
 import { ProductNormalizer } from '../productNormalizer.js';
 import { ProductSearchService } from '../productSearch.js';
 import { ProviderRegistry } from '../providerRegistry.js';
@@ -259,6 +263,11 @@ async function runExternalCommerceTestSuite() {
   console.log('\n==============================================================================');
   console.log(`🎉 TEST SUMMARY: ${passed} PASSED | ${failed} FAILED`);
   console.log('==============================================================================\n');
+
+  try {
+    const { pool } = await import('../../db.js');
+    await pool.end();
+  } catch {}
 
   process.exit(failed > 0 ? 1 : 0);
 }

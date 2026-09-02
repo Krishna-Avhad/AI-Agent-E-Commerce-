@@ -19,8 +19,8 @@ export const pool = new Pool({
   password: process.env.DB_PASS || 'Sacharon@196',
   database: process.env.DB_NAME || 'postgres',
   ssl: { rejectUnauthorized: false },
-  max: 10,
-  idleTimeoutMillis: 30000
+  max: 3,
+  idleTimeoutMillis: 10000
 });
 
 pool.on('error', (err) => {

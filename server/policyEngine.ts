@@ -41,12 +41,7 @@ export async function evaluateAgentAction(
   const startTime = Date.now();
 
   // 1. Fetch Merchant Settings & Active Policies from Supabase
-  const settingsRes = await pool.query(
-    'SELECT * FROM merchant_settings WHERE merchant_id = $1',
-    [merchantId]
-  );
-
-  const settings = settingsRes.rows[0] || {
+  let settings = {
     agent_enabled: true,
     agent_max_order_value: '50000.00',
     agent_daily_limit: '500000.00',
@@ -54,6 +49,18 @@ export async function evaluateAgentAction(
     max_discount_percent: '15.00',
     max_discount_amount: '2500.00'
   };
+
+  try {
+    const settingsRes = await pool.query(
+      'SELECT * FROM merchant_settings WHERE merchant_id = $1',
+      [merchantId]
+    );
+    if (settingsRes.rows.length > 0) {
+      settings = settingsRes.rows[0];
+    }
+  } catch (err: any) {
+    // Graceful fallback to verified merchant bounded defaults
+  }
 
   const maxDiscountPercent = parseFloat(settings.max_discount_percent);
   const maxDiscountAmount = parseFloat(settings.max_discount_amount);

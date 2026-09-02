@@ -1,5 +1,6 @@
 import crypto from 'crypto';
 import dotenv from 'dotenv';
+import { pool } from './db.js';
 import { evaluateAgentAction } from './policyEngine.js';
 import { createRazorpayOrder, verifyRazorpayPayment, handleRazorpayWebhook } from './razorpayService.js';
 import { getAIBuyerCatalog, searchCatalogByAgentIntent } from './agentInterface.js';
@@ -216,6 +217,10 @@ async function runProductionBackendTestSuite() {
   console.log('\n==============================================================================');
   console.log(`🎉 TEST SUMMARY: ${passed} PASSED | ${failed} FAILED`);
   console.log('==============================================================================\n');
+
+  try {
+    await pool.end();
+  } catch {}
 
   process.exit(failed > 0 ? 1 : 0);
 }

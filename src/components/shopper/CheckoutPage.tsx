@@ -20,6 +20,7 @@ export const CheckoutPage: React.FC = () => {
     cart,
     cartTotal,
     cartSubtotal,
+    cartDiscount,
     placeOrder,
     setShopperRoute,
     addToast
@@ -54,7 +55,11 @@ export const CheckoutPage: React.FC = () => {
     setIsProcessing(true);
 
     try {
-      const order = await placeOrder({
+      const orderPayload = {
+        items: cart.map((i) => ({
+          productId: i.product.id,
+          quantity: i.quantity
+        })),
         customerName: name,
         customerEmail: email,
         shippingAddress: {
@@ -64,25 +69,104 @@ export const CheckoutPage: React.FC = () => {
           zip,
           country: 'India'
         },
+        discountCode: cartDiscount > 0 ? 'RAZORFLOW10' : undefined
+      };
+
+      const res = await fetch('/api/payments/create-order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(orderPayload)
+      });
+
+      const orderData = await res.json();
+
+      if (!res.ok) {
+        throw new Error(orderData.error || 'Failed to initialize payment');
+      }
+
+      // Check if real Razorpay Checkout is available on window
+      if (typeof (window as any).Razorpay !== 'undefined' && orderData.razorpayOrderId) {
+        const options = {
+          key: 'rzp_test_TX3dNfAyxwx8NO',
+          amount: orderData.amountInPaise,
+          currency: 'INR',
+          name: 'RazorFlow Hardware Labs',
+          description: `Order #${orderData.orderId}`,
+          order_id: orderData.razorpayOrderId,
+          prefill: {
+            name: name,
+            email: email,
+            contact: '9876543210'
+          },
+          theme: {
+            color: '#0D9488'
+          },
+          handler: async (response: any) => {
+            setIsProcessing(true);
+            try {
+              const verifyRes = await fetch('/api/payments/verify', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  orderId: orderData.orderId,
+                  razorpayOrderId: response.razorpay_order_id,
+                  razorpayPaymentId: response.razorpay_payment_id,
+                  razorpaySignature: response.razorpay_signature
+                })
+              });
+
+              const verifyData = await verifyRes.json();
+              if (verifyData.verified) {
+                try {
+                  confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+                } catch (e) {}
+
+                addToast('success', 'Payment Verified', `Payment ID ${response.razorpay_payment_id} verified via HMAC-SHA256!`);
+                setShopperRoute('order-success');
+              } else {
+                addToast('error', 'Signature Verification Failed', 'Payment signature could not be verified.');
+              }
+            } catch (err) {
+              addToast('error', 'Verification Error', 'Failed to contact payment verification endpoint.');
+            } finally {
+              setIsProcessing(false);
+            }
+          },
+          modal: {
+            ondismiss: () => {
+              setIsProcessing(false);
+              addToast('info', 'Checkout Dismissed', 'You closed the Razorpay payment window.');
+            }
+          }
+        };
+
+        const rzp = new (window as any).Razorpay(options);
+        rzp.on('payment.failed', (failResp: any) => {
+          setIsProcessing(false);
+          addToast('error', 'Payment Failed', failResp.error?.description || 'Payment could not be processed.');
+        });
+        rzp.open();
+        return;
+      }
+
+      // Fallback if Razorpay script is blocked or offline
+      const order = await placeOrder({
+        customerName: name,
+        customerEmail: email,
+        shippingAddress: { street, city, state: stateVal, zip, country: 'India' },
         paymentMethod
       });
 
       setIsProcessing(false);
-      
-      // Trigger Confetti Celebration
       try {
-        confetti({
-          particleCount: 80,
-          spread: 70,
-          origin: { y: 0.6 }
-        });
+        confetti({ particleCount: 80, spread: 70, origin: { y: 0.6 } });
       } catch (err) {}
 
-      addToast('success', 'Payment Successful', `Order #${order.id} confirmed via ${paymentMethod}!`);
+      addToast('success', 'Payment Successful', `Order #${order.id} confirmed!`);
       setShopperRoute('order-success');
     } catch (err: any) {
       setIsProcessing(false);
-      addToast('error', 'Payment Failed', 'Transaction could not be authorized.');
+      addToast('error', 'Payment Error', err.message || 'Transaction could not be authorized.');
     }
   };
 

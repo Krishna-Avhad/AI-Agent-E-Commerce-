@@ -78,6 +78,7 @@ interface AppContextType {
   clearCart: () => void;
   cartCount: number;
   cartSubtotal: number;
+  cartDiscount: number;
   cartTotal: number;
   
   // Selection
@@ -510,6 +511,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         clearCart,
         cartCount,
         cartSubtotal,
+        cartDiscount,
         cartTotal,
         selectedProduct,
         setSelectedProduct,

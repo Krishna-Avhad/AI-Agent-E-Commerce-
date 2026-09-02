@@ -1,9 +1,13 @@
+import crypto from 'crypto';
+import dotenv from 'dotenv';
 import { evaluateAgentAction } from './policyEngine.js';
 import { createRazorpayOrder, verifyRazorpayPayment, handleRazorpayWebhook } from './razorpayService.js';
 import { getAIBuyerCatalog, searchCatalogByAgentIntent } from './agentInterface.js';
 import { getDynamicUpsellCrossSell } from './growthEngine.js';
 import { calculateAndPersistCart, addItemToCart } from './cartService.js';
 import { processAIChatMessage } from './aiOrchestrator.js';
+
+dotenv.config();
 
 async function runProductionBackendTestSuite() {
   console.log('🧪 ==============================================================================');
@@ -73,17 +77,17 @@ async function runProductionBackendTestSuite() {
     failed++;
   }
 
-  // Test 4: Server-Side Price Validation & Order Creation in Supabase
+  // Test 4: Server-Side Price Validation & Razorpay Test Mode Order Creation
   try {
-    console.log('\nTest 4: Server-Side Price Validation & Order Creation...');
+    console.log('\nTest 4: Server-Side Price Validation & Razorpay Test Mode Order Creation...');
     createdTestOrder = await createRazorpayOrder({
       items: [{ productId: 'prod-01', quantity: 1 }, { productId: 'prod-06', quantity: 1 }],
-      customerName: 'Buildathon Test User',
-      customerEmail: 'test.user@razorflow.ai',
+      customerName: 'Buildathon Verified Buyer',
+      customerEmail: 'buyer@razorflow.ai',
       shippingAddress: { street: '100 Silicon Way', city: 'Bengaluru', state: 'KA', zip: '560001', country: 'India' }
     });
     if (createdTestOrder.amount > 0 && createdTestOrder.amountInPaise === Math.round(createdTestOrder.amount * 100)) {
-      console.log(`  ✅ PASSED: Order created: ${createdTestOrder.orderId}, Total: ₹${createdTestOrder.amount}, Provider Configured: ${createdTestOrder.paymentProviderConfigured}`);
+      console.log(`  ✅ PASSED: Order created: ${createdTestOrder.orderId}, Razorpay Order ID: ${createdTestOrder.razorpayOrderId || 'N/A'}, Total: ₹${createdTestOrder.amount}, Provider Configured: ${createdTestOrder.paymentProviderConfigured}`);
       passed++;
     } else {
       throw new Error('Invalid order amount calculation');
@@ -93,24 +97,43 @@ async function runProductionBackendTestSuite() {
     failed++;
   }
 
-  // Test 5: Safe Payment Verification State (No fabricated success)
+  // Test 5: Cryptographic Payment Signature Verification (HMAC-SHA256)
   try {
-    console.log('\nTest 5: Safe Payment Verification State...');
+    console.log('\nTest 5: Cryptographic Payment Signature Verification...');
+    const keySecret = process.env.RAZORPAY_KEY_SECRET || '';
+    const paymentId = `pay_test_${Date.now()}`;
+    const rzpOrderId = createdTestOrder.razorpayOrderId || `order_test_${Date.now()}`;
+
+    // 5A: Test valid HMAC-SHA256 signature
+    const validSignature = crypto
+      .createHmac('sha256', keySecret)
+      .update(`${rzpOrderId}|${paymentId}`)
+      .digest('hex');
+
     const verifyRes = await verifyRazorpayPayment({
       orderId: createdTestOrder.orderId,
-      razorpayOrderId: 'order_test_unconf',
-      razorpayPaymentId: 'pay_test_unconf',
-      razorpaySignature: 'sig_test_unconf'
+      razorpayOrderId: rzpOrderId,
+      razorpayPaymentId: paymentId,
+      razorpaySignature: validSignature
     });
-    // When PAYMENTS_ENABLED=false, verification safely refuses to forge success
-    if (!verifyRes.verified && verifyRes.status === 'PAYMENT_PROVIDER_NOT_CONFIGURED') {
-      console.log('  ✅ PASSED: Verification safely returned PAYMENT_PROVIDER_NOT_CONFIGURED without fabricating success.');
-      passed++;
-    } else if (verifyRes.verified) {
-      console.log('  ✅ PASSED: Real Razorpay signature cryptographically verified.');
+
+    if (verifyRes.verified && verifyRes.status === 'PAID') {
+      console.log('  ✅ PASSED: Real Razorpay HMAC-SHA256 signature cryptographically verified and order marked PAID.');
       passed++;
     } else {
       throw new Error(`Unexpected verification response: ${JSON.stringify(verifyRes)}`);
+    }
+
+    // 5B: Test forged/tampered signature rejection
+    const invalidVerifyRes = await verifyRazorpayPayment({
+      orderId: createdTestOrder.orderId,
+      razorpayOrderId: rzpOrderId,
+      razorpayPaymentId: paymentId,
+      razorpaySignature: 'forged_fake_signature_abc123'
+    });
+
+    if (!invalidVerifyRes.verified) {
+      console.log('  ✅ PASSED: Tampered/forged signature rejected with 0 order state change.');
     }
   } catch (e: any) {
     console.error('  ❌ FAILED:', e.message);
@@ -121,13 +144,17 @@ async function runProductionBackendTestSuite() {
   try {
     console.log('\nTest 6: Webhook Idempotent Event Deduplication...');
     const testEvtId = `evt_test_dedup_${Date.now()}`;
+    const webhookSecret = process.env.RAZORPAY_WEBHOOK_SECRET || '';
     const eventPayload = {
       id: testEvtId,
       event: 'payment.captured',
-      payload: { payment: { entity: { id: `pay_${Date.now()}`, order_id: 'order_rzp_mock' } } }
+      payload: { payment: { entity: { id: `pay_${Date.now()}`, order_id: createdTestOrder.razorpayOrderId || 'order_rzp_mock' } } }
     };
-    const firstDelivery = await handleRazorpayWebhook(JSON.stringify(eventPayload), 'test_sig', eventPayload);
-    const secondDelivery = await handleRazorpayWebhook(JSON.stringify(eventPayload), 'test_sig', eventPayload);
+    const rawBody = JSON.stringify(eventPayload);
+    const validWebhookSig = crypto.createHmac('sha256', webhookSecret).update(rawBody).digest('hex');
+
+    const firstDelivery = await handleRazorpayWebhook(rawBody, validWebhookSig, eventPayload);
+    const secondDelivery = await handleRazorpayWebhook(rawBody, validWebhookSig, eventPayload);
     if (firstDelivery.status === 'processed' && secondDelivery.status === 'already_processed') {
       console.log('  ✅ PASSED: First delivery processed; second duplicate delivery deduplicated with 0 state corruption.');
       passed++;

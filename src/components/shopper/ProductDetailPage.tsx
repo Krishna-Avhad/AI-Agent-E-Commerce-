@@ -27,6 +27,9 @@ export const ProductDetailPage: React.FC = () => {
     products
   } = useApp();
 
+  const [activeImage, setActiveImage] = useState<string>(selectedProduct?.image || '');
+  const [quantity, setQuantity] = useState<number>(1);
+
   if (!selectedProduct) {
     return (
       <div className="text-center py-20 bg-white rounded-2xl border border-slate-200">
@@ -40,9 +43,6 @@ export const ProductDetailPage: React.FC = () => {
       </div>
     );
   }
-
-  const [activeImage, setActiveImage] = useState<string>(selectedProduct.image);
-  const [quantity, setQuantity] = useState<number>(1);
 
   const galleryImages = selectedProduct.gallery && selectedProduct.gallery.length > 0 
     ? selectedProduct.gallery 

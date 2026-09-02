@@ -539,6 +539,44 @@ app.get('/api/mcp-tools', async (_req, res) => {
   }
 });
 
+// ---------------- EXTERNAL COMMERCE PRODUCT DISCOVERY ----------------
+const productSearchService = new (await import('./externalCommerce/productSearch.js')).ProductSearchService();
+
+app.get('/api/search/products', async (req, res) => {
+  try {
+    const { query, category, minPrice, maxPrice, currency, limit } = req.query;
+    const result = await productSearchService.search({
+      query: String(query || ''),
+      category: category ? String(category) : undefined,
+      minPrice: minPrice ? parseFloat(String(minPrice)) : undefined,
+      maxPrice: maxPrice ? parseFloat(String(maxPrice)) : undefined,
+      currency: currency ? String(currency) : undefined,
+      limit: limit ? parseInt(String(limit)) : undefined
+    });
+    res.json(result);
+  } catch (err: any) {
+    const status = err.statusCode || (err.code === 'INVALID_SEARCH_QUERY' ? 400 : 500);
+    res.status(status).json({
+      error: err.message,
+      code: err.code || 'EXTERNAL_COMMERCE_ERROR',
+      provider: err.provider
+    });
+  }
+});
+
+app.get('/api/search/products/:provider/:id', async (req, res) => {
+  try {
+    const { provider, id } = req.params;
+    const product = await productSearchService.getProduct(provider as any, id);
+    if (!product) {
+      return res.status(404).json({ error: 'External product not found' });
+    }
+    res.json(product);
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // Start server
 initDatabase().then(() => {
   app.listen(PORT, () => {

@@ -40,6 +40,10 @@ export async function initDatabase() {
 
     // Seed normalized datasets
     await seedNormalizedDatabase();
+
+    // Migrate External Commerce cache tables
+    const { migrateExternalCommerceSchema } = await import('./externalCommerce/migration.js');
+    await migrateExternalCommerceSchema();
   } catch (err: any) {
     console.error('⚠️ Database schema migration error:', err.message);
   }

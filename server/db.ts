@@ -23,6 +23,10 @@ export const pool = new Pool({
   idleTimeoutMillis: 30000
 });
 
+pool.on('error', (err) => {
+  console.warn('⚠️ Supabase Pool idle connection refreshed:', err.message);
+});
+
 export async function initDatabase() {
   console.log('🔄 Applying Supabase PostgreSQL 22-Table Normalized Schema...');
   

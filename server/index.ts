@@ -7,6 +7,8 @@ import { createRazorpayOrder, verifyRazorpayPayment, handleRazorpayWebhook } fro
 import { getDynamicUpsellCrossSell, getAbandonedCartOpportunities, getRealtimeMerchantAnalytics } from './growthEngine.js';
 import { getAIBuyerCatalog, searchCatalogByAgentIntent, handleAgentActionProposal, createAgentToAgentOrder } from './agentInterface.js';
 import { logAuditEvent } from './auditService.js';
+import { calculateAndPersistCart, addItemToCart, removeItemFromCart, updateCartItemQuantity, clearCart } from './cartService.js';
+import { processAIChatMessage } from './aiOrchestrator.js';
 
 dotenv.config();
 
@@ -243,6 +245,73 @@ app.post('/api/bundles', async (req, res) => {
       [id, b.title, b.tagline, b.description, b.matchScore || 95, b.originalTotal, b.bundlePrice, b.savingsPercentage || 15, b.category, JSON.stringify(productIds), b.curatedReason]
     );
     res.status(201).json(result.rows[0]);
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ---------------- PERSISTENT CART ENDPOINTS ----------------
+app.get('/api/cart/:cartId', async (req, res) => {
+  try {
+    const { cartId } = req.params;
+    const { discountCode } = req.query;
+    const cart = await calculateAndPersistCart(cartId, undefined, discountCode as string);
+    res.json(cart);
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.post('/api/cart/:cartId/items', async (req, res) => {
+  try {
+    const { cartId } = req.params;
+    const { productId, quantity, variantId } = req.body;
+    if (!productId) return res.status(400).json({ error: 'productId is required.' });
+    const cart = await addItemToCart(cartId, { productId, quantity: quantity || 1, variantId });
+    res.status(201).json(cart);
+  } catch (err: any) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
+app.patch('/api/cart/:cartId/items/:productId', async (req, res) => {
+  try {
+    const { cartId, productId } = req.params;
+    const { quantity } = req.body;
+    const cart = await updateCartItemQuantity(cartId, productId, parseInt(quantity));
+    res.json(cart);
+  } catch (err: any) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
+app.delete('/api/cart/:cartId/items/:productId', async (req, res) => {
+  try {
+    const { cartId, productId } = req.params;
+    const cart = await removeItemFromCart(cartId, productId);
+    res.json(cart);
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.delete('/api/cart/:cartId', async (req, res) => {
+  try {
+    const { cartId } = req.params;
+    const cart = await clearCart(cartId);
+    res.json(cart);
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ---------------- AI COPILOT ENDPOINTS ----------------
+app.post('/api/ai/chat', async (req, res) => {
+  try {
+    const { sessionId, customerId, message } = req.body;
+    if (!message) return res.status(400).json({ error: 'Message content is required.' });
+    const response = await processAIChatMessage({ sessionId, customerId, message });
+    res.json(response);
   } catch (err: any) {
     res.status(500).json({ error: err.message });
   }

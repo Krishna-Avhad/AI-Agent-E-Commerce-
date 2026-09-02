@@ -1,18 +1,20 @@
 import { evaluateAgentAction } from './policyEngine.js';
 import { createRazorpayOrder, verifyRazorpayPayment, handleRazorpayWebhook } from './razorpayService.js';
-import { getAIBuyerCatalog } from './agentInterface.js';
+import { getAIBuyerCatalog, searchCatalogByAgentIntent } from './agentInterface.js';
 import { getDynamicUpsellCrossSell } from './growthEngine.js';
+import { calculateAndPersistCart, addItemToCart } from './cartService.js';
+import { processAIChatMessage } from './aiOrchestrator.js';
 
-async function runEndToEndTests() {
+async function runProductionBackendTestSuite() {
   console.log('🧪 ==============================================================================');
-  console.log('🧪 RUNNING RAZORPAY BUILDATHON TRACK 01 END-TO-END AUTOMATED VERIFICATION SUITE');
+  console.log('🧪 RAZORFLOW AI COMMERCE: PRODUCTION BACKEND & TRACK 01 VERIFICATION SUITE');
   console.log('🧪 ==============================================================================\n');
 
   let passed = 0;
   let failed = 0;
   let createdTestOrder: any = null;
 
-  // Test 1: Bounded Agent Policy - Allowed Action
+  // Test 1: Deterministic Policy Engine - Allow within Bounds
   try {
     console.log('Test 1: Policy Engine - Allowed 10% Discount Proposal...');
     const res = await evaluateAgentAction({
@@ -33,7 +35,7 @@ async function runEndToEndTests() {
     failed++;
   }
 
-  // Test 2: Bounded Agent Policy - Graceful Failure Path (Out-of-Bounds 25% Discount)
+  // Test 2: Deterministic Policy Engine - Graceful Failure Path (Out-of-Bounds 25% Discount)
   try {
     console.log('\nTest 2: Policy Engine - Graceful Failure on 25% Discount Proposal...');
     const res = await evaluateAgentAction({
@@ -55,17 +57,33 @@ async function runEndToEndTests() {
     failed++;
   }
 
-  // Test 3: Server-Side Price Recalculation & Razorpay Test Mode Order Creation
+  // Test 3: Persistent Database Cart Engine
   try {
-    console.log('\nTest 3: Razorpay Test Mode Order Creation with Server Price Validation...');
+    console.log('\nTest 3: Persistent Cart Engine with Server-Side Recalculation...');
+    const cartId = `cart_test_${Date.now()}`;
+    const cart = await addItemToCart(cartId, { productId: 'prod-01', quantity: 2 });
+    if (cart.subtotal === 698 && cart.items.length === 1 && cart.items[0].quantity === 2) {
+      console.log(`  ✅ PASSED: Cart ${cart.id} persisted with subtotal ₹${cart.subtotal}, total ₹${cart.total}`);
+      passed++;
+    } else {
+      throw new Error(`Invalid cart calculation: subtotal ${cart.subtotal}`);
+    }
+  } catch (e: any) {
+    console.error('  ❌ FAILED:', e.message);
+    failed++;
+  }
+
+  // Test 4: Server-Side Price Validation & Order Creation in Supabase
+  try {
+    console.log('\nTest 4: Server-Side Price Validation & Order Creation...');
     createdTestOrder = await createRazorpayOrder({
-      items: [{ productId: 'prod-01', quantity: 1 }],
+      items: [{ productId: 'prod-01', quantity: 1 }, { productId: 'prod-06', quantity: 1 }],
       customerName: 'Buildathon Test User',
       customerEmail: 'test.user@razorflow.ai',
       shippingAddress: { street: '100 Silicon Way', city: 'Bengaluru', state: 'KA', zip: '560001', country: 'India' }
     });
     if (createdTestOrder.amount > 0 && createdTestOrder.amountInPaise === Math.round(createdTestOrder.amount * 100)) {
-      console.log(`  ✅ PASSED: Razorpay Order created: ${createdTestOrder.razorpayOrderId}, Order ID: ${createdTestOrder.orderId}, Amount: ₹${createdTestOrder.amount} (${createdTestOrder.amountInPaise} paise)`);
+      console.log(`  ✅ PASSED: Order created: ${createdTestOrder.orderId}, Total: ₹${createdTestOrder.amount}, Provider Configured: ${createdTestOrder.paymentProviderConfigured}`);
       passed++;
     } else {
       throw new Error('Invalid order amount calculation');
@@ -75,39 +93,43 @@ async function runEndToEndTests() {
     failed++;
   }
 
-  // Test 4: Cryptographic Payment Signature Verification (using real persisted order)
+  // Test 5: Safe Payment Verification State (No fabricated success)
   try {
-    console.log('\nTest 4: Cryptographic Payment Verification...');
+    console.log('\nTest 5: Safe Payment Verification State...');
     const verifyRes = await verifyRazorpayPayment({
       orderId: createdTestOrder.orderId,
-      razorpayOrderId: createdTestOrder.razorpayOrderId,
-      razorpayPaymentId: `pay_test_${Date.now()}`,
-      razorpaySignature: 'test_sig_verified_razorflow_ai_2026'
+      razorpayOrderId: 'order_test_unconf',
+      razorpayPaymentId: 'pay_test_unconf',
+      razorpaySignature: 'sig_test_unconf'
     });
-    if (verifyRes.verified) {
-      console.log('  ✅ PASSED: Payment cryptographically verified, Order marked Paid in ledger, Audit ID =', verifyRes.auditId);
+    // When PAYMENTS_ENABLED=false, verification safely refuses to forge success
+    if (!verifyRes.verified && verifyRes.status === 'PAYMENT_PROVIDER_NOT_CONFIGURED') {
+      console.log('  ✅ PASSED: Verification safely returned PAYMENT_PROVIDER_NOT_CONFIGURED without fabricating success.');
+      passed++;
+    } else if (verifyRes.verified) {
+      console.log('  ✅ PASSED: Real Razorpay signature cryptographically verified.');
       passed++;
     } else {
-      throw new Error(verifyRes.message);
+      throw new Error(`Unexpected verification response: ${JSON.stringify(verifyRes)}`);
     }
   } catch (e: any) {
     console.error('  ❌ FAILED:', e.message);
     failed++;
   }
 
-  // Test 5: Webhook Idempotency & Deduplication
+  // Test 6: Webhook Idempotent Event Deduplication
   try {
-    console.log('\nTest 5: Webhook Idempotent Event Deduplication...');
+    console.log('\nTest 6: Webhook Idempotent Event Deduplication...');
     const testEvtId = `evt_test_dedup_${Date.now()}`;
     const eventPayload = {
       id: testEvtId,
       event: 'payment.captured',
-      payload: { payment: { entity: { id: `pay_${Date.now()}`, order_id: createdTestOrder.razorpayOrderId } } }
+      payload: { payment: { entity: { id: `pay_${Date.now()}`, order_id: 'order_rzp_mock' } } }
     };
-    const firstDelivery = await handleRazorpayWebhook(JSON.stringify(eventPayload), 'test_sig_1', eventPayload);
-    const secondDelivery = await handleRazorpayWebhook(JSON.stringify(eventPayload), 'test_sig_1', eventPayload);
+    const firstDelivery = await handleRazorpayWebhook(JSON.stringify(eventPayload), 'test_sig', eventPayload);
+    const secondDelivery = await handleRazorpayWebhook(JSON.stringify(eventPayload), 'test_sig', eventPayload);
     if (firstDelivery.status === 'processed' && secondDelivery.status === 'already_processed') {
-      console.log('  ✅ PASSED: First delivery processed; second delivery deduplicated safely without state corruption.');
+      console.log('  ✅ PASSED: First delivery processed; second duplicate delivery deduplicated with 0 state corruption.');
       passed++;
     } else {
       throw new Error(`Unexpected webhook result: ${JSON.stringify(secondDelivery)}`);
@@ -117,30 +139,47 @@ async function runEndToEndTests() {
     failed++;
   }
 
-  // Test 6: AI Buyer Machine-Readable Catalog Endpoint (UAP / AP2 Standard)
+  // Test 7: AI Buyer Machine-Readable Catalog Endpoint (UAP/ACP Protocol)
   try {
-    console.log('\nTest 6: AI Buyer Machine-Readable Catalog Endpoint (UAP/ACP Protocol)...');
+    console.log('\nTest 7: AI Buyer Machine-Readable Catalog Endpoint (UAP/ACP Protocol)...');
     const catalog = await getAIBuyerCatalog();
-    if (catalog.protocolVersion && catalog.items.length >= 8) {
+    if (catalog.protocolVersion && catalog.items.length >= 20) {
       console.log(`  ✅ PASSED: Protocol Version = ${catalog.protocolVersion}, SKUs Available = ${catalog.items.length}`);
       passed++;
     } else {
-      throw new Error('Incomplete catalog payload');
+      throw new Error(`Expected at least 20 SKUs in catalog, got ${catalog?.items?.length}`);
     }
   } catch (e: any) {
     console.error('  ❌ FAILED:', e.message);
     failed++;
   }
 
-  // Test 7: AI Growth Engine - Dynamic Upsell Pairings for Audio
+  // Test 8: AI Growth Engine - Dynamic Upsell Pairings
   try {
-    console.log('\nTest 7: AI Growth Engine - Dynamic Upsell Pairings for Audio...');
+    console.log('\nTest 8: AI Growth Engine - Dynamic Upsell Pairings from Relational Graph...');
     const upsells = await getDynamicUpsellCrossSell('prod-01');
     if (upsells.length > 0) {
       console.log(`  ✅ PASSED: Retrieved ${upsells.length} pairings (Top pairing: ${upsells[0].recommendedProduct.name}, Score: ${upsells[0].score})`);
       passed++;
     } else {
       throw new Error('No upsell pairings found');
+    }
+  } catch (e: any) {
+    console.error('  ❌ FAILED:', e.message);
+    failed++;
+  }
+
+  // Test 9: Server-Side AI Copilot Orchestrator
+  try {
+    console.log('\nTest 9: Server-Side AI Copilot Orchestrator Intent Routing...');
+    const chatRes = await processAIChatMessage({
+      message: 'Can you recommend studio headphones under ₹50,000?'
+    });
+    if (chatRes.content && chatRes.actions && chatRes.actions.length > 0) {
+      console.log(`  ✅ PASSED: Assistant replied with ${chatRes.actions.length} actionable tool recommendations.`);
+      passed++;
+    } else {
+      throw new Error('AI Orchestrator returned invalid chat structure');
     }
   } catch (e: any) {
     console.error('  ❌ FAILED:', e.message);
@@ -154,4 +193,4 @@ async function runEndToEndTests() {
   process.exit(failed > 0 ? 1 : 0);
 }
 
-runEndToEndTests();
+runProductionBackendTestSuite();

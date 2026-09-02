@@ -89,8 +89,8 @@ export interface Order {
   discount: number;
   total: number;
   status: 'Pending' | 'Processing' | 'Shipped' | 'Delivered' | 'Flagged by AI';
-  paymentMethod: 'Razorpay UPI' | 'Razorpay Card' | 'Instant Settlement' | 'Agent-to-Agent Protocol';
-  paymentStatus: 'Paid' | 'Settling' | 'Refunded' | 'Failed';
+  paymentMethod: 'Razorpay UPI' | 'Razorpay Card' | 'Instant Settlement' | 'Agent-to-Agent Protocol' | 'Razorpay Test Mode';
+  paymentStatus: 'Paid' | 'Settling' | 'Pending' | 'Refunded' | 'Failed';
   channel: 'Direct Consumer' | 'Agent-to-Agent' | 'MCP API' | 'Voice Assistant';
   trackingNumber?: string;
   estimatedDelivery?: string;

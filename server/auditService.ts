@@ -55,3 +55,5 @@ export async function logAuditEvent(params: CreateAuditLogParams): Promise<strin
 
   return id;
 }
+
+export const writeAuditLog = logAuditEvent;

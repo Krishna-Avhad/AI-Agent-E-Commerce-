@@ -63,7 +63,7 @@ export const OrderSuccessPage: React.FC = () => {
             Tracking: {selectedOrder.trackingNumber}
           </span>
           <span className="px-3 py-1 bg-slate-900 text-white rounded-full font-bold">
-            ${selectedOrder.total} Paid
+            ₹{selectedOrder.total} Paid
           </span>
         </div>
       </div>
@@ -120,15 +120,15 @@ export const OrderSuccessPage: React.FC = () => {
           </h4>
           <div className="divide-y divide-slate-100 border border-slate-100 rounded-2xl p-2 bg-slate-50/50">
             {selectedOrder.items.map((item) => (
-              <div key={item.product.id} className="py-2.5 px-3 flex items-center justify-between text-xs">
+              <div key={item.productId} className="py-2.5 px-3 flex items-center justify-between text-xs">
                 <div className="flex items-center space-x-3">
-                  <img src={item.product.image} alt={item.product.name} className="w-12 h-12 rounded-xl object-cover" />
+                  <img src={item.imageUrl} alt={item.productName} className="w-12 h-12 rounded-xl object-cover" />
                   <div>
-                    <h5 className="font-semibold text-slate-900">{item.product.name}</h5>
-                    <span className="text-slate-400 text-[11px]">Quantity: {item.quantity}</span>
+                    <h5 className="font-semibold text-slate-900">{item.productName}</h5>
+                    <span className="text-[10px] text-slate-400">Qty: {item.quantity}</span>
                   </div>
                 </div>
-                <span className="font-bold text-slate-900">${item.product.price * item.quantity}</span>
+                <span className="font-bold text-slate-900">₹{item.unitPrice * item.quantity}</span>
               </div>
             ))}
           </div>

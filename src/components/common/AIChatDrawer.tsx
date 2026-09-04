@@ -43,7 +43,7 @@ export const AIChatDrawer: React.FC = () => {
   };
 
   const samplePrompts = [
-    "Recommend the best headphones under $350 for deep focus",
+    "Recommend the best headphones under ₹350 for deep focus",
     "Create an ergonomic desk bundle for developer posture",
     "Compare Kinesis Keyboard vs Vertical Mouse",
     "What are current agent-to-agent order volume trends?"
@@ -133,7 +133,7 @@ export const AIChatDrawer: React.FC = () => {
                           <div>
                             <h5 className="font-semibold text-slate-900 text-xs line-clamp-1">{prod.name}</h5>
                             <div className="flex items-center space-x-2 text-[11px]">
-                              <span className="font-bold text-slate-900">${prod.price}</span>
+                              <span className="font-bold text-slate-900">₹{prod.price}</span>
                               <span className="text-teal-600 font-semibold">{prod.aiMatchScore}% Match</span>
                             </div>
                           </div>

@@ -208,7 +208,7 @@ export const ProductManagementPage: React.FC = () => {
                   </td>
 
                   <td className="p-3.5 font-heading font-bold text-slate-900 text-xs">
-                    ${product.price}
+                    ₹{product.price}
                   </td>
 
                   <td className="p-3.5">
@@ -319,7 +319,7 @@ export const ProductManagementPage: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="font-semibold text-slate-700 block mb-1">Unit Price ($)</label>
+                  <label className="font-semibold text-slate-700 block mb-1">Unit Price (₹)</label>
                   <input
                     type="number"
                     required

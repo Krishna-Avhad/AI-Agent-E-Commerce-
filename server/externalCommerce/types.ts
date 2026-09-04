@@ -3,7 +3,7 @@
  * Strict TypeScript without 'any'.
  */
 
-export type ProviderName = 'shopify' | 'ebay' | 'opencatalog' | 'dummyjson';
+export type ProviderName = 'linqs' | 'shopify' | 'ebay' | 'opencatalog' | 'dummyjson';
 
 export type ProductAvailability = 'IN_STOCK' | 'OUT_OF_STOCK' | 'LIMITED_STOCK' | 'PRE_ORDER' | 'UNKNOWN';
 

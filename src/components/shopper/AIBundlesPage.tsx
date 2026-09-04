@@ -67,7 +67,7 @@ export const AIBundlesPage: React.FC = () => {
                     {bundle.category}
                   </span>
                   <span className="px-2.5 py-0.5 bg-emerald-50 text-emerald-700 rounded-full font-bold text-xs">
-                    Save ${bundle.originalTotal - bundle.bundlePrice} ({bundle.savingsPercentage}%)
+                    Save ₹{bundle.originalTotal - bundle.bundlePrice} ({bundle.savingsPercentage}%)
                   </span>
                 </div>
                 <h2 className="font-heading font-bold text-2xl text-slate-900">
@@ -81,8 +81,8 @@ export const AIBundlesPage: React.FC = () => {
               {/* Price CTA */}
               <div className="flex items-center space-x-4 bg-slate-50 p-4 rounded-2xl border border-slate-200 self-start md:self-auto">
                 <div className="text-right">
-                  <div className="text-xs text-slate-400 line-through">${bundle.originalTotal}</div>
-                  <div className="font-heading font-extrabold text-2xl text-slate-900">${bundle.bundlePrice}</div>
+                  <div className="text-xs text-slate-400 line-through">₹{bundle.originalTotal}</div>
+                  <div className="font-heading font-extrabold text-2xl text-slate-900">₹{bundle.bundlePrice}</div>
                 </div>
                 <button
                   onClick={() => handleBuyBundle(bundle)}
@@ -127,7 +127,7 @@ export const AIBundlesPage: React.FC = () => {
                         {prod.name}
                       </h5>
                       <div className="flex items-center justify-between text-xs">
-                        <span className="font-bold text-slate-900">${prod.price}</span>
+                        <span className="font-bold text-slate-900">₹{prod.price}</span>
                         <span className="text-teal-600 font-semibold text-[10px]">{prod.aiMatchScore}% Fit</span>
                       </div>
                     </div>

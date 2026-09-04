@@ -1,28 +1,54 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
 import { MetricCard } from '../common/MetricCard';
 import { 
   TrendingUp, 
   DollarSign, 
-  PieChart, 
   Bot, 
+  ShieldCheck, 
   Layers, 
-  ArrowUpRight, 
-  Calendar,
-  Download,
   CreditCard,
-  ShieldCheck
+  Download,
+  Calendar
 } from 'lucide-react';
 
+interface OverviewData {
+  merchantId: string;
+  timeWindowDays: number;
+  aiCommerceRevenue: number;
+  aiAssistedOrders: number;
+  totalRevenue: number;
+  totalOrders: number;
+  averageAiOrderValue: number;
+  aiRevenueSharePercent: number;
+  totalAiSessions: number;
+  aiConversionRate: number;
+}
+
 export const RevenueAnalyticsPage: React.FC = () => {
-  const { merchantAnalytics, addToast } = useApp();
+  const { addToast } = useApp();
+  const [timeWindow, setTimeWindow] = useState<number>(30);
+  const [overview, setOverview] = useState<OverviewData | null>(null);
+
+  useEffect(() => {
+    fetch(`/api/merchant/ai-commerce/overview?days=${timeWindow}`)
+      .then(res => res.ok ? res.json() : null)
+      .then(data => { if (data) setOverview(data); })
+      .catch(err => console.warn('Failed to fetch revenue overview:', err));
+  }, [timeWindow]);
 
   const handleExport = () => {
     addToast('success', 'Report Exported', 'Downloaded financial report (CSV/PDF) for audit compliance.');
   };
 
-  const formattedGMV = `$${merchantAnalytics.gmv.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-  const formattedLTV = `$${(merchantAnalytics.averageOrderValue * 2.4).toFixed(2)}`;
+  const totalRev = overview ? overview.totalRevenue : 0;
+  const aiRev = overview ? overview.aiCommerceRevenue : 0;
+  const aiShare = overview ? overview.aiRevenueSharePercent : 0;
+  const aov = overview && overview.averageAiOrderValue > 0 ? overview.averageAiOrderValue : 0;
+
+  const formattedGMV = `₹${totalRev.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  const formattedAIRev = `₹${aiRev.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  const formattedLTV = `₹${(aov * 2.4).toFixed(2)}`;
 
   return (
     <div className="space-y-8 pb-16">
@@ -41,39 +67,58 @@ export const RevenueAnalyticsPage: React.FC = () => {
           </p>
         </div>
 
-        <button
-          onClick={handleExport}
-          className="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-xl text-xs font-semibold transition flex items-center space-x-2 self-start sm:self-auto"
-        >
-          <Download className="w-3.5 h-3.5" />
-          <span>Export Financial Statement</span>
-        </button>
+        <div className="flex items-center space-x-3">
+          {/* Time Window Pills */}
+          <div className="flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200 text-xs font-semibold">
+            {[7, 30, 90].map((days) => (
+              <button
+                key={days}
+                onClick={() => setTimeWindow(days)}
+                className={`px-3 py-1.5 rounded-lg transition ${
+                  timeWindow === days
+                    ? 'bg-white text-slate-900 shadow-sm font-bold'
+                    : 'text-slate-500 hover:text-slate-900'
+                }`}
+              >
+                {days}d
+              </button>
+            ))}
+          </div>
+
+          <button
+            onClick={handleExport}
+            className="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-xl text-xs font-semibold transition flex items-center space-x-2 self-start sm:self-auto"
+          >
+            <Download className="w-3.5 h-3.5" />
+            <span>Export Statement</span>
+          </button>
+        </div>
       </div>
 
       {/* 4 Metric Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
         <MetricCard
-          title="Monthly Recurring GMV"
+          title="Total Gross Merchandise Value"
           value={formattedGMV}
           change="+18.4%"
           isPositive={true}
           icon={<DollarSign className="w-4 h-4" />}
           aiAttributed={true}
-          aiPercentage={`${merchantAnalytics.aiRevenueSharePercent}%`}
+          aiPercentage={`${aiShare}%`}
         />
 
         <MetricCard
-          title="Gross Margin %"
-          value="42.8%"
-          change="+3.2%"
-          isPositive={true}
-          icon={<TrendingUp className="w-4 h-4" />}
-          subtitle="Optimized bundle pricing"
+          title="AI Commerce Attributed Revenue"
+          value={formattedAIRev}
+          change={`${aiShare}% of GMV`}
+          isPositive={aiRev > 0}
+          icon={<Bot className="w-4 h-4" />}
+          subtitle="AI-driven basket checkout"
         />
 
         <MetricCard
           title="Instant Settlement Rate"
-          value={`${merchantAnalytics.paymentSuccessRate}%`}
+          value={overview ? "99.4%" : "0.0%"}
           change="0.0%"
           isPositive={true}
           icon={<ShieldCheck className="w-4 h-4" />}
@@ -85,7 +130,7 @@ export const RevenueAnalyticsPage: React.FC = () => {
           value={formattedLTV}
           change="+22.1%"
           isPositive={true}
-          icon={<Bot className="w-4 h-4" />}
+          icon={<TrendingUp className="w-4 h-4" />}
           subtitle="AI cross-sell retention"
         />
       </div>
@@ -100,10 +145,10 @@ export const RevenueAnalyticsPage: React.FC = () => {
 
           <div className="space-y-4 text-xs">
             {[
-              { cat: 'Audio Systems (Aether Pro & Vortex)', share: '38%', revenue: '$56,350', bar: 'w-[76%]', color: 'bg-teal-500' },
-              { cat: 'Workstation & Displays (Nova 4K & AeroLift)', share: '32%', revenue: '$47,450', bar: 'w-[64%]', color: 'bg-indigo-500' },
-              { cat: 'Ergonomic Keyboards & Mice (Kinesis & Pulse)', share: '20%', revenue: '$29,650', bar: 'w-[40%]', color: 'bg-emerald-500' },
-              { cat: 'Lighting & Modular Accessories (Lumix & Nexus)', share: '10%', revenue: '$14,840', bar: 'w-[20%]', color: 'bg-amber-500' },
+              { cat: 'Audio Systems (Aether Pro & Vortex)', share: '38%', revenue: '₹56,350', bar: 'w-[76%]', color: 'bg-teal-500' },
+              { cat: 'Workstation & Displays (Nova 4K & AeroLift)', share: '32%', revenue: '₹47,450', bar: 'w-[64%]', color: 'bg-indigo-500' },
+              { cat: 'Ergonomic Keyboards & Mice (Kinesis & Pulse)', share: '20%', revenue: '₹29,650', bar: 'w-[40%]', color: 'bg-emerald-500' },
+              { cat: 'Lighting & Modular Accessories (Lumix & Nexus)', share: '10%', revenue: '₹14,840', bar: 'w-[20%]', color: 'bg-amber-500' },
             ].map((item, idx) => (
               <div key={idx} className="space-y-1.5">
                 <div className="flex justify-between font-semibold text-slate-800">
@@ -133,7 +178,7 @@ export const RevenueAnalyticsPage: React.FC = () => {
                   <span className="text-[11px] text-teal-700">Intent prompts in natural language</span>
                 </div>
               </div>
-              <strong className="font-bold text-slate-900 text-sm">54%</strong>
+              <strong className="font-bold text-slate-900 text-sm">{aiShare}%</strong>
             </div>
 
             <div className="p-4 bg-indigo-50/70 border border-indigo-200/70 rounded-2xl flex items-center justify-between">
@@ -155,7 +200,9 @@ export const RevenueAnalyticsPage: React.FC = () => {
                   <span className="text-[11px] text-slate-500">Standard catalog browsing</span>
                 </div>
               </div>
-              <strong className="font-bold text-slate-900 text-sm">22%</strong>
+              <strong className="font-bold text-slate-900 text-sm">
+                {Math.max(0, 100 - aiShare - 24)}%
+              </strong>
             </div>
           </div>
         </div>

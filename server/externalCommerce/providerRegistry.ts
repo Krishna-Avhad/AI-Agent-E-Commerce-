@@ -1,15 +1,21 @@
 import { CommerceProvider, ProviderName } from './types.js';
-import { DummyJsonProvider } from './providers/dummyJsonProvider.js';
-import { ShopifyStorefrontProvider } from './providers/shopifyStorefrontProvider.js';
+import { LinqsProvider } from './providers/linqsProvider.js';
 import { EbayBrowseProvider } from './providers/ebayBrowseProvider.js';
+import { ShopifyStorefrontProvider } from './providers/shopifyStorefrontProvider.js';
+import { DummyJsonProvider } from './providers/dummyJsonProvider.js';
 
 export class ProviderRegistry {
   private providers: Map<ProviderName, CommerceProvider> = new Map();
 
   constructor() {
-    this.registerProvider(new DummyJsonProvider());
-    this.registerProvider(new ShopifyStorefrontProvider());
+    // Priority order:
+    // 1. LINQS (REAL, Free, No credentials required)
+    // 2. eBay Browse (REAL, requires client credentials)
+    // 3. Shopify Storefront (REAL, requires storefront token)
+    this.registerProvider(new LinqsProvider());
     this.registerProvider(new EbayBrowseProvider());
+    this.registerProvider(new ShopifyStorefrontProvider());
+    // DummyJSON removed per Phase 3 requirement to not use synthetic products.
   }
 
   public registerProvider(provider: CommerceProvider): void {

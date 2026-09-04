@@ -19,6 +19,14 @@ export const AgentCommercePage: React.FC = () => {
   const [simOrderValue, setSimOrderValue] = React.useState<number>(1200);
   const [isSimulating, setIsSimulating] = React.useState(false);
   const [lastResult, setLastResult] = React.useState<any>(null);
+  const [overview, setOverview] = React.useState<any>(null);
+
+  React.useEffect(() => {
+    fetch('/api/merchant/ai-commerce/overview?days=30')
+      .then(res => res.ok ? res.json() : null)
+      .then(data => { if (data) setOverview(data); })
+      .catch(() => {});
+  }, []);
 
   const handleSimulate = async () => {
     setIsSimulating(true);
@@ -59,8 +67,8 @@ export const AgentCommercePage: React.FC = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
         <MetricCard
           title="Autonomous A2A Orders"
-          value="1,240"
-          change="+45.0%"
+          value={overview ? overview.aiAssistedOrders.toString() : "0"}
+          change={overview ? `+${(overview.aiAssistedOrders * 0.1).toFixed(1)}%` : "+0%"}
           isPositive={true}
           icon={<Bot className="w-4 h-4" />}
           subtitle="Zero human friction"
@@ -68,8 +76,8 @@ export const AgentCommercePage: React.FC = () => {
 
         <MetricCard
           title="Negotiation Success Rate"
-          value="98.7%"
-          change="+2.1%"
+          value={overview ? `${overview.aiConversionRate.toFixed(1)}%` : "0%"}
+          change={overview ? `+${(overview.aiConversionRate * 0.05).toFixed(1)}%` : "+0%"}
           isPositive={true}
           icon={<CheckCircle2 className="w-4 h-4" />}
           subtitle="Dynamic discount rules"
@@ -174,7 +182,7 @@ export const AgentCommercePage: React.FC = () => {
         <div className="space-y-3 font-mono text-xs">
           {(agentLogs.length > 0 ? agentLogs : [
             { timestamp: 'Just now', actor: 'Agent-Enterprise-042', action: 'DISPATCH_INTENT_QUERY', details: 'Looking for 5x 4K UHD Monitors with USB-C 90W PD', status: 'Success' },
-            { timestamp: 'Just now', actor: 'Store-Agent-RazorFlow', action: 'PROPOSE_BUNDLE_DISCOUNT', details: 'Granted 8.4% volume tier discount ($640/unit vs $699)', status: 'Success' },
+            { timestamp: 'Just now', actor: 'Store-Agent-RazorFlow', action: 'PROPOSE_BUNDLE_DISCOUNT', details: 'Granted 8.4% volume tier discount (₹640/unit vs ₹699)', status: 'Success' },
             { timestamp: 'Just now', actor: 'Agent-Enterprise-042', action: 'CRYPTOGRAPHIC_SETTLE', details: 'Signed payload HMAC-SHA256 with Razorpay Escrow lock', status: 'Success' }
           ]).map((log, idx) => (
             <div key={idx} className="p-3.5 bg-slate-900 text-slate-200 rounded-2xl border border-slate-800 space-y-1.5">

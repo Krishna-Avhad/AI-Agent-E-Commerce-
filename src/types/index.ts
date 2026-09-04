@@ -8,6 +8,7 @@ export type ShopperRoute =
   | 'bundles' 
   | 'cart' 
   | 'checkout' 
+  | 'orders'
   | 'order-success' 
   | 'order-detail';
 
@@ -23,7 +24,8 @@ export type MerchantRoute =
   | 'mcp-integration' 
   | 'audit-trail' 
   | 'audit-timeline' 
-  | 'system-status';
+  | 'system-status'
+  | 'ai-control';
 
 export interface Product {
   id: string;
@@ -33,6 +35,7 @@ export interface Product {
   originalPrice?: number;
   rating: number;
   reviewCount: number;
+  reviewsCount?: number;
   image: string;
   gallery?: string[];
   description: string;
@@ -47,6 +50,8 @@ export interface Product {
   vectorEmbeddingStatus: 'synced' | 'pending' | 'outdated';
   brand: string;
   featured?: boolean;
+  isAiRecommended?: boolean;
+  aiConfidenceScore?: number;
 }
 
 export interface BundleItem {
@@ -64,10 +69,38 @@ export interface BundleItem {
 }
 
 export interface CartItem {
-  product: Product;
+  id: string; // The cart item id
+  productId: string;
+  productName: string;
+  sku: string;
+  imageUrl: string;
+  category: string;
   quantity: number;
+  unitPrice: number;
+  totalPrice: number;
+  inStock: boolean;
+  availableStock: number;
   selectedColor?: string;
   selectedStorage?: string;
+  product?: Product;
+  name?: string;
+  price?: number;
+}
+
+export interface CartCalculationResult {
+  id: string;
+  merchantId: string;
+  customerId: string | null;
+  status: string;
+  items: CartItem[];
+  subtotal: number;
+  discount: number;
+  tax: number;
+  shipping: number;
+  total: number;
+  currency: string;
+  itemCount: number;
+  appliedPromo?: string | null;
 }
 
 export interface Order {
@@ -82,7 +115,7 @@ export interface Order {
     zip: string;
     country: string;
   };
-  items: CartItem[];
+  items: any[];
   subtotal: number;
   tax: number;
   shipping: number;

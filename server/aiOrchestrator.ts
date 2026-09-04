@@ -28,20 +28,28 @@ export async function processAIChatMessage(req: ChatMessageRequest): Promise<Cha
   const text = req.message.toLowerCase().trim();
 
   // 1. Ensure AI Session exists in Database
-  await pool.query(
-    `INSERT INTO ai_sessions (id, merchant_id, customer_id, channel, status)
-     VALUES ($1, 'merch_razorflow_01', $2, 'AI_COPILOT', 'ACTIVE')
-     ON CONFLICT (id) DO NOTHING`,
-    [sessionId, req.customerId || null]
-  );
+  try {
+    await Promise.race([
+      pool.query(
+        `INSERT INTO ai_sessions (id, merchant_id, customer_id, channel, status)
+         VALUES ($1, 'merch_razorflow_01', $2, 'AI_COPILOT', 'ACTIVE')
+         ON CONFLICT (id) DO NOTHING`,
+        [sessionId, req.customerId || null]
+      ),
+      new Promise<any>((_, reject) => setTimeout(() => reject(new Error('timeout')), 1000))
+    ]);
 
-  // 2. Log User Message to Database
-  const userMsgId = `msg_${Date.now()}_u`;
-  await pool.query(
-    `INSERT INTO ai_messages (id, session_id, role, sender, content, created_at)
-     VALUES ($1, $2, 'user', 'user', $3, NOW())`,
-    [userMsgId, sessionId, req.message]
-  );
+    // 2. Log User Message to Database
+    const userMsgId = `msg_${Date.now()}_u`;
+    await Promise.race([
+      pool.query(
+        `INSERT INTO ai_messages (id, session_id, role, sender, content, created_at)
+         VALUES ($1, $2, 'user', 'user', $3, NOW())`,
+        [userMsgId, sessionId, req.message]
+      ),
+      new Promise<any>((_, reject) => setTimeout(() => reject(new Error('timeout')), 1000))
+    ]);
+  } catch {}
 
   let assistantReply = '';
   let actions: ChatActionOption[] = [];
@@ -117,12 +125,17 @@ export async function processAIChatMessage(req: ChatMessageRequest): Promise<Cha
   }
 
   // 4. Log Assistant Reply to Database
-  const botMsgId = `msg_${Date.now()}_b`;
-  await pool.query(
-    `INSERT INTO ai_messages (id, session_id, role, sender, content, metadata, created_at)
-     VALUES ($1, $2, 'assistant', 'assistant', $3, $4, NOW())`,
-    [botMsgId, sessionId, assistantReply, JSON.stringify({ actions, policyResult })]
-  );
+  try {
+    const botMsgId = `msg_${Date.now()}_b`;
+    await Promise.race([
+      pool.query(
+        `INSERT INTO ai_messages (id, session_id, role, sender, content, metadata, created_at)
+         VALUES ($1, $2, 'assistant', 'assistant', $3, $4, NOW())`,
+        [botMsgId, sessionId, assistantReply, JSON.stringify({ actions, policyResult })]
+      ),
+      new Promise<any>((_, reject) => setTimeout(() => reject(new Error('timeout')), 1000))
+    ]);
+  } catch {}
 
   return {
     sessionId,

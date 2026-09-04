@@ -177,4 +177,105 @@ export class ProductNormalizer {
       isDiscoveryOnly: true
     };
   }
+
+  public static normalizeLinqs(raw: Record<string, unknown>): ExternalProduct | null {
+    if (!raw || typeof raw !== 'object') {
+      return null;
+    }
+
+    const title = typeof raw.name === 'string' ? raw.name : (typeof raw.title === 'string' ? raw.title : null);
+    const id = raw.id ? String(raw.id) : (raw.databaseId ? String(raw.databaseId) : (raw.slug ? String(raw.slug) : null));
+
+    if (!id || !title) {
+      return null;
+    }
+
+    let price = 0;
+    if (typeof raw.price_from === 'number') {
+      price = raw.price_from;
+    } else if (raw.price !== undefined) {
+      const pStr = String(raw.price).replace(/,/g, '');
+      const match = pStr.match(/\d+(?:\.\d+)?/);
+      price = match ? parseFloat(match[0]) : 0;
+    }
+
+    let originalPrice: number | null = null;
+    if (raw.regularPrice) {
+      const regStr = String(raw.regularPrice).replace(/,/g, '');
+      const regMatch = regStr.match(/\d+(?:\.\d+)?/);
+      if (regMatch) {
+        const parsedReg = parseFloat(regMatch[0]);
+        if (parsedReg > price) originalPrice = parsedReg;
+      }
+    }
+
+    const currency = typeof raw.price_currency === 'string' ? raw.price_currency : 'INR';
+
+    const rawStock = String(raw.stockStatus || raw.stock_status || '').toUpperCase();
+    const availability: ProductAvailability = 
+      rawStock === 'IN_STOCK' || rawStock === 'LOW_STOCK'
+        ? 'IN_STOCK'
+        : rawStock === 'OUT_OF_STOCK'
+          ? 'OUT_OF_STOCK'
+          : 'IN_STOCK';
+
+    let imageUrl: string | null = null;
+    if (raw.image && typeof raw.image === 'object' && typeof (raw.image as Record<string, unknown>).src === 'string') {
+      imageUrl = (raw.image as Record<string, unknown>).src as string;
+    } else if (typeof raw.imageUrl === 'string') {
+      imageUrl = raw.imageUrl;
+    }
+
+    const productUrl = typeof raw.url === 'string' 
+      ? raw.url 
+      : (typeof raw.slug === 'string' ? `https://shop.linqs.in/product/${raw.slug}` : null);
+
+    const category = typeof raw.category === 'string' 
+      ? raw.category 
+      : (typeof raw.form_factor === 'string' ? raw.form_factor : (typeof raw.formFactor === 'string' ? raw.formFactor : null));
+
+    const specifications: Record<string, string> = {};
+    if (typeof raw.chip === 'string') specifications['Chip'] = raw.chip;
+    if (typeof raw.chip_family === 'string') specifications['Chip Family'] = raw.chip_family;
+    if (typeof raw.size === 'string') specifications['Size'] = raw.size;
+    if (typeof raw.formFactor === 'string') specifications['Form Factor'] = raw.formFactor;
+    if (typeof raw.form_factor === 'string') specifications['Form Factor'] = raw.form_factor;
+    if (typeof raw.memory_bytes === 'number') specifications['Memory'] = `${raw.memory_bytes} bytes`;
+
+    const description = typeof raw.description === 'string'
+      ? raw.description
+      : (Array.isArray(raw.best_for) ? `Best for: ${raw.best_for.join(', ')}` : null);
+
+    return {
+      provider: 'linqs',
+      externalProductId: id,
+      title: title.trim(),
+      description,
+      brand: 'LINQS',
+      category,
+      price,
+      currency,
+      originalPrice,
+      discountPercentage: originalPrice && originalPrice > price ? Number((((originalPrice - price) / originalPrice) * 100).toFixed(0)) : null,
+      imageUrl,
+      additionalImages: imageUrl ? [imageUrl] : [],
+      productUrl,
+      availability,
+      seller: 'LINQS Shop (Yuvera Solutions)',
+      rating: null,
+      reviewCount: null,
+      shipping: null,
+      identifiers: {
+        sku: typeof raw.sku === 'string' ? raw.sku : null,
+        upc: null,
+        ean: null,
+        isbn: null,
+        mpn: null
+      },
+      specifications,
+      fetchedAt: new Date().toISOString(),
+      isDiscoveryOnly: true
+    };
+  }
 }
+

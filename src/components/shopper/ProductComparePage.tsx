@@ -86,10 +86,9 @@ export const ProductComparePage: React.FC = () => {
               Recommendation Verdict
             </h3>
             <p className="text-xs text-slate-200 leading-relaxed max-w-3xl">
-              If your priority is <strong>acoustic noise isolation & deep-work focus</strong>, the{' '}
-              <strong className="text-teal-300">{compareProducts[0].name}</strong> scores highest with 98% intent match.
+              Based on the AI assessment, <strong className="text-teal-300">{compareProducts[0].name}</strong> scores highest with a {compareProducts[0].aiMatchScore || 90}% intent match.
               {compareProducts.length > 1 && (
-                <> Meanwhile, <strong className="text-indigo-300">{compareProducts[1].name}</strong> is optimal for dedicated desk productivity.</>
+                <> Meanwhile, <strong className="text-indigo-300">{compareProducts[1].name}</strong> provides a strong alternative for this category.</>
               )}
             </p>
           </div>
@@ -114,7 +113,7 @@ export const ProductComparePage: React.FC = () => {
                           <h4 className="font-heading font-bold text-sm text-slate-900 line-clamp-1">
                             {prod.name}
                           </h4>
-                          <div className="font-bold text-base text-slate-900">${prod.price}</div>
+                          <div className="font-bold text-base text-slate-900">₹{prod.price}</div>
                         </div>
 
                         <button
@@ -152,7 +151,7 @@ export const ProductComparePage: React.FC = () => {
                         >
                           <option value="" disabled>Select hardware...</option>
                           {availableToAdd.map((p) => (
-                            <option key={p.id} value={p.id}>{p.name} (${p.price})</option>
+                            <option key={p.id} value={p.id}>{p.name} (₹{p.price})</option>
                           ))}
                         </select>
                       </div>

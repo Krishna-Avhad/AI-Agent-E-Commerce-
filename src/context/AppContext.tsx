@@ -12,13 +12,7 @@ import type {
   ToastMessage,
   ChatMessage
 } from '../types';
-import { 
-  INITIAL_PRODUCTS, 
-  INITIAL_BUNDLES, 
-  INITIAL_ORDERS, 
-  INITIAL_AUDIT_LOGS, 
-  INITIAL_MCP_TOOLS 
-} from '../data/mockData';
+
 
 export interface MerchantAnalyticsData {
   gmv: number;
@@ -71,6 +65,7 @@ interface AppContextType {
   backendConnected: boolean;
   
   // Cart
+  cartId: string | null;
   cart: CartItem[];
   addToCart: (product: Product, quantity?: number) => void;
   removeFromCart: (productId: string) => void;
@@ -79,6 +74,8 @@ interface AppContextType {
   cartCount: number;
   cartSubtotal: number;
   cartDiscount: number;
+  cartTax: number;
+  cartShipping: number;
   cartTotal: number;
   
   // Selection
@@ -127,37 +124,42 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [shopperRoute, setShopperRoute] = useState<ShopperRoute>('home');
   const [merchantRoute, setMerchantRoute] = useState<MerchantRoute>('overview');
 
-  const [products, setProducts] = useState<Product[]>(INITIAL_PRODUCTS);
-  const [bundles, setBundles] = useState<BundleItem[]>(INITIAL_BUNDLES);
-  const [orders, setOrders] = useState<Order[]>(INITIAL_ORDERS);
-  const [auditLogs, setAuditLogs] = useState<AuditEvent[]>(INITIAL_AUDIT_LOGS);
-  const [mcpTools, setMcpTools] = useState<MCPTool[]>(INITIAL_MCP_TOOLS);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [bundles, setBundles] = useState<BundleItem[]>([]);
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [auditLogs, setAuditLogs] = useState<AuditEvent[]>([]);
+  const [mcpTools, setMcpTools] = useState<MCPTool[]>([]);
   const [backendConnected, setBackendConnected] = useState<boolean>(false);
 
   const [merchantAnalytics, setMerchantAnalytics] = useState<MerchantAnalyticsData>({
-    gmv: 128450.00,
-    aiAttributedRevenue: 100705.00,
-    aiRevenueSharePercent: 78.4,
-    totalOrders: 284,
-    averageOrderValue: 452.28,
-    conversionRate: 4.82,
-    upsellRevenueGenerated: 24890.00,
-    abandonedCartValueDetected: 14200.00,
-    recoveredCartRevenue: 9840.00,
-    aiRecommendationAcceptanceRate: 34.2,
-    paymentSuccessRate: 99.4,
-    agentActionSuccessRate: 98.6
+    gmv: 0,
+    aiAttributedRevenue: 0,
+    aiRevenueSharePercent: 0,
+    totalOrders: 0,
+    averageOrderValue: 0,
+    conversionRate: 0,
+    upsellRevenueGenerated: 0,
+    abandonedCartValueDetected: 0,
+    recoveredCartRevenue: 0,
+    aiRecommendationAcceptanceRate: 0,
+    paymentSuccessRate: 0,
+    agentActionSuccessRate: 0
   });
 
-  // Cart State (pre-populated with 1 item for immediate delight)
-  const [cart, setCart] = useState<CartItem[]>([
-    { product: INITIAL_PRODUCTS[0], quantity: 1 }
-  ]);
+  // Cart State connected to authoritative backend
+  const [cartId, setCartId] = useState<string | null>(null);
+  const [cart, setCart] = useState<CartItem[]>([]);
+  const [cartSubtotal, setCartSubtotal] = useState(0);
+  const [cartDiscount, setCartDiscount] = useState(0);
+  const [cartTax, setCartTax] = useState(0);
+  const [cartShipping, setCartShipping] = useState(0);
+  const [cartTotal, setCartTotal] = useState(0);
+  const [cartCount, setCartCount] = useState(0);
 
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(INITIAL_PRODUCTS[0]);
-  const [compareProducts, setCompareProducts] = useState<Product[]>([INITIAL_PRODUCTS[0], INITIAL_PRODUCTS[4]]);
-  const [selectedOrder, setSelectedOrder] = useState<Order | null>(INITIAL_ORDERS[0]);
-  const [selectedAuditEvent, setSelectedAuditEvent] = useState<AuditEvent | null>(INITIAL_AUDIT_LOGS[0]);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [compareProducts, setCompareProducts] = useState<Product[]>([]);
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+  const [selectedAuditEvent, setSelectedAuditEvent] = useState<AuditEvent | null>(null);
 
   const [searchIntentQuery, setSearchIntentQuery] = useState<string>('');
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
@@ -172,10 +174,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       sender: 'ai',
       text: "👋 Welcome to **RazorFlow AI**. Connected to live Supabase PostgreSQL and Razorpay Test Mode. Every money action is explainable, bounded, and gated. What are you building today?",
       timestamp: 'Just now',
-      actions: [
-        { label: '🎧 Top ANC Headphones', actionType: 'view_product', payload: INITIAL_PRODUCTS[0] },
-        { label: '⚡ Ergonomic Bundle (Save 16%)', actionType: 'view_bundle', payload: INITIAL_BUNDLES[1] }
-      ]
+      actions: []
     }
   ]);
 
@@ -251,48 +250,124 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
   };
 
+  // Cart backend initialization
   useEffect(() => {
+    const initCart = async () => {
+      let currentCartId = localStorage.getItem('razorflow_cart_id');
+      if (!currentCartId) {
+        try {
+          const res = await fetch('/api/cart', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ currency: 'INR' }) });
+          if (res.ok) {
+            const data = await res.json();
+            currentCartId = data.id;
+            localStorage.setItem('razorflow_cart_id', currentCartId!);
+          }
+        } catch (e) {
+          console.warn('Failed to initialize persistent cart');
+        }
+      }
+      
+      if (currentCartId) {
+        setCartId(currentCartId);
+        try {
+          const res = await fetch(`/api/cart/${currentCartId}`);
+          if (res.ok) {
+            const data = await res.json();
+            updateLocalCartState(data);
+          }
+        } catch (e) {
+          console.warn('Failed to load persistent cart');
+        }
+      }
+    };
+
+    initCart();
     refreshBackendData();
   }, []);
 
-  const addToCart = (product: Product, quantity = 1) => {
-    setCart((prev) => {
-      const existing = prev.find((item) => item.product.id === product.id);
-      if (existing) {
-        return prev.map((item) =>
-          item.product.id === product.id ? { ...item, quantity: item.quantity + quantity } : item
-        );
+  const updateLocalCartState = (data: any) => {
+    setCart(data.items || []);
+    setCartSubtotal(data.subtotal || 0);
+    setCartDiscount(data.discount || 0);
+    setCartTax(data.tax || 0);
+    setCartShipping(data.shipping || 0);
+    setCartTotal(data.total || 0);
+    setCartCount(data.itemCount || 0);
+  };
+
+  const addToCart = async (product: Product, quantity = 1) => {
+    if (!cartId) return;
+    try {
+      const res = await fetch(`/api/cart/${cartId}/items`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ productId: product.id, quantity })
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        if (data.code === 'DISCOVERY_ONLY_PRODUCT') {
+          addToast('error', 'Action Blocked', 'External discovery products cannot be added to the internal cart.');
+        } else if (data.code === 'INSUFFICIENT_STOCK' || data.code === 'OUT_OF_STOCK') {
+          addToast('error', 'Out of Stock', 'This item is currently unavailable in the requested quantity.');
+        } else {
+          addToast('error', 'Error', data.error || 'Failed to add item to cart.');
+        }
+        return;
       }
-      return [...prev, { product, quantity }];
-    });
-    addToast('success', 'Added to Cart', `${product.name} (Qty: ${quantity})`);
+      updateLocalCartState(data);
+      addToast('success', 'Added to Cart', `${product.name} (Qty: ${quantity})`);
+    } catch (e) {
+      addToast('error', 'Error', 'Network error while adding to cart.');
+    }
   };
 
-  const removeFromCart = (productId: string) => {
-    setCart((prev) => prev.filter((item) => item.product.id !== productId));
-    addToast('info', 'Cart Updated', 'Item removed from your bag.');
+  const removeFromCart = async (productId: string) => {
+    if (!cartId) return;
+    try {
+      const res = await fetch(`/api/cart/${cartId}/items/${productId}`, { method: 'DELETE' });
+      if (res.ok) {
+        const data = await res.json();
+        updateLocalCartState(data);
+        addToast('info', 'Cart Updated', 'Item removed from your bag.');
+      }
+    } catch (e) {
+      addToast('error', 'Error', 'Failed to remove item.');
+    }
   };
 
-  const updateCartQuantity = (productId: string, quantity: number) => {
+  const updateCartQuantity = async (productId: string, quantity: number) => {
+    if (!cartId) return;
     if (quantity <= 0) {
       removeFromCart(productId);
       return;
     }
-    setCart((prev) =>
-      prev.map((item) => (item.product.id === productId ? { ...item, quantity } : item))
-    );
+    try {
+      const res = await fetch(`/api/cart/${cartId}/items/${productId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ quantity })
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        addToast('error', 'Quantity Update Failed', data.error || 'Cannot update quantity.');
+        return;
+      }
+      updateLocalCartState(data);
+    } catch (e) {
+      addToast('error', 'Error', 'Failed to update quantity.');
+    }
   };
 
-  const clearCart = () => {
-    setCart([]);
+  const clearCart = async () => {
+    if (!cartId) return;
+    try {
+      const res = await fetch(`/api/cart/${cartId}`, { method: 'DELETE' });
+      if (res.ok) {
+        const data = await res.json();
+        updateLocalCartState(data);
+      }
+    } catch (e) {}
   };
-
-  const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
-  const cartSubtotal = cart.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
-  const cartDiscount = cartSubtotal > 500 ? 50 : 0;
-  const cartTax = Number((cartSubtotal * 0.08).toFixed(2));
-  const cartShipping = cartSubtotal > 300 || cartCount === 0 ? 0 : 15;
-  const cartTotal = Number((cartSubtotal - cartDiscount + cartTax + cartShipping).toFixed(2));
 
   const addToCompare = (product: Product) => {
     if (compareProducts.some((p) => p.id === product.id)) {
@@ -387,35 +462,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const placeOrder = async (orderDetails: Partial<Order>): Promise<Order> => {
     try {
-      const orderPayload = {
-        items: cart.map((i) => ({
-          productId: i.product.id,
-          quantity: i.quantity
-        })),
-        customerName: orderDetails.customerName || 'Alex Chen',
-        customerEmail: orderDetails.customerEmail || 'alex.chen@example.com',
-        shippingAddress: orderDetails.shippingAddress || {
-          street: '100 Silicon Valley Way',
-          city: 'Bengaluru',
-          state: 'Karnataka',
-          zip: '560001',
-          country: 'India'
-        },
-        channel: (orderDetails.channel as any) || 'Direct Consumer',
-        discountCode: cartDiscount > 0 ? 'RAZORFLOW10' : undefined
-      };
-
-      const res = await fetch('/api/payments/create-order', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(orderPayload)
-      });
-
-      if (res.ok) {
-        const result = await res.json();
-        const newOrder: Order = {
-          id: result.orderId,
-          date: new Date().toISOString().replace('T', ' ').substring(0, 16),
+        const orderPayload = {
+          items: cart.map((i) => ({
+            productId: i.productId,
+            quantity: i.quantity
+          })),
           customerName: orderDetails.customerName || 'Alex Chen',
           customerEmail: orderDetails.customerEmail || 'alex.chen@example.com',
           shippingAddress: orderDetails.shippingAddress || {
@@ -425,27 +476,52 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
             zip: '560001',
             country: 'India'
           },
-          items: [...cart],
-          subtotal: cartSubtotal,
-          tax: cartTax,
-          shipping: cartShipping,
-          discount: cartDiscount,
-          total: result.amount || cartTotal,
-          status: 'Processing',
-          paymentMethod: orderDetails.paymentMethod || 'Razorpay Test Mode',
-          paymentStatus: result.status || 'Pending',
           channel: (orderDetails.channel as any) || 'Direct Consumer',
-          trackingNumber: `DEL-RZ-${Math.floor(1000000 + Math.random() * 9000000)}`,
-          estimatedDelivery: 'Sep 05, 2026',
-          aiConfidenceScore: 0.99,
-          auditId: result.auditId || `AUD-${Date.now()}`
+          discountCode: cartDiscount > 0 ? 'RAZORFLOW10' : undefined
         };
 
-        setOrders((prev) => [newOrder, ...prev]);
-        clearCart();
-        refreshBackendData();
-        return newOrder;
-      }
+        const res = await fetch('/api/payments/create-order', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(orderPayload)
+        });
+
+        if (res.ok) {
+          const result = await res.json();
+          const newOrder: Order = {
+            id: result.orderId,
+            date: new Date().toISOString().replace('T', ' ').substring(0, 16),
+            customerName: orderDetails.customerName || 'Alex Chen',
+            customerEmail: orderDetails.customerEmail || 'alex.chen@example.com',
+            shippingAddress: orderDetails.shippingAddress || {
+              street: '100 Silicon Valley Way',
+              city: 'Bengaluru',
+              state: 'Karnataka',
+              zip: '560001',
+              country: 'India'
+            },
+            items: [], // Deprecated in favor of DB schema for now in UI mockup
+            subtotal: cartSubtotal,
+            tax: cartTax,
+            shipping: cartShipping,
+            discount: cartDiscount,
+            total: result.amount || cartTotal,
+            status: 'Processing',
+            paymentMethod: orderDetails.paymentMethod || 'Razorpay Test Mode',
+            paymentStatus: result.status || 'Pending',
+            channel: (orderDetails.channel as any) || 'Direct Consumer',
+            trackingNumber: `DEL-RZ-${Math.floor(1000000 + Math.random() * 9000000)}`,
+            estimatedDelivery: 'Sep 05, 2026',
+            aiConfidenceScore: 0.99,
+            auditId: result.auditId || `AUD-${Date.now()}`
+          };
+
+          setOrders((prev) => [newOrder, ...prev]);
+          setSelectedOrder(newOrder);
+          clearCart();
+          refreshBackendData();
+          return newOrder;
+        }
     } catch (err: any) {
       console.warn('Backend order placement fallback:', err);
     }
@@ -504,6 +580,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         mcpTools,
         merchantAnalytics,
         backendConnected,
+        cartId,
         cart,
         addToCart,
         removeFromCart,
@@ -512,6 +589,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         cartCount,
         cartSubtotal,
         cartDiscount,
+        cartTax,
+        cartShipping,
         cartTotal,
         selectedProduct,
         setSelectedProduct,

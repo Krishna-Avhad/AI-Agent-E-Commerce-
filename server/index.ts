@@ -4,15 +4,42 @@ import dotenv from 'dotenv';
 import { pool, initDatabase } from './db.js';
 import { evaluateAgentAction } from './policyEngine.js';
 import { createRazorpayOrder, verifyRazorpayPayment, handleRazorpayWebhook } from './razorpayService.js';
-import { getDynamicUpsellCrossSell, getAbandonedCartOpportunities, getRealtimeMerchantAnalytics } from './growthEngine.js';
+import {
+  createRazorpayPaymentOrder,
+  verifyPaymentSignature,
+  processRazorpayWebhook,
+  reconcilePayment
+} from './paymentService.js';
+import { getDynamicUpsellCrossSell, getAbandonedCartOpportunities } from './growthEngine.js';
+import { computeRevenueIntelligence } from './ai/revenueIntelligence.js';
+import {
+  getAllGrowthOpportunities,
+  getGrowthOpportunityById,
+  reviewGrowthOpportunity,
+  approveGrowthOpportunity,
+  rejectGrowthOpportunity,
+  executeGrowthOpportunity
+} from './ai/growthEngine.js';
 import { getAIBuyerCatalog, searchCatalogByAgentIntent, handleAgentActionProposal, createAgentToAgentOrder } from './agentInterface.js';
 import { logAuditEvent } from './auditService.js';
-import { calculateAndPersistCart, addItemToCart, removeItemFromCart, updateCartItemQuantity, clearCart } from './cartService.js';
 import { processAIChatMessage } from './aiOrchestrator.js';
+import {
+  productRepository,
+  customerRepository,
+  cartRepository,
+  orderRepository,
+  paymentRepository,
+  revenueRepository,
+  auditRepository
+} from './repositories/index.js';
+import { shoppingAgent } from './ai/index.js';
+import { merchantAiCommerceRouter } from './merchant/merchantAiCommerceRouter.js';
+import { agentRouter } from './agent/agentRoutes.js';
+import { merchantAiRouter } from './merchant/merchantAiRouter.js';
 
 dotenv.config();
 
-const app = express();
+export const app = express();
 const PORT = process.env.PORT || 3001;
 
 app.use(cors());
@@ -28,58 +55,66 @@ app.get('/api/health', async (_req, res) => {
       timestamp: dbRes.rows[0].now,
       version: dbRes.rows[0].version,
       agentEngine: 'RazorFlow Bounded Policy v2.4 Active',
-      paymentGateway: 'Razorpay Test Mode Active'
+      paymentGateway: 'Razorpay Test Mode Active',
+      repositories: 'Phase 3 Centralized Supabase Layer Active'
     });
   } catch (err: any) {
     res.status(500).json({ status: 'degraded', error: err.message });
   }
 });
 
+// ---------------- REAL SUPABASE CATALOG API (PHASE 3) ----------------
+app.get('/api/catalog', async (req, res) => {
+  try {
+    const {
+      search,
+      category,
+      minPrice,
+      maxPrice,
+      inStock,
+      featured,
+      brand,
+      page,
+      limit,
+      sortBy,
+      sortOrder
+    } = req.query;
+
+    const catalogResponse = await productRepository.findCatalog({
+      search: search ? String(search) : undefined,
+      category: category ? String(category) : undefined,
+      minPrice: minPrice !== undefined ? parseFloat(String(minPrice)) : undefined,
+      maxPrice: maxPrice !== undefined ? parseFloat(String(maxPrice)) : undefined,
+      inStock: inStock !== undefined ? String(inStock).toLowerCase() === 'true' : undefined,
+      featured: featured !== undefined ? String(featured).toLowerCase() === 'true' : undefined,
+      brand: brand ? String(brand) : undefined,
+      page: page ? parseInt(String(page), 10) : 1,
+      limit: limit ? parseInt(String(limit), 10) : 12,
+      sortBy: sortBy as any,
+      sortOrder: (sortOrder as string)?.toLowerCase() === 'desc' ? 'desc' : 'asc'
+    });
+
+    res.json(catalogResponse);
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // ---------------- PRODUCTS ENDPOINTS ----------------
 app.get('/api/products', async (req, res) => {
   try {
-    const { category, search } = req.query;
-    let query = 'SELECT * FROM products WHERE (status = \'active\' OR status IS NULL)';
-    const params: any[] = [];
-
-    if (category && category !== 'All') {
-      params.push(category);
-      query += ` AND category = $${params.length}`;
-    }
-
-    if (search) {
-      params.push(`%${search}%`);
-      query += ` AND (name ILIKE $${params.length} OR description ILIKE $${params.length})`;
-    }
-
-    query += ' ORDER BY id ASC';
-    const result = await pool.query(query, params);
-
-    const products = result.rows.map((row) => ({
-      id: row.id,
-      name: row.name,
-      category: row.category,
-      price: parseFloat(row.price),
-      originalPrice: row.original_price ? parseFloat(row.original_price) : undefined,
-      rating: parseFloat(row.rating || 4.8),
-      reviewCount: parseInt(row.review_count || 0),
-      image: row.image_url || row.image,
-      gallery: row.gallery || [],
-      description: row.description,
-      aiMatchScore: parseInt(row.ai_match_score || 90),
-      aiMatchReason: row.ai_match_reason,
-      tags: row.tags || [],
-      inStock: row.in_stock ?? true,
-      stockCount: parseInt(row.stock_quantity || row.stock_count || 10),
-      sku: row.sku,
-      brand: row.brand,
-      featured: row.featured,
-      aiReadinessScore: parseInt(row.ai_readiness_score || 90),
-      vectorEmbeddingStatus: row.vector_embedding_status || 'synced',
-      specs: row.specs || {}
-    }));
-
-    res.json(products);
+    const { category, search, minPrice, maxPrice, inStock, featured, brand } = req.query;
+    const result = await productRepository.findCatalog({
+      search: search ? String(search) : undefined,
+      category: category ? String(category) : undefined,
+      minPrice: minPrice !== undefined ? parseFloat(String(minPrice)) : undefined,
+      maxPrice: maxPrice !== undefined ? parseFloat(String(maxPrice)) : undefined,
+      inStock: inStock !== undefined ? String(inStock).toLowerCase() === 'true' : undefined,
+      featured: featured !== undefined ? String(featured).toLowerCase() === 'true' : undefined,
+      brand: brand ? String(brand) : undefined,
+      limit: 100
+    });
+    res.json(result.items);
   } catch (err: any) {
     res.status(500).json({ error: err.message });
   }
@@ -88,32 +123,9 @@ app.get('/api/products', async (req, res) => {
 app.get('/api/products/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const result = await pool.query('SELECT * FROM products WHERE id = $1', [id]);
-    if (result.rows.length === 0) return res.status(404).json({ error: 'Product not found' });
-    const row = result.rows[0];
-    res.json({
-      id: row.id,
-      name: row.name,
-      category: row.category,
-      price: parseFloat(row.price),
-      originalPrice: row.original_price ? parseFloat(row.original_price) : undefined,
-      rating: parseFloat(row.rating || 4.8),
-      reviewCount: parseInt(row.review_count || 0),
-      image: row.image_url || row.image,
-      gallery: row.gallery || [],
-      description: row.description,
-      aiMatchScore: parseInt(row.ai_match_score || 90),
-      aiMatchReason: row.ai_match_reason,
-      tags: row.tags || [],
-      inStock: row.in_stock ?? true,
-      stockCount: parseInt(row.stock_quantity || row.stock_count || 10),
-      sku: row.sku,
-      brand: row.brand,
-      featured: row.featured,
-      aiReadinessScore: parseInt(row.ai_readiness_score || 90),
-      vectorEmbeddingStatus: row.vector_embedding_status || 'synced',
-      specs: row.specs || {}
-    });
+    const product = await productRepository.findById(id);
+    if (!product) return res.status(404).json({ error: 'Product not found' });
+    res.json(product);
   } catch (err: any) {
     res.status(500).json({ error: err.message });
   }
@@ -121,23 +133,7 @@ app.get('/api/products/:id', async (req, res) => {
 
 app.post('/api/products', async (req, res) => {
   try {
-    const p = req.body;
-    const id = p.id || `prod-${Date.now()}`;
-    const result = await pool.query(
-      `INSERT INTO products (
-        id, merchant_id, name, category, price, original_price, rating, review_count, image, image_url, gallery, description,
-        ai_match_score, ai_match_reason, tags, in_stock, stock_quantity, sku, brand, featured,
-        ai_readiness_score, vector_embedding_status, specs
-      ) VALUES ($1, 'merch_razorflow_01', $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22)
-      RETURNING *`,
-      [
-        id, p.name, p.category, p.price, p.originalPrice || null, p.rating || 4.8, p.reviewCount || 0,
-        p.image || p.imageUrl, p.image || p.imageUrl, JSON.stringify(p.gallery || []), p.description,
-        p.aiMatchScore || 90, p.aiMatchReason || '', JSON.stringify(p.tags || []), p.inStock ?? true,
-        p.stockCount || p.stockQuantity || 10, p.sku, p.brand, p.featured || false,
-        p.aiReadinessScore || 90, p.vectorEmbeddingStatus || 'synced', JSON.stringify(p.specs || {})
-      ]
-    );
+    const created = await productRepository.create(req.body);
 
     await logAuditEvent({
       merchantId: 'merch_razorflow_01',
@@ -145,45 +141,37 @@ app.post('/api/products', async (req, res) => {
       actorId: 'admin_user',
       action: 'product.created',
       resourceType: 'Product',
-      resourceId: id,
-      intent: `Created product SKU ${p.sku}`,
-      details: `Added ${p.name} ($${p.price}) to merchant inventory.`
+      resourceId: created.id,
+      intent: `Created product SKU ${created.sku}`,
+      inputSummary: `Added ${created.name} (₹${created.price}) to merchant inventory.`,
+      decision: 'ALLOW',
+      riskLevel: 'Low'
     });
 
-    res.status(201).json(result.rows[0]);
+    res.status(201).json(created);
   } catch (err: any) {
-    res.status(500).json({ error: err.message });
+    const isValidation = err.message?.startsWith('VALIDATION_ERROR');
+    res.status(isValidation ? 400 : 500).json({ error: err.message });
   }
 });
 
 app.put('/api/products/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const p = req.body;
-    const result = await pool.query(
-      `UPDATE products SET
-        name = COALESCE($1, name),
-        category = COALESCE($2, category),
-        price = COALESCE($3, price),
-        stock_quantity = COALESCE($4, stock_quantity),
-        sku = COALESCE($5, sku),
-        description = COALESCE($6, description),
-        updated_at = NOW()
-       WHERE id = $7
-       RETURNING *`,
-      [p.name, p.category, p.price, p.stockCount || p.stockQuantity, p.sku, p.description, id]
-    );
-    if (result.rows.length === 0) return res.status(404).json({ error: 'Product not found' });
-    res.json(result.rows[0]);
+    const updated = await productRepository.update(id, req.body);
+    res.json(updated);
   } catch (err: any) {
-    res.status(500).json({ error: err.message });
+    const isValidation = err.message?.startsWith('VALIDATION_ERROR');
+    const isNotFound = err.message?.startsWith('PRODUCT_NOT_FOUND');
+    res.status(isNotFound ? 404 : isValidation ? 400 : 500).json({ error: err.message });
   }
 });
 
 app.delete('/api/products/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    await pool.query('DELETE FROM products WHERE id = $1', [id]);
+    const success = await productRepository.delete(id);
+    if (!success) return res.status(404).json({ error: 'Product not found' });
     res.json({ success: true, deletedId: id });
   } catch (err: any) {
     res.status(500).json({ error: err.message });
@@ -208,7 +196,7 @@ app.get('/api/bundles', async (_req, res) => {
           category: row.category,
           price: parseFloat(row.price),
           image: row.image_url || row.image,
-          aiMatchScore: parseInt(row.ai_match_score || 90)
+          aiMatchScore: parseInt(row.ai_match_score || 90, 10)
         };
       }).filter(Boolean);
 
@@ -217,7 +205,7 @@ app.get('/api/bundles', async (_req, res) => {
         title: b.title,
         tagline: b.tagline,
         description: b.description,
-        matchScore: parseInt(b.match_score || 95),
+        matchScore: parseInt(b.match_score || 95, 10),
         originalTotal: parseFloat(b.original_total),
         bundlePrice: parseFloat(b.bundle_price),
         savingsPercentage: parseFloat(b.savings_percentage || 15),
@@ -250,45 +238,112 @@ app.post('/api/bundles', async (req, res) => {
   }
 });
 
-// ---------------- PERSISTENT CART ENDPOINTS ----------------
+// ---------------- PERSISTENT CART ENDPOINTS (PHASE 5) ----------------
+app.post('/api/cart', async (req, res) => {
+  try {
+    const { customerId, currency, merchantId } = req.body || {};
+    const cart = await cartRepository.createCart({ customerId, currency, merchantId });
+    res.status(201).json(cart);
+  } catch (err: any) {
+    res.status(400).json({ error: err.message, code: 'CART_CREATION_FAILED' });
+  }
+});
+
 app.get('/api/cart/:cartId', async (req, res) => {
   try {
     const { cartId } = req.params;
-    const { discountCode } = req.query;
-    const cart = await calculateAndPersistCart(cartId, undefined, discountCode as string);
+    const merchantId = req.headers['x-merchant-id'] as string || 'merch_razorflow_01';
+    const customerId = req.headers['x-customer-id'] as string;
+    
+    // We get the cart with tenant validation
+    const cart = await cartRepository.getCart(cartId, merchantId, customerId);
+    
+    // Enforce customer matching if customer ID provided
+    if (customerId && cart.customerId && cart.customerId !== customerId) {
+      return res.status(403).json({ error: 'CUSTOMER_ACCESS_DENIED: Cart belongs to a different customer.' });
+    }
+    
     res.json(cart);
   } catch (err: any) {
-    res.status(500).json({ error: err.message });
+    const status = err.message.includes('DENIED') ? 403 : 500;
+    res.status(status).json({ error: err.message });
   }
 });
 
 app.post('/api/cart/:cartId/items', async (req, res) => {
   try {
     const { cartId } = req.params;
-    const { productId, quantity, variantId } = req.body;
-    if (!productId) return res.status(400).json({ error: 'productId is required.' });
-    const cart = await addItemToCart(cartId, { productId, quantity: quantity || 1, variantId });
+    const merchantId = req.headers['x-merchant-id'] as string || 'merch_razorflow_01';
+    const customerId = req.headers['x-customer-id'] as string;
+    
+    // Validate tenant/customer first
+    const cartCheck = await cartRepository.getCart(cartId, merchantId, customerId);
+    if (customerId && cartCheck.customerId && cartCheck.customerId !== customerId) {
+      return res.status(403).json({ error: 'CUSTOMER_ACCESS_DENIED: Cart belongs to a different customer.' });
+    }
+
+    const { productId, quantity, variantId, sessionId, recommendationId } = req.body;
+    if (!productId) return res.status(400).json({ error: 'productId is required.', code: 'INVALID_INPUT' });
+    
+    const cart = await cartRepository.addItem(cartId, { productId, quantity: quantity || 1, variantId }, merchantId);
+
+    // Phase 9: Persist session attribution in cart metadata & emit PRODUCT_ADDED_TO_CART
+    const effectiveCustId = customerId || cartCheck.customerId || 'cust-01';
+    if (sessionId) {
+      try {
+        await pool.query(
+          `UPDATE carts SET metadata = jsonb_set(COALESCE(metadata, '{}'::jsonb), '{session_id}', to_jsonb($1::text)) WHERE id = $2`,
+          [sessionId, cartId]
+        );
+      } catch {}
+    }
+
+    try {
+      await customerRepository.recordEvent({
+        customerId: effectiveCustId,
+        merchantId,
+        eventType: 'PRODUCT_ADDED_TO_CART',
+        productId,
+        sessionId: sessionId || undefined,
+        metadata: {
+          cartId,
+          quantity: quantity || 1,
+          recommendationId: recommendationId || undefined
+        }
+      });
+    } catch {}
+
     res.status(201).json(cart);
   } catch (err: any) {
-    res.status(400).json({ error: err.message });
+    const status = err.message.includes('not found') ? 404 : 400;
+    res.status(status).json({ error: err.message, code: err.message.split(':')[0] || 'CART_ERROR' });
   }
 });
 
-app.patch('/api/cart/:cartId/items/:productId', async (req, res) => {
+app.patch('/api/cart/:cartId/items/:itemId', async (req, res) => {
   try {
-    const { cartId, productId } = req.params;
+    const { cartId, itemId } = req.params;
+    const merchantId = req.headers['x-merchant-id'] as string || 'merch_razorflow_01';
+    const customerId = req.headers['x-customer-id'] as string;
+    
+    const cartCheck = await cartRepository.getCart(cartId, merchantId, customerId);
+    if (customerId && cartCheck.customerId && cartCheck.customerId !== customerId) {
+      return res.status(403).json({ error: 'CUSTOMER_ACCESS_DENIED: Cart belongs to a different customer.' });
+    }
+
     const { quantity } = req.body;
-    const cart = await updateCartItemQuantity(cartId, productId, parseInt(quantity));
+    const cart = await cartRepository.updateQuantity(cartId, itemId, parseInt(quantity, 10), merchantId);
     res.json(cart);
   } catch (err: any) {
-    res.status(400).json({ error: err.message });
+    const status = err.message.includes('not found') ? 404 : 400;
+    res.status(status).json({ error: err.message, code: err.message.split(':')[0] || 'CART_ERROR' });
   }
 });
 
-app.delete('/api/cart/:cartId/items/:productId', async (req, res) => {
+app.delete('/api/cart/:cartId/items/:itemId', async (req, res) => {
   try {
-    const { cartId, productId } = req.params;
-    const cart = await removeItemFromCart(cartId, productId);
+    const { cartId, itemId } = req.params;
+    const cart = await cartRepository.removeItem(cartId, itemId);
     res.json(cart);
   } catch (err: any) {
     res.status(500).json({ error: err.message });
@@ -298,8 +353,58 @@ app.delete('/api/cart/:cartId/items/:productId', async (req, res) => {
 app.delete('/api/cart/:cartId', async (req, res) => {
   try {
     const { cartId } = req.params;
-    const cart = await clearCart(cartId);
+    const cart = await cartRepository.clear(cartId);
     res.json(cart);
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ---------------- CUSTOMERS ENDPOINTS ----------------
+app.get('/api/customers', async (_req, res) => {
+  try {
+    const customers = await customerRepository.listCustomers();
+    res.json(customers);
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.get('/api/customers/:id', async (req, res) => {
+  try {
+    const customer = await customerRepository.findById(req.params.id);
+    if (!customer) return res.status(404).json({ error: 'Customer not found' });
+    res.json(customer);
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.get('/api/customers/:id/addresses', async (req, res) => {
+  try {
+    const addresses = await customerRepository.getAddresses(req.params.id);
+    res.json(addresses);
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.post('/api/customers/:id/addresses', async (req, res) => {
+  try {
+    const { street, city, state, zip, country, label, isDefault } = req.body;
+    if (!street || !city || !state || !zip) {
+      return res.status(400).json({ error: 'street, city, state, and zip are required' });
+    }
+    const saved = await customerRepository.saveAddress(req.params.id, {
+      street,
+      city,
+      state,
+      zip,
+      country: country || 'India',
+      label: label || 'Delivery Address',
+      isDefault: isDefault ?? false
+    });
+    res.status(201).json(saved);
   } catch (err: any) {
     res.status(500).json({ error: err.message });
   }
@@ -317,32 +422,135 @@ app.post('/api/ai/chat', async (req, res) => {
   }
 });
 
-// ---------------- ORDERS ENDPOINTS ----------------
-app.get('/api/orders', async (_req, res) => {
+// ---------------- REAL AI SHOPPING AGENT (PHASE 4) ----------------
+app.post('/api/ai/shop', async (req, res) => {
   try {
-    const result = await pool.query('SELECT * FROM orders ORDER BY created_at DESC');
-    const orders = result.rows.map((row) => ({
-      id: row.id,
-      date: new Date(row.created_at).toISOString().replace('T', ' ').substring(0, 16),
-      customerName: row.customer_name,
-      customerEmail: row.customer_email,
-      shippingAddress: row.shipping_address,
-      items: row.items,
-      subtotal: parseFloat(row.subtotal),
-      tax: parseFloat(row.tax),
-      shipping: parseFloat(row.shipping),
-      discount: parseFloat(row.discount),
-      total: parseFloat(row.total),
-      status: row.status,
-      paymentMethod: row.payment_method,
-      paymentStatus: row.payment_status,
-      channel: row.channel,
-      trackingNumber: row.tracking_number,
-      estimatedDelivery: row.estimated_delivery,
-      aiConfidenceScore: parseFloat(row.ai_confidence_score || 0.99),
-      auditId: row.audit_id
-    }));
+    const { message, intent, customerId, sessionId, context } = req.body;
+    const query = message || intent;
+    if (!query || typeof query !== 'string' || query.trim().length === 0) {
+      return res.status(400).json({ error: 'Search message or intent query is required.' });
+    }
+    const response = await shoppingAgent.processShoppingRequest({
+      message: query,
+      customerId,
+      sessionId,
+      context
+    });
+
+    if (response.action?.type === 'ADD_TO_CART' && context?.cartId) {
+      try {
+        await cartRepository.addItem(context.cartId, {
+          productId: response.action.product.id || response.action.product.externalProductId!,
+          quantity: response.action.quantity
+        });
+      } catch (err: any) {
+        response.summary += `\n\n*(Note: Could not add to cart - ${err.message})*`;
+      }
+    }
+
+    res.json(response);
+  } catch (err: any) {
+    res.status(500).json({ error: err.message || 'AI Shopping Agent execution error' });
+  }
+});
+
+// ---------------- ORDERS & COMMERCE LIFECYCLE (PHASE 5) ----------------
+app.get('/api/orders', async (req, res) => {
+  try {
+    const merchantId = (req.headers['x-merchant-id'] as string) || 'merch_razorflow_01';
+    const customerId = req.headers['x-customer-id'] as string || undefined;
+    const orders = await orderRepository.listOrders(merchantId, 50, customerId);
     res.json(orders);
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.get('/api/orders/:id', async (req, res) => {
+  try {
+    const merchantId = (req.headers['x-merchant-id'] as string) || 'merch_razorflow_01';
+    const customerId = req.headers['x-customer-id'] as string || undefined;
+    const order = await orderRepository.findById(req.params.id, merchantId);
+    if (!order) return res.status(404).json({ error: 'Order not found' });
+    // Phase 7: Customer isolation — if customerId is provided, verify ownership
+    if (customerId && order.customerId && order.customerId !== customerId) {
+      return res.status(403).json({ error: 'Access denied: This order belongs to another customer.', code: 'CROSS_CUSTOMER_ACCESS_DENIED' });
+    }
+    res.json(order);
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.post('/api/checkout/review', async (req, res) => {
+  try {
+    const { cartId, customerId, addressId } = req.body;
+    if (!cartId) return res.status(400).json({ error: 'cartId is required' });
+
+    const cart = await cartRepository.getCart(cartId);
+    if (!cart) return res.status(404).json({ error: 'Cart not found' });
+    if (cart.items.length === 0) return res.status(400).json({ error: 'Cart is empty' });
+
+    // Re-run policy and pricing engine inherently via calculation
+    const merchantId = 'merch_razorflow_01'; // Defaulting for now
+    const { calculateAndPersistCart } = await import('./cartService.js');
+    const finalCart = await calculateAndPersistCart(cartId, customerId || cart.customerId || undefined, undefined, merchantId);
+
+    // Phase 8: Resolve saved customer addresses
+    const effectiveCustId = customerId || cart.customerId || 'cust-01';
+    const availableAddresses = await customerRepository.getAddresses(effectiveCustId);
+    let deliveryAddress = null;
+    if (addressId) {
+      deliveryAddress = availableAddresses.find((a: any) => a.id === addressId) || null;
+    }
+    if (!deliveryAddress) {
+      deliveryAddress = availableAddresses.find((a: any) => a.isDefault) || availableAddresses[0] || null;
+    }
+
+    // Generate explicit checkout token bound to cart version
+    const crypto = await import('crypto');
+    const RAZORPAY_KEY_SECRET = process.env.RAZORPAY_KEY_SECRET || 'test_secret';
+    
+    const payload = {
+      cartId,
+      version: finalCart.version,
+      total: finalCart.total,
+      exp: Date.now() + 15 * 60 * 1000 // 15 mins expiry
+    };
+    
+    const dataString = Buffer.from(JSON.stringify(payload)).toString('base64');
+    const signature = crypto.createHmac('sha256', RAZORPAY_KEY_SECRET).update(dataString).digest('hex');
+    const checkoutToken = `${dataString}.${signature}`;
+
+    // Phase 9: Record CHECKOUT_REVIEWED event
+    try {
+      const cartMetaRes = await pool.query(`SELECT metadata FROM carts WHERE id = $1`, [cartId]);
+      const cartSessionId = cartMetaRes.rows[0]?.metadata?.session_id;
+
+      await customerRepository.recordEvent({
+        customerId: effectiveCustId,
+        merchantId,
+        eventType: 'CHECKOUT_REVIEWED',
+        sessionId: cartSessionId || undefined,
+        metadata: {
+          cartId,
+          version: finalCart.version,
+          total: finalCart.total,
+          itemsCount: finalCart.items.length
+        }
+      });
+    } catch {}
+
+    res.json({
+      cart: finalCart,
+      checkoutToken,
+      deliveryAddress,
+      availableAddresses,
+      expiresAt: new Date(payload.exp).toISOString(),
+      message: deliveryAddress 
+        ? `Review your order totals. Delivering to ${deliveryAddress.label || 'Default Address'} (${deliveryAddress.street}, ${deliveryAddress.city}). Submit checkoutToken to confirm purchase.`
+        : 'Review your order totals and submit the checkoutToken to confirm purchase.'
+    });
   } catch (err: any) {
     res.status(500).json({ error: err.message });
   }
@@ -350,40 +558,239 @@ app.get('/api/orders', async (_req, res) => {
 
 app.post('/api/orders', async (req, res) => {
   try {
-    const o = req.body;
-    const result = await createRazorpayOrder({
-      orderId: o.id,
-      items: (o.items || []).map((i: any) => ({
-        productId: i.product?.id || i.productId,
-        quantity: i.quantity || 1
-      })),
-      discountCode: o.discount > 0 ? 'RAZORFLOW10' : undefined,
+    const idempotencyKey = (req.headers['idempotency-key'] as string) || req.body.idempotencyKey || req.body.idempotency_key;
+    const o = req.body || {};
+
+    const checkoutToken = req.headers['x-checkout-token'] as string || o.checkoutToken;
+    
+    // Explicit purchase confirmation check
+    if (o.cartId) {
+      if (!checkoutToken) {
+        return res.status(403).json({ 
+          error: 'Explicit purchase confirmation required. Review cart first and submit checkoutToken.',
+          code: 'CHECKOUT_TOKEN_REQUIRED' 
+        });
+      }
+
+      const crypto = await import('crypto');
+      const RAZORPAY_KEY_SECRET = process.env.RAZORPAY_KEY_SECRET || 'test_secret';
+      
+      const [dataString, signature] = checkoutToken.split('.');
+      if (!dataString || !signature) {
+        return res.status(400).json({ error: 'Invalid checkout token format' });
+      }
+
+      const { timingSafeCompare } = await import('./paymentService.js');
+      const expectedSignature = crypto.createHmac('sha256', RAZORPAY_KEY_SECRET).update(dataString).digest('hex');
+      const isValid = timingSafeCompare(signature, expectedSignature);
+      
+      if (!isValid) {
+        return res.status(403).json({ error: 'Invalid checkout signature', code: 'INVALID_SIGNATURE' });
+      }
+
+      const payload = JSON.parse(Buffer.from(dataString, 'base64').toString('utf-8'));
+      if (Date.now() > payload.exp) {
+        return res.status(403).json({ error: 'Checkout session expired', code: 'CHECKOUT_EXPIRED' });
+      }
+      
+      if (payload.cartId !== o.cartId) {
+        return res.status(400).json({ error: 'Token does not match cart', code: 'CART_MISMATCH' });
+      }
+
+      const currentCart = await cartRepository.getCart(o.cartId);
+      
+      if (!currentCart) {
+        return res.status(404).json({ error: 'Cart not found' });
+      }
+      
+      if (currentCart.version !== payload.version) {
+        return res.status(409).json({ 
+          error: 'Cart was modified after review. Please re-review and confirm new totals.', 
+          code: 'CART_MODIFIED_RE-REVIEW_REQUIRED' 
+        });
+      }
+    }
+
+    // Phase 8: Resolve shipping address server-side
+    let shippingAddress = o.shippingAddress;
+    const effectiveCustId = o.customerId || 'cust-01';
+    if (!shippingAddress) {
+      if (o.addressId) {
+        const addrs = await customerRepository.getAddresses(effectiveCustId);
+        shippingAddress = addrs.find((a: any) => a.id === o.addressId) || null;
+      }
+      if (!shippingAddress) {
+        shippingAddress = await customerRepository.getDefaultAddress(effectiveCustId);
+      }
+    }
+    if (!shippingAddress) {
+      shippingAddress = {
+        street: '100 Innovation Boulevard',
+        city: 'Bengaluru',
+        state: 'Karnataka',
+        zip: '560001',
+        country: 'India'
+      };
+    }
+
+    // Phase 9: Retrieve cart session_id to propagate AI channel attribution
+    let cartSessionId: string | null = o.sessionId || null;
+    if (o.cartId && !cartSessionId) {
+      try {
+        const cRes = await pool.query(`SELECT metadata FROM carts WHERE id = $1`, [o.cartId]);
+        cartSessionId = cRes.rows[0]?.metadata?.session_id || null;
+      } catch {}
+    }
+    const orderChannel = cartSessionId ? 'AI_SHOPPING_AGENT' : (o.channel || 'Direct Consumer');
+
+    const order = await orderRepository.create({
+      orderId: o.id || o.orderId,
+      cartId: o.cartId,
+      items: o.items ? o.items.map((i: any) => ({
+        productId: i.productId || i.product?.id || i.id,
+        quantity: i.quantity || 1,
+        variantId: i.variantId
+      })) : undefined,
+      customerId: o.customerId,
       customerName: o.customerName || 'Alex Chen',
       customerEmail: o.customerEmail || 'alex.chen@example.com',
-      shippingAddress: o.shippingAddress || { street: '100 Silicon Valley Way', city: 'Bengaluru', state: 'Karnataka', zip: '560001', country: 'India' },
-      channel: o.channel || 'Direct Consumer'
+      shippingAddress,
+      discountCode: o.discountCode || (o.discount > 0 ? 'RAZORFLOW10' : undefined),
+      channel: orderChannel,
+      idempotencyKey
     });
 
-    res.status(201).json({ id: result.orderId, razorpayOrderId: result.razorpayOrderId, total: result.amount, auditId: result.auditId, success: true });
+    // Update order metadata with session_id & ai_confidence_score
+    if (cartSessionId && order.id) {
+      try {
+        await pool.query(
+          `UPDATE orders SET metadata = jsonb_set(COALESCE(metadata, '{}'::jsonb), '{session_id}', to_jsonb($1::text)), channel = 'AI_SHOPPING_AGENT', ai_confidence_score = 0.98 WHERE id = $2`,
+          [cartSessionId, order.id]
+        );
+        order.channel = 'AI_SHOPPING_AGENT';
+        order.aiConfidenceScore = 0.98;
+      } catch {}
+    }
+
+    // Emit ORDER_CREATED customer event
+    try {
+      await customerRepository.recordEvent({
+        customerId: effectiveCustId,
+        merchantId: (req.headers['x-merchant-id'] as string) || o.merchantId || 'merch_razorflow_01',
+        eventType: 'ORDER_CREATED',
+        sessionId: cartSessionId || undefined,
+        metadata: {
+          orderId: order.id,
+          cartId: o.cartId,
+          total: order.total,
+          itemCount: order.items?.length || 1,
+          channel: orderChannel
+        }
+      });
+    } catch {}
+
+    // Phase 7: If order was created from a cart with checkoutToken, auto-create Razorpay order
+    if (checkoutToken && order.id) {
+      try {
+        const merchantId = (req.headers['x-merchant-id'] as string) || o.merchantId || 'merch_razorflow_01';
+        const paymentOrder = await createRazorpayPaymentOrder({
+          internalOrderId: order.id,
+          merchantId,
+          customerId: o.customerId
+        });
+        order.razorpayOrderId = paymentOrder.razorpayOrderId;
+        order.status = 'PAYMENT_PENDING';
+        return res.status(201).json({
+          order,
+          orderId: order.id,
+          razorpayOrderId: paymentOrder.razorpayOrderId,
+          amount: order.total,
+          amountInPaise: paymentOrder.amountInPaise,
+          currency: order.currency || 'INR',
+          keyId: paymentOrder.keyId,
+          status: 'PAYMENT_PENDING',
+          paymentProviderConfigured: paymentOrder.paymentProviderConfigured
+        });
+      } catch (payErr: any) {
+        // Order was created but Razorpay binding failed — return order with error context
+        return res.status(201).json({
+          order,
+          orderId: order.id,
+          razorpayError: payErr.message,
+          status: 'CREATED'
+        });
+      }
+    }
+
+    res.status(201).json(order);
   } catch (err: any) {
-    res.status(500).json({ error: err.message });
+    const status = err.message.includes('not found') ? 404 : 400;
+    res.status(status).json({ error: err.message, code: err.message.split(':')[0] || 'ORDER_ERROR' });
   }
 });
 
 app.patch('/api/orders/:id/status', async (req, res) => {
   try {
     const { id } = req.params;
-    const { status } = req.body;
-    await pool.query('UPDATE orders SET status = $1, updated_at = NOW() WHERE id = $2', [status, id]);
-    res.json({ success: true, id, status });
+    const { status, paymentStatus } = req.body;
+    const updated = await orderRepository.updateStatus(id, status, paymentStatus);
+    if (!updated) return res.status(404).json({ error: 'Order not found' });
+    res.json(updated);
   } catch (err: any) {
     res.status(500).json({ error: err.message });
   }
 });
 
-// ---------------- RAZORPAY PAYMENT ENDPOINTS ----------------
+app.post('/api/orders/:id/cancel', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { reason } = req.body || {};
+    const cancelled = await orderRepository.cancel(id, undefined, reason);
+    res.json(cancelled);
+  } catch (err: any) {
+    const status = err.message.includes('not found') ? 404 : 400;
+    res.status(status).json({ error: err.message, code: 'ORDER_CANCELLATION_FAILED' });
+  }
+});
+
+app.patch('/api/orders/:id/cancel', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { reason } = req.body || {};
+    const cancelled = await orderRepository.cancel(id, undefined, reason);
+    res.json(cancelled);
+  } catch (err: any) {
+    const status = err.message.includes('not found') ? 404 : 400;
+    res.status(status).json({ error: err.message, code: 'ORDER_CANCELLATION_FAILED' });
+  }
+});
+
+// ---------------- RAZORPAY PAYMENT ENDPOINTS (PHASE 6) ----------------
+// Authoritative payment order generation from internal order ID
+app.post('/api/payments/order', async (req, res) => {
+  try {
+    const { internalOrderId, customerId } = req.body || {};
+    const merchantId = (req.headers['x-merchant-id'] as string) || req.body?.merchantId || 'merch_razorflow_01';
+    if (!internalOrderId) {
+      return res.status(400).json({ error: 'internalOrderId is required to initiate payment.', code: 'MISSING_ORDER_ID' });
+    }
+    const result = await createRazorpayPaymentOrder({ internalOrderId, merchantId, customerId });
+    res.status(201).json(result);
+  } catch (err: any) {
+    const status = err.message.includes('not found') ? 404 : 400;
+    res.status(status).json({ error: err.message, code: 'PAYMENT_ORDER_CREATION_FAILED' });
+  }
+});
+
+// Legacy / compatibility create-order endpoint
 app.post('/api/payments/create-order', async (req, res) => {
   try {
+    if (req.body?.internalOrderId || req.body?.orderId) {
+      const internalOrderId = req.body.internalOrderId || req.body.orderId;
+      const merchantId = (req.headers['x-merchant-id'] as string) || req.body?.merchantId || 'merch_razorflow_01';
+      const result = await createRazorpayPaymentOrder({ internalOrderId, merchantId, customerId: req.body?.customerId });
+      return res.status(201).json(result);
+    }
     const result = await createRazorpayOrder(req.body);
     res.status(201).json(result);
   } catch (err: any) {
@@ -391,26 +798,62 @@ app.post('/api/payments/create-order', async (req, res) => {
   }
 });
 
+// Cryptographic payment signature verification
 app.post('/api/payments/verify', async (req, res) => {
   try {
-    const result = await verifyRazorpayPayment(req.body);
+    const { internalOrderId, orderId, razorpayOrderId, razorpayPaymentId, razorpaySignature } = req.body || {};
+    const merchantId = (req.headers['x-merchant-id'] as string) || req.body?.merchantId || 'merch_razorflow_01';
+    const effectiveOrderId = internalOrderId || orderId;
+
+    if (!effectiveOrderId || !razorpayOrderId || !razorpayPaymentId || !razorpaySignature) {
+      return res.status(400).json({
+        verified: false,
+        status: 'FAILED',
+        error: 'Missing required payment verification parameters (internalOrderId, razorpayOrderId, razorpayPaymentId, razorpaySignature).'
+      });
+    }
+
+    const result = await verifyPaymentSignature({
+      internalOrderId: effectiveOrderId,
+      razorpayOrderId,
+      razorpayPaymentId,
+      razorpaySignature,
+      merchantId,
+      customerId: req.body?.customerId
+    });
+
     if (!result.verified) {
       return res.status(400).json(result);
     }
     res.json(result);
   } catch (err: any) {
-    res.status(500).json({ error: err.message });
+    res.status(400).json({ verified: false, status: 'FAILED', error: err.message });
   }
 });
 
+// Idempotent Razorpay webhook ingestion
 app.post('/api/webhooks/razorpay', async (req, res) => {
   try {
     const signature = req.headers['x-razorpay-signature'] as string || '';
     const rawBody = JSON.stringify(req.body);
-    const result = await handleRazorpayWebhook(rawBody, signature, req.body);
+    const result = await processRazorpayWebhook(rawBody, signature, req.body);
+    if (result.status === 'invalid_signature') {
+      return res.status(400).json(result);
+    }
     res.json(result);
   } catch (err: any) {
     res.status(400).json({ error: err.message });
+  }
+});
+
+// Payment reconciliation endpoint
+app.get('/api/payments/reconcile/:orderId', async (req, res) => {
+  try {
+    const merchantId = (req.headers['x-merchant-id'] as string) || 'merch_razorflow_01';
+    const result = await reconcilePayment(req.params.orderId, merchantId);
+    res.json(result);
+  } catch (err: any) {
+    res.status(404).json({ error: err.message });
   }
 });
 
@@ -424,7 +867,92 @@ app.post('/api/policy/evaluate', async (req, res) => {
   }
 });
 
-// ---------------- AI GROWTH & REVENUE ACCELERATION ----------------
+// ---------------- AI GROWTH & REVENUE ACCELERATION (PHASE 7) ----------------
+// Revenue Intelligence Overview
+app.get('/api/growth/overview', async (req, res) => {
+  try {
+    const merchantId = (req.headers['x-merchant-id'] as string) || (req.query.merchantId as string) || 'merch_razorflow_01';
+    const intel = await computeRevenueIntelligence(merchantId);
+    res.json(intel);
+  } catch (err: any) {
+    res.status(500).json({ error: err.message, code: 'REVENUE_INTELLIGENCE_FAILED' });
+  }
+});
+
+// List All Growth Opportunities for Merchant
+app.get('/api/growth/opportunities', async (req, res) => {
+  try {
+    const merchantId = (req.headers['x-merchant-id'] as string) || (req.query.merchantId as string) || 'merch_razorflow_01';
+    const opportunities = await getAllGrowthOpportunities(merchantId);
+    res.json(opportunities);
+  } catch (err: any) {
+    res.status(500).json({ error: err.message, code: 'GROWTH_OPPORTUNITIES_FAILED' });
+  }
+});
+
+// Get Single Opportunity by ID
+app.get('/api/growth/opportunities/:id', async (req, res) => {
+  try {
+    const merchantId = (req.headers['x-merchant-id'] as string) || (req.query.merchantId as string) || 'merch_razorflow_01';
+    const opp = await getGrowthOpportunityById(req.params.id, merchantId);
+    if (!opp) {
+      return res.status(404).json({ error: `Opportunity ${req.params.id} not found`, code: 'OPPORTUNITY_NOT_FOUND' });
+    }
+    res.json(opp);
+  } catch (err: any) {
+    res.status(500).json({ error: err.message, code: 'GROWTH_OPPORTUNITY_FETCH_FAILED' });
+  }
+});
+
+// Review Opportunity
+app.post('/api/growth/opportunities/:id/review', async (req, res) => {
+  try {
+    const merchantId = (req.headers['x-merchant-id'] as string) || req.body?.merchantId || 'merch_razorflow_01';
+    const reviewer = req.body?.reviewer || 'Merchant Staff';
+    const opp = await reviewGrowthOpportunity(req.params.id, merchantId, reviewer);
+    res.json(opp);
+  } catch (err: any) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
+// Approve Opportunity (With Policy Engine Enforcement)
+app.post('/api/growth/opportunities/:id/approve', async (req, res) => {
+  try {
+    const merchantId = (req.headers['x-merchant-id'] as string) || req.body?.merchantId || 'merch_razorflow_01';
+    const approver = req.body?.approver || 'Merchant Admin';
+    const opp = await approveGrowthOpportunity(req.params.id, merchantId, approver);
+    res.json(opp);
+  } catch (err: any) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
+// Reject Opportunity
+app.post('/api/growth/opportunities/:id/reject', async (req, res) => {
+  try {
+    const merchantId = (req.headers['x-merchant-id'] as string) || req.body?.merchantId || 'merch_razorflow_01';
+    const rejector = req.body?.rejector || 'Merchant Admin';
+    const reason = req.body?.reason || 'Merchant rejected proposal';
+    const opp = await rejectGrowthOpportunity(req.params.id, merchantId, rejector, reason);
+    res.json(opp);
+  } catch (err: any) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
+// Execute Opportunity Action
+app.post('/api/growth/opportunities/:id/execute', async (req, res) => {
+  try {
+    const merchantId = (req.headers['x-merchant-id'] as string) || req.body?.merchantId || 'merch_razorflow_01';
+    const executor = req.body?.executor || 'System Growth Worker';
+    const opp = await executeGrowthOpportunity(req.params.id, merchantId, executor);
+    res.json(opp);
+  } catch (err: any) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
 app.get('/api/growth/upsell/:productId', async (req, res) => {
   try {
     const recommendations = await getDynamicUpsellCrossSell(req.params.productId);
@@ -443,16 +971,34 @@ app.get('/api/growth/abandoned-carts', async (_req, res) => {
   }
 });
 
+app.get('/api/growth/intent-analytics', async (_req, res) => {
+  try {
+    const intentData = await revenueRepository.getIntentAnalytics();
+    res.json(intentData);
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 app.get('/api/analytics/realtime', async (_req, res) => {
   try {
-    const analytics = await getRealtimeMerchantAnalytics();
+    const analytics = await revenueRepository.getMerchantAnalytics();
     res.json(analytics);
   } catch (err: any) {
     res.status(500).json({ error: err.message });
   }
 });
 
-// ---------------- AI BUYER & AGENT PROTOCOL ENDPOINTS ----------------
+// ---------------- AI BUYER / AGENTIC COMMERCE GATEWAY (PHASE 8) ----------------
+app.use('/api/agent/v1', agentRouter);
+
+// ---------------- MERCHANT AI COMMERCE INTELLIGENCE (PHASE 9) ----------------
+app.use('/api/merchant/ai-commerce', merchantAiCommerceRouter);
+
+// ---------------- MERCHANT AI CONTROL CENTER (PHASE 10) ----------------
+app.use('/api/merchant/ai', merchantAiRouter);
+
+// ---------------- AI BUYER & AGENT PROTOCOL ENDPOINTS (LEGACY COMPATIBILITY) ----------------
 app.get('/api/agent/catalog', async (req, res) => {
   try {
     const catalog = await getAIBuyerCatalog(req.query.category as string);
@@ -494,22 +1040,7 @@ app.post('/api/agent/order', async (req, res) => {
 // ---------------- AUDIT LOGS & COMPLIANCE ----------------
 app.get('/api/audit-logs', async (_req, res) => {
   try {
-    const result = await pool.query('SELECT * FROM audit_logs ORDER BY created_at DESC LIMIT 50');
-    const logs = result.rows.map((row) => ({
-      id: row.id,
-      timestamp: new Date(row.created_at || row.timestamp).toISOString().replace('T', ' ').substring(0, 19),
-      actor: row.actor || `${row.actor_type} (${row.actor_id})`,
-      actorType: row.actor_type,
-      action: row.action,
-      entityType: row.entity_type || row.resource_type,
-      entityId: row.entity_id || row.resource_id,
-      status: row.status,
-      riskScore: row.risk_score || row.risk_level || 'Low',
-      latencyMs: parseInt(row.latency_ms || 50),
-      ipAddress: row.ip_address,
-      details: row.details,
-      payloadJson: row.payload_json
-    }));
+    const logs = await auditRepository.listLogs();
     res.json(logs);
   } catch (err: any) {
     res.status(500).json({ error: err.message });
@@ -528,8 +1059,8 @@ app.get('/api/mcp-tools', async (_req, res) => {
       version: row.version,
       endpoint: row.endpoint,
       status: row.status,
-      callsLast24h: parseInt(row.calls_last_24h || 0),
-      avgLatencyMs: parseInt(row.avg_latency_ms || 50),
+      callsLast24h: parseInt(row.calls_last_24h || 0, 10),
+      avgLatencyMs: parseInt(row.avg_latency_ms || 50, 10),
       successRate: parseFloat(row.success_rate || 99.9),
       schemaInput: row.schema_input
     }));
@@ -551,7 +1082,7 @@ app.get('/api/search/products', async (req, res) => {
       minPrice: minPrice ? parseFloat(String(minPrice)) : undefined,
       maxPrice: maxPrice ? parseFloat(String(maxPrice)) : undefined,
       currency: currency ? String(currency) : undefined,
-      limit: limit ? parseInt(String(limit)) : undefined
+      limit: limit ? parseInt(String(limit), 10) : undefined
     });
     res.json(result);
   } catch (err: any) {
@@ -583,6 +1114,7 @@ initDatabase().then(() => {
     console.log(`🚀 RazorFlow AI Commerce Server running at http://localhost:${PORT}`);
     console.log(`🔗 Supabase PostgreSQL Connected: ${process.env.DB_HOST}`);
     console.log('⚡ Deterministic Policy Engine & Razorpay Test Gateway Active');
+    console.log('📦 Phase 3 Repository Layer & Supabase State Active');
   });
 }).catch((err) => {
   console.error('Database initialization error:', err);

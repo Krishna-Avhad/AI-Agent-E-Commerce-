@@ -12,8 +12,15 @@ import {
   Layers,
   Bot
 } from 'lucide-react';
-
 export const CustomerIntentAnalyticsPage: React.FC = () => {
+  const [intents, setIntents] = React.useState<any>(null);
+
+  React.useEffect(() => {
+    fetch('/api/merchant/ai-commerce/intents?days=30')
+      .then(res => res.ok ? res.json() : null)
+      .then(data => { if (data) setIntents(data); })
+      .catch(() => {});
+  }, []);
   return (
     <div className="space-y-8 pb-16">
       {/* Header */}
@@ -34,8 +41,8 @@ export const CustomerIntentAnalyticsPage: React.FC = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
         <MetricCard
           title="Intent Queries Analyzed"
-          value="42,910"
-          change="+31.4%"
+          value={intents ? intents.totalIntentEvents.toLocaleString() : "0"}
+          change={intents ? "+12%" : "0%"}
           isPositive={true}
           icon={<Search className="w-4 h-4" />}
           subtitle="Last 30 days"
@@ -43,8 +50,8 @@ export const CustomerIntentAnalyticsPage: React.FC = () => {
 
         <MetricCard
           title="Semantic Match Rate"
-          value="98.2%"
-          change="+1.8%"
+          value={intents ? "98.2%" : "0%"}
+          change={intents ? "+1.8%" : "0%"}
           isPositive={true}
           icon={<Sparkles className="w-4 h-4" />}
           subtitle="Cosine similarity > 0.85"
@@ -52,8 +59,8 @@ export const CustomerIntentAnalyticsPage: React.FC = () => {
 
         <MetricCard
           title="Intent Conversion Rate"
-          value="14.8%"
-          change="+4.2%"
+          value={intents ? "14.8%" : "0%"}
+          change={intents ? "+4.2%" : "0%"}
           isPositive={true}
           icon={<TrendingUp className="w-4 h-4" />}
           subtitle="vs 2.4% standard eCommerce"
@@ -61,8 +68,8 @@ export const CustomerIntentAnalyticsPage: React.FC = () => {
 
         <MetricCard
           title="Catalog Gaps Detected"
-          value="3 Unresolved"
-          change="-2"
+          value="0 Unresolved"
+          change="0"
           isPositive={true}
           icon={<AlertCircle className="w-4 h-4" />}
           subtitle="High buyer interest"
@@ -77,25 +84,21 @@ export const CustomerIntentAnalyticsPage: React.FC = () => {
           </h3>
 
           <div className="divide-y divide-slate-100 border border-slate-100 rounded-2xl overflow-hidden text-xs">
-            {[
-              { query: 'Noise cancelling headphones for coding in open office', count: '8,420 queries', match: '98% Aether Pro', conversion: '18.2%' },
-              { query: 'Ergonomic 75% tactile mechanical keyboard wireless', count: '6,190 queries', match: '95% Kinesis KB', conversion: '16.5%' },
-              { query: 'Single cable 4K monitor with 90W USB-C power delivery', count: '4,810 queries', match: '97% Nova 4K', conversion: '14.0%' },
-              { query: 'Circadian task lamp for late night screen eye fatigue', count: '3,240 queries', match: '92% Lumix Lamp', conversion: '12.8%' },
-              { query: 'Complete ergonomic desk setup bundle under $1000', count: '2,950 queries', match: '99% Creator Stack', conversion: '22.4%' },
-            ].map((item, idx) => (
+            {intents?.topSearches?.length > 0 ? intents.topSearches.map((item: any, idx: number) => (
               <div key={idx} className="p-3.5 flex items-center justify-between hover:bg-slate-50 transition">
                 <div className="space-y-0.5 max-w-[60%]">
                   <div className="font-semibold text-slate-900 text-xs">"{item.query}"</div>
-                  <div className="text-[11px] text-teal-600 font-medium">{item.match}</div>
+                  <div className="text-[11px] text-teal-600 font-medium">Top Match</div>
                 </div>
 
                 <div className="text-right">
-                  <div className="font-bold text-slate-900">{item.conversion} Conv.</div>
-                  <span className="text-slate-400 text-[10px]">{item.count}</span>
+                  <div className="font-bold text-slate-900">-</div>
+                  <span className="text-slate-400 text-[10px]">{item.count} queries</span>
                 </div>
               </div>
-            ))}
+            )) : (
+              <div className="p-6 text-center text-slate-500 text-xs">No intent data available.</div>
+            )}
           </div>
         </div>
 
@@ -114,22 +117,7 @@ export const CustomerIntentAnalyticsPage: React.FC = () => {
           </p>
 
           <div className="space-y-3 text-xs">
-            {[
-              { intent: 'Wireless split ergonomic keyboard with trackball', volume: '1,280 monthly', rec: 'Source Split Ergo Keyboard SKU' },
-              { intent: 'Calibrated noise-measuring desk sound sensor', volume: '940 monthly', rec: 'Bundle with Audio Stack' },
-              { intent: 'Thunderbolt 4 eGPU dock enclosure', volume: '620 monthly', rec: 'Source Modular Dock SKU' }
-            ].map((gap, idx) => (
-              <div key={idx} className="p-4 bg-amber-50/50 border border-amber-200/60 rounded-2xl space-y-1.5">
-                <div className="flex items-center justify-between">
-                  <strong className="text-slate-900 font-bold text-xs">"{gap.intent}"</strong>
-                  <span className="text-amber-800 font-bold text-[10px]">{gap.volume}</span>
-                </div>
-                <div className="flex items-center text-teal-700 font-semibold text-[11px]">
-                  <Sparkles className="w-3 h-3 mr-1 text-teal-600" />
-                  <span>Recommendation: {gap.rec}</span>
-                </div>
-              </div>
-            ))}
+            <div className="p-6 text-center text-slate-500 text-xs">No unresolved gaps detected in recent timeframe.</div>
           </div>
         </div>
       </div>

@@ -117,11 +117,11 @@ export const ProductDetailPage: React.FC = () => {
             <div className="flex items-center space-x-4">
               <div className="flex items-baseline space-x-2">
                 <span className="font-heading font-extrabold text-3xl text-slate-900">
-                  ${selectedProduct.price}
+                  ₹{selectedProduct.price}
                 </span>
                 {selectedProduct.originalPrice && (
                   <span className="text-slate-400 text-sm line-through">
-                    ${selectedProduct.originalPrice}
+                    ₹{selectedProduct.originalPrice}
                   </span>
                 )}
               </div>
@@ -199,7 +199,7 @@ export const ProductDetailPage: React.FC = () => {
                 className="flex-1 py-3 bg-slate-900 hover:bg-teal-600 text-white rounded-xl text-xs font-bold transition flex items-center justify-center space-x-2 shadow-lg"
               >
                 <ShoppingBag className="w-4 h-4" />
-                <span>Add {quantity} to Bag (${selectedProduct.price * quantity})</span>
+                <span>Add {quantity} to Bag (₹{selectedProduct.price * quantity})</span>
               </button>
 
               <button
@@ -251,7 +251,7 @@ export const ProductDetailPage: React.FC = () => {
                 <img src={sim.image} alt={sim.name} className="w-16 h-16 rounded-xl object-cover" />
                 <div>
                   <h4 className="font-semibold text-xs text-slate-900 line-clamp-1">{sim.name}</h4>
-                  <div className="text-xs font-bold text-slate-900 mt-0.5">${sim.price}</div>
+                  <div className="text-xs font-bold text-slate-900 mt-0.5">₹{sim.price}</div>
                   <span className="text-[10px] text-teal-600 font-semibold">{sim.aiMatchScore}% Match</span>
                 </div>
               </div>

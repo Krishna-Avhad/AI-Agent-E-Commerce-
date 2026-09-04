@@ -95,18 +95,18 @@ export const OrderDetailsPage: React.FC = () => {
 
             <div className="divide-y divide-slate-100">
               {selectedOrder.items.map((item) => (
-                <div key={item.product.id} className="py-3 flex items-center justify-between text-xs">
-                  <div className="flex items-center space-x-3">
-                    <img src={item.product.image} alt={item.product.name} className="w-14 h-14 rounded-xl object-cover border border-slate-200 shrink-0" />
+                <div key={item.productId} className="py-3 flex items-center justify-between text-xs">
+                  <div className="flex items-center space-x-4">
+                    <img src={item.imageUrl} alt={item.productName} className="w-14 h-14 rounded-xl object-cover border border-slate-200 shrink-0" />
                     <div>
-                      <h4 className="font-semibold text-slate-900 text-xs">{item.product.name}</h4>
-                      <p className="text-[11px] text-slate-400">SKU: {item.product.sku}</p>
-                      <p className="text-slate-600 font-medium mt-0.5">${item.product.price} × {item.quantity}</p>
+                      <h4 className="font-semibold text-slate-900 text-xs">{item.productName}</h4>
+                      <p className="text-[11px] text-slate-400">SKU: {item.sku}</p>
+                      <p className="text-slate-600 font-medium mt-0.5">₹{item.unitPrice} × {item.quantity}</p>
                     </div>
                   </div>
-                  <span className="font-heading font-bold text-sm text-slate-900">
-                    ${item.product.price * item.quantity}
-                  </span>
+                  <div className="text-right font-bold text-slate-900">
+                    ₹{item.unitPrice * item.quantity}
+                  </div>
                 </div>
               ))}
             </div>
@@ -115,7 +115,7 @@ export const OrderDetailsPage: React.FC = () => {
             <div className="pt-4 border-t border-slate-200 space-y-2 text-xs">
               <div className="flex justify-between text-slate-600">
                 <span>Subtotal</span>
-                <span>${selectedOrder.subtotal}</span>
+                <span>₹{selectedOrder.subtotal}</span>
               </div>
               {selectedOrder.discount > 0 && (
                 <div className="flex justify-between text-emerald-600 font-semibold">
@@ -125,17 +125,17 @@ export const OrderDetailsPage: React.FC = () => {
               )}
               <div className="flex justify-between text-slate-600">
                 <span>Tax (8% GST / State)</span>
-                <span>${selectedOrder.tax}</span>
+                <span>₹{selectedOrder.tax}</span>
               </div>
               <div className="flex justify-between text-slate-600">
                 <span>Express Shipping</span>
                 <span className="text-teal-600 font-semibold">
-                  {selectedOrder.shipping === 0 ? 'FREE' : `$${selectedOrder.shipping}`}
+                  {selectedOrder.shipping === 0 ? 'FREE' : `₹${selectedOrder.shipping}`}
                 </span>
               </div>
               <div className="pt-2 border-t border-slate-200 flex justify-between items-baseline font-bold">
                 <span className="text-slate-900 text-sm">Settled Amount</span>
-                <span className="text-slate-900 text-xl font-heading font-extrabold">${selectedOrder.total}</span>
+                <span className="text-slate-900 text-xl font-heading font-extrabold">₹{selectedOrder.total}</span>
               </div>
             </div>
           </div>

@@ -16,6 +16,30 @@
 7. **Real Razorpay Test Mode Payment Lifecycle**: Full HMAC-SHA256 signature verification, idempotent webhooks, and strict order binding.
 8. **AI Growth Engine & Revenue Intelligence**: Direct Supabase SQL metric calculation (GMV, AOV, orders), abandoned cart recovery, statistical upsell pairing, and automated bundle discovery.
 
+### 🧠 AI Orchestration Flow
+
+```mermaid
+flowchart TD
+    User([Shopper Prompt]) --> UI[RazorFlow Chat UI]
+    UI -->|POST /api/ai/shop| Router[AI Commerce Router]
+    Router --> Agent[Shopping Agent Orchestrator]
+    
+    subagent_Intent[Intent Parsing Engine]
+    Agent -->|Extract Entities & Constraints| subagent_Intent
+    
+    subagent_Intent -->|Search Query| Catalog[(PostgreSQL Catalog)]
+    subagent_Intent -->|Federated Query| ExtAPI[External Providers]
+    
+    Catalog --> Ranker[Semantic Match & Ranking]
+    ExtAPI --> Ranker
+    
+    Ranker -->|Top Recommendations| Policy[Deterministic Policy Engine]
+    Policy -->|Enforce Discounts & Security| Formatter[Response Builder]
+    
+    Formatter -->|Structured JSON Payload| UI
+    UI -->|Interactive UI rendering| Visuals([Product Comparison Matrix, Add to Cart])
+```
+
 ---
 
 ## 🟢 Verified Status Baseline (Phases 1–11)

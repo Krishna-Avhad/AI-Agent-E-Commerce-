@@ -6,7 +6,8 @@ import {
   Send, 
   Bot, 
   User, 
-  ArrowRight, 
+  ArrowRight,
+  ArrowRightLeft,
   AlertCircle,
   CheckCircle2,
   Package,
@@ -734,6 +735,66 @@ export const AIHomePage: React.FC = () => {
                              </div>
                            )}
                         </div>
+                    </div>
+                  )}
+
+                  {msg.data?.comparison && (
+                    <div className="mt-4 border border-indigo-100 rounded-xl overflow-hidden bg-white shadow-sm">
+                      <div className="bg-indigo-50 px-4 py-2 border-b border-indigo-100 flex items-center justify-between">
+                        <div className="flex items-center space-x-2 text-indigo-700 font-semibold text-xs">
+                          <ArrowRightLeft className="w-3.5 h-3.5" />
+                          <span>AI Feature Comparison</span>
+                        </div>
+                      </div>
+                      <div className="p-4 overflow-x-auto">
+                        <table className="w-full text-left border-collapse min-w-[600px]">
+                          <thead>
+                            <tr>
+                              <th className="p-2 border-b border-slate-100 text-xs text-slate-400 font-semibold w-1/4">Feature</th>
+                              {msg.data.comparison.products.map((p: any) => (
+                                <th key={p.id} className="p-2 border-b border-slate-100 text-xs text-slate-800 font-bold w-1/4">
+                                  {p.title}
+                                </th>
+                              ))}
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {Object.keys(msg.data.comparison.products[0]?.features || {}).map((featureKey) => (
+                              <tr key={featureKey} className="hover:bg-slate-50 transition border-b border-slate-50 last:border-0">
+                                <td className="p-2 text-xs font-semibold text-slate-600 capitalize">
+                                  {featureKey.replace(/([A-Z])/g, ' $1').trim()}
+                                </td>
+                                {msg.data.comparison.products.map((p: any) => (
+                                  <td key={p.id} className="p-2 text-xs text-slate-600">
+                                    {p.features[featureKey] !== null ? p.features[featureKey] : <span className="text-slate-300">-</span>}
+                                  </td>
+                                ))}
+                              </tr>
+                            ))}
+                            <tr className="bg-slate-50">
+                              <td className="p-2 border-t border-slate-200"></td>
+                              {msg.data.comparison.products.map((p: any) => (
+                                <td key={p.id} className="p-2 border-t border-slate-200">
+                                  <button 
+                                    onClick={() => {
+                                      addToCart({...p, id: p.externalProductId || p.id, name: p.title, image: p.imageUrl || p.image, price: p.price});
+                                      setShopperRoute('cart');
+                                    }}
+                                    className="w-full py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-[10px] font-bold rounded-lg transition shadow-sm"
+                                  >
+                                    Add to Cart
+                                  </button>
+                                </td>
+                              ))}
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      {msg.data.comparison.verdict && (
+                        <div className="p-3 bg-indigo-50 border-t border-indigo-100 text-xs text-indigo-800">
+                          <strong>Verdict:</strong> {msg.data.comparison.verdict}
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>

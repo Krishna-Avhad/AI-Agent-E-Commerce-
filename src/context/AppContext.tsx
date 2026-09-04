@@ -12,13 +12,7 @@ import type {
   ToastMessage,
   ChatMessage
 } from '../types';
-import { 
-  INITIAL_PRODUCTS, 
-  INITIAL_BUNDLES, 
-  INITIAL_ORDERS, 
-  INITIAL_AUDIT_LOGS, 
-  INITIAL_MCP_TOOLS 
-} from '../data/mockData';
+
 
 export interface MerchantAnalyticsData {
   gmv: number;
@@ -130,26 +124,26 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [shopperRoute, setShopperRoute] = useState<ShopperRoute>('home');
   const [merchantRoute, setMerchantRoute] = useState<MerchantRoute>('overview');
 
-  const [products, setProducts] = useState<Product[]>(INITIAL_PRODUCTS);
-  const [bundles, setBundles] = useState<BundleItem[]>(INITIAL_BUNDLES);
-  const [orders, setOrders] = useState<Order[]>(INITIAL_ORDERS);
-  const [auditLogs, setAuditLogs] = useState<AuditEvent[]>(INITIAL_AUDIT_LOGS);
-  const [mcpTools, setMcpTools] = useState<MCPTool[]>(INITIAL_MCP_TOOLS);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [bundles, setBundles] = useState<BundleItem[]>([]);
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [auditLogs, setAuditLogs] = useState<AuditEvent[]>([]);
+  const [mcpTools, setMcpTools] = useState<MCPTool[]>([]);
   const [backendConnected, setBackendConnected] = useState<boolean>(false);
 
   const [merchantAnalytics, setMerchantAnalytics] = useState<MerchantAnalyticsData>({
-    gmv: 128450.00,
-    aiAttributedRevenue: 100705.00,
-    aiRevenueSharePercent: 78.4,
-    totalOrders: 284,
-    averageOrderValue: 452.28,
-    conversionRate: 4.82,
-    upsellRevenueGenerated: 24890.00,
-    abandonedCartValueDetected: 14200.00,
-    recoveredCartRevenue: 9840.00,
-    aiRecommendationAcceptanceRate: 34.2,
-    paymentSuccessRate: 99.4,
-    agentActionSuccessRate: 98.6
+    gmv: 0,
+    aiAttributedRevenue: 0,
+    aiRevenueSharePercent: 0,
+    totalOrders: 0,
+    averageOrderValue: 0,
+    conversionRate: 0,
+    upsellRevenueGenerated: 0,
+    abandonedCartValueDetected: 0,
+    recoveredCartRevenue: 0,
+    aiRecommendationAcceptanceRate: 0,
+    paymentSuccessRate: 0,
+    agentActionSuccessRate: 0
   });
 
   // Cart State connected to authoritative backend
@@ -162,10 +156,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [cartTotal, setCartTotal] = useState(0);
   const [cartCount, setCartCount] = useState(0);
 
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(INITIAL_PRODUCTS[0]);
-  const [compareProducts, setCompareProducts] = useState<Product[]>([INITIAL_PRODUCTS[0], INITIAL_PRODUCTS[4]]);
-  const [selectedOrder, setSelectedOrder] = useState<Order | null>(INITIAL_ORDERS[0]);
-  const [selectedAuditEvent, setSelectedAuditEvent] = useState<AuditEvent | null>(INITIAL_AUDIT_LOGS[0]);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [compareProducts, setCompareProducts] = useState<Product[]>([]);
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+  const [selectedAuditEvent, setSelectedAuditEvent] = useState<AuditEvent | null>(null);
 
   const [searchIntentQuery, setSearchIntentQuery] = useState<string>('');
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
@@ -180,10 +174,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       sender: 'ai',
       text: "👋 Welcome to **RazorFlow AI**. Connected to live Supabase PostgreSQL and Razorpay Test Mode. Every money action is explainable, bounded, and gated. What are you building today?",
       timestamp: 'Just now',
-      actions: [
-        { label: '🎧 Top ANC Headphones', actionType: 'view_product', payload: INITIAL_PRODUCTS[0] },
-        { label: '⚡ Ergonomic Bundle (Save 16%)', actionType: 'view_bundle', payload: INITIAL_BUNDLES[1] }
-      ]
+      actions: []
     }
   ]);
 

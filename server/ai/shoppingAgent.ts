@@ -181,10 +181,10 @@ export class ShoppingAgent {
     // 1. Parse Exclusions (Ordering step 1)
     const exclusions: string[] = [];
     const excludePatterns = [
-      /(?:don't show|dont show|do not show|avoid|without|excluding|exclude|except|that isn't|that is not|isn't|is not|no|not)\s+([a-z0-9\s]+?)(?:$|[.,;!]|(?:\band\b|\bwith\b|\bunder\b|\bfor\b|\bbut\b|\bones\b))/gi,
+      /(?:don't show|dont show|do not show|avoid|without|excluding|exclude|except|that isn't|that isnt|that is not|isn't|isnt|is not|no|not)\s+([a-z0-9\s]+?)(?:$|[.,;!]|(?:\band\b|\bwith\b|\bunder\b|\bfor\b|\bbut\b|\bones\b))/gi,
       /(?:excluding|exclude|without|avoid)\s+([a-z0-9]+)/gi,
       /(?:don't show|dont show|do not show)\s+([a-z0-9]+)/gi,
-      /(?:that isn't|that is not|isn't|is not|not|no)\s+([a-z0-9]+)/gi
+      /(?:that isn't|that isnt|that is not|isn't|isnt|is not|not|no)\s+([a-z0-9]+)/gi
     ];
     for (const pat of excludePatterns) {
       const matches = Array.from(lower.matchAll(pat));
@@ -199,8 +199,8 @@ export class ShoppingAgent {
     }
 
     // Explicit checks for common exclusion variations (e.g. cosmetics, refurbished, etc.)
-    const cosmeticsNegMatch = /\b(?:no|not|isn't|is not|that isn't|that is not|without|avoid|excluding|exclude|don't show|dont show|do not show)\s+cosmetics?\b/i;
-    if (cosmeticsNegMatch.test(lower) || lower.includes("isn't cosmetics") || lower.includes("is not cosmetics") || lower.includes("not cosmetics") || lower.includes("no cosmetics")) {
+    const cosmeticsNegMatch = /\b(?:no|not|isn't|isnt|is not|that isn't|that isnt|that is not|without|avoid|excluding|exclude|don't show|dont show|do not show)\s+cosmetics?\b/i;
+    if (cosmeticsNegMatch.test(lower) || lower.includes("isn't cosmetics") || lower.includes("isnt cosmetics") || lower.includes("is not cosmetics") || lower.includes("not cosmetics") || lower.includes("no cosmetics")) {
       if (!exclusions.some(e => e.toLowerCase().includes('cosmetic'))) {
         exclusions.push('cosmetics');
         exclusions.push('Cosmetics');
@@ -259,7 +259,7 @@ export class ShoppingAgent {
       }
       const matchedKw = kws.find(kw => {
         if (!lower.includes(kw)) return false;
-        const negPattern = new RegExp(`\\b(?:not|no|isn't|is not|without|avoid|excluding|exclude|that isn't|that is not)\\s+([a-z0-9\\s]*?\\b)?${kw}\\b`, 'i');
+        const negPattern = new RegExp(`\\b(?:not|no|isn't|isnt|is not|without|avoid|excluding|exclude|that isn't|that isnt|that is not)\\s+([a-z0-9\\s]*?\\b)?${kw}\\b`, 'i');
         return !negPattern.test(lower);
       });
       if (matchedKw) {
@@ -358,7 +358,7 @@ export class ShoppingAgent {
       .replace(/(?:birthday|anniversary|holiday|party|college|room)\s+(?:gift\s+)?/gi, '')
       .replace(/(?:gift|present)\s+(?:for\s+(?:my\s+)?[a-z]+\s*)?/gi, '')
       .replace(/(?:for\s+(?:my\s+)?(?:sister|brother|dad|mom|father|mother|friend|wife|husband|colleague))/gi, '')
-      .replace(/(?:something\s+)?(?:that\s+)?(?:isn't|is not|not|without|excluding|avoid|no)\s+[a-z0-9\s]+/gi, '')
+      .replace(/(?:something\s+)?(?:that\s+)?(?:isn't|isnt|is not|not|without|excluding|avoid|no)\s+[a-z0-9\s]+/gi, '')
       .replace(/(?:under|below|less than|max|up to)\s*(?:rs\.?|inr|₹|\$|€)?\s*[0-9,]+k?/gi, '')
       .replace(/(?:above|more than|over|min|at least)\s*(?:rs\.?|inr|₹|\$|€)?\s*[0-9,]+k?/gi, '')
       .replace(/(?:between|from)\s*(?:rs\.?|inr|₹|\$|€)?\s*[0-9,]+k?\s*(?:and|to)\s*(?:rs\.?|inr|₹|\$|€)?\s*[0-9,]+k?/gi, '')

@@ -9,12 +9,10 @@ import {
   ArrowRight, 
   AlertCircle,
   CheckCircle2,
-  Clock,
   Package,
   ShoppingBag,
   MapPin,
   CreditCard,
-  ExternalLink,
   Lock,
   Loader2
 } from 'lucide-react';
@@ -36,7 +34,6 @@ export const AIHomePage: React.FC = () => {
     addToCart, 
     clearCart,
     setSelectedOrder,
-    setOrders,
     addToast 
   } = useApp();
   
@@ -290,7 +287,10 @@ export const AIHomePage: React.FC = () => {
               setMessages(prev => [...prev, {
                 id: Date.now().toString(),
                 role: 'assistant',
-                content: `Payment wasn't completed, but your cart has been safely preserved. You can click **Confirm Purchase** to retry whenever you're ready.`
+                content: `Payment wasn't completed, but your cart has been safely preserved. You can retry your payment below whenever you're ready.`,
+                data: {
+                  retryCheckout: checkoutReview
+                }
               }]);
               addToast('info', 'Checkout Dismissed', 'Razorpay modal closed. Cart preserved.');
             }
@@ -303,7 +303,10 @@ export const AIHomePage: React.FC = () => {
           setMessages(prev => [...prev, {
             id: Date.now().toString(),
             role: 'assistant',
-            content: `Payment was not completed (${failResp.error?.description || 'Gateway error'}). Your cart is still safely saved. Would you like to try again?`
+            content: `Payment was not completed (${failResp.error?.description || 'Gateway error'}). Your cart is still safely saved. Would you like to try again?`,
+            data: {
+              retryCheckout: checkoutReview
+            }
           }]);
           addToast('error', 'Payment Failed', failResp.error?.description || 'Payment could not be completed.');
         });
@@ -562,6 +565,30 @@ export const AIHomePage: React.FC = () => {
                             <Lock className="w-4 h-4 text-teal-300" />
                             <span>Confirm Purchase (₹{msg.data.checkoutReview.cart?.total})</span>
                             <ArrowRight className="w-3.5 h-3.5 ml-1 group-hover:translate-x-0.5 transition" />
+                          </>
+                        )}
+                      </button>
+                    </div>
+                  )}
+
+                  {/* Retry Payment Action */}
+                  {msg.data?.retryCheckout && (
+                    <div className="mt-3 pt-2 border-t border-slate-100 flex items-center space-x-2">
+                      <button
+                        onClick={() => executeInlinePurchase(msg.data.retryCheckout)}
+                        disabled={isPayingInline}
+                        className="px-4 py-2.5 bg-slate-900 hover:bg-teal-600 disabled:bg-slate-400 text-white rounded-xl text-xs font-bold transition flex items-center space-x-2 shadow-sm group"
+                      >
+                        {isPayingInline ? (
+                          <>
+                            <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                            <span>Opening Razorpay Gateway...</span>
+                          </>
+                        ) : (
+                          <>
+                            <Lock className="w-3.5 h-3.5 text-teal-300" />
+                            <span>Retry Payment (₹{msg.data.retryCheckout.cart?.total})</span>
+                            <ArrowRight className="w-3 h-3 ml-0.5 group-hover:translate-x-0.5 transition" />
                           </>
                         )}
                       </button>

@@ -146,29 +146,31 @@ export const Navbar: React.FC = () => {
 
         {/* Center: Search with AI Intent Prompt or Navigation */}
         {portalMode === 'shopper' ? (
-          <form onSubmit={handleSearchSubmit} className="flex-1 max-w-lg hidden md:block">
-            <div className="relative group">
-              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 group-focus-within:text-teal-600">
-                <Search className="w-4 h-4" />
+          shopperRoute !== 'home' ? (
+            <form onSubmit={handleSearchSubmit} className="flex-1 max-w-lg hidden md:block">
+              <div className="relative group">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 group-focus-within:text-teal-600">
+                  <Search className="w-4 h-4" />
+                </div>
+                <input
+                  type="text"
+                  value={searchIntentQuery}
+                  onChange={(e) => setSearchIntentQuery(e.target.value)}
+                  placeholder="Ask AI: 'Noise cancelling under ₹300 for coding'..."
+                  className="w-full pl-10 pr-24 py-2 bg-slate-50 border border-slate-200 rounded-full text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 focus:bg-white transition"
+                />
+                <div className="absolute inset-y-0 right-1.5 flex items-center">
+                  <button
+                    type="submit"
+                    className="inline-flex items-center px-2.5 py-1 text-xs font-semibold text-teal-700 bg-teal-50 hover:bg-teal-100 rounded-full border border-teal-200/60 transition"
+                  >
+                    <Sparkles className="w-3 h-3 mr-1 text-teal-600" />
+                    Match AI
+                  </button>
+                </div>
               </div>
-              <input
-                type="text"
-                value={searchIntentQuery}
-                onChange={(e) => setSearchIntentQuery(e.target.value)}
-                placeholder="Ask AI: 'Noise cancelling under ₹300 for coding'..."
-                className="w-full pl-10 pr-24 py-2 bg-slate-50 border border-slate-200 rounded-full text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 focus:bg-white transition"
-              />
-              <div className="absolute inset-y-0 right-1.5 flex items-center">
-                <button
-                  type="submit"
-                  className="inline-flex items-center px-2.5 py-1 text-xs font-semibold text-teal-700 bg-teal-50 hover:bg-teal-100 rounded-full border border-teal-200/60 transition"
-                >
-                  <Sparkles className="w-3 h-3 mr-1 text-teal-600" />
-                  Match AI
-                </button>
-              </div>
-            </div>
-          </form>
+            </form>
+          ) : null
         ) : (
           <div className="hidden md:flex items-center space-x-1 text-sm text-slate-600 font-medium">
             <button

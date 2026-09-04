@@ -254,7 +254,11 @@ export const MerchantOverviewPage: React.FC = () => {
 
           {/* Funnel Stage Progress Bars */}
           <div className="space-y-3.5 pt-2">
-            {funnelStages.length > 0 ? (
+            {isLoading ? (
+              <div className="text-center py-8 text-xs text-slate-400">
+                Loading conversion funnel metrics...
+              </div>
+            ) : funnelStages.length > 0 && funnelStages.some(s => s.count > 0) ? (
               funnelStages.map((stage, idx) => {
                 const maxCount = Math.max(...funnelStages.map(s => s.count), 1);
                 const widthPercent = Math.max(8, Math.round((stage.count / maxCount) * 100));
@@ -296,8 +300,14 @@ export const MerchantOverviewPage: React.FC = () => {
                 );
               })
             ) : (
-              <div className="text-center py-8 text-xs text-slate-400">
-                Loading conversion funnel metrics...
+              <div className="text-center py-10 px-4 bg-slate-50/60 rounded-2xl border border-dashed border-slate-200 flex flex-col items-center justify-center space-y-2">
+                <div className="w-9 h-9 rounded-full bg-slate-100 flex items-center justify-center text-slate-400">
+                  <TrendingUp className="w-5 h-5" />
+                </div>
+                <p className="text-sm font-semibold text-slate-700">No funnel data yet</p>
+                <p className="text-xs text-slate-500 max-w-sm">
+                  Interact with the Shopper AI to populate real-time commerce telemetry.
+                </p>
               </div>
             )}
           </div>

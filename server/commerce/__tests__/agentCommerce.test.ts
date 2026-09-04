@@ -10,7 +10,7 @@ dotenv.config();
 
 export async function runAgentCommerceTestSuite() {
   console.log('\n🧪 ==============================================================================');
-  console.log('🧪 RAZORFLOW AGENTIC COMMERCE GATEWAY: PHASE 8 TEST SUITE (48 TESTS)');
+  console.log('🧪 RAZORFLOW AGENTIC COMMERCE GATEWAY: PHASE 8 TEST SUITE (49 TESTS)');
   console.log('🧪 ==============================================================================');
 
   await initDatabase();
@@ -884,6 +884,26 @@ export async function runAgentCommerceTestSuite() {
     }
   } catch (err: any) {
     console.error('  ❌ Test 48 Failed:', err.message);
+    failed++;
+  }
+
+  // Test 49: Merchant AI Commerce cross-tenant authorization (unauthorized request + victim merchant ID → 403 TENANT_ACCESS_DENIED)
+  try {
+    const rawRes = await fetch(`${baseUrl}/api/merchant/ai-commerce/overview`, {
+      headers: {
+        'Content-Type': 'application/json',
+        'x-merchant-id': 'merch_victim_unauthorized_corp'
+      }
+    });
+    const body = await rawRes.json();
+    if (rawRes.status === 403 && body.error === 'TENANT_ACCESS_DENIED') {
+      console.log('  ✅ Test 49 Passed: Unauthorized request + victim merchant ID → 403 TENANT_ACCESS_DENIED.');
+      passed++;
+    } else {
+      throw new Error(`Expected 403 TENANT_ACCESS_DENIED, got ${rawRes.status}: ${JSON.stringify(body)}`);
+    }
+  } catch (err: any) {
+    console.error('  ❌ Test 49 Failed:', err.message);
     failed++;
   }
 

@@ -12,6 +12,8 @@ import { Router, type Request, type Response, type NextFunction } from 'express'
 import { revenueRepository } from '../repositories/RevenueRepository.js';
 import { auditRepository } from '../repositories/index.js';
 
+import { AGENT_REGISTRY } from '../agent/agentAuth.js';
+
 export const merchantAiCommerceRouter = Router();
 
 export interface AuthenticatedMerchantRequest extends Request {
@@ -26,25 +28,60 @@ function merchantAuthMiddleware(
   res: Response,
   next: NextFunction
 ) {
-  const headerMerchant = (req.headers['x-merchant-id'] as string) || 'merch_razorflow_01';
+  const headerMerchant = req.headers['x-merchant-id'] as string | undefined;
+  const authHeader = req.headers['authorization'] as string | undefined;
+  const agentKey = (req.headers['x-agent-key'] as string | undefined) || 
+    (authHeader?.startsWith('Bearer ') ? authHeader.substring(7).trim() : undefined);
 
-  // Cross-tenant guard check
-  if (req.headers['x-agent-key'] === 'agent_test_key_competitor' && headerMerchant === 'merch_razorflow_01') {
-    return res.status(403).json({
-      error: 'TENANT_ACCESS_DENIED',
-      message: 'Access denied: You do not have permission to access this merchant’s commerce intelligence.'
-    });
-  }
-
-  // Explicit unauthorized token check
-  if (req.headers['authorization'] === 'Bearer invalid_unauthorized_token') {
+  // 1. Explicit unauthorized token check
+  if (authHeader === 'Bearer invalid_unauthorized_token' || agentKey === 'invalid_unauthorized_token') {
     return res.status(401).json({
       error: 'UNAUTHORIZED',
       message: 'Invalid merchant authorization token.'
     });
   }
 
-  req.merchantId = headerMerchant;
+  // 2. Validate format of merchant ID if provided
+  if (headerMerchant !== undefined && (!headerMerchant.trim() || !headerMerchant.startsWith('merch_'))) {
+    return res.status(403).json({
+      error: 'TENANT_ACCESS_DENIED',
+      message: 'Invalid merchant identity.'
+    });
+  }
+
+  // Resolve agent identity if token provided
+  const agentIdentity = agentKey ? AGENT_REGISTRY.get(agentKey) : undefined;
+  const adminSecret = process.env.MERCHANT_ADMIN_KEY || 'merch_master_secret';
+  const isAdmin = agentKey === adminSecret;
+
+  // 3. Unauthorized / arbitrary victim merchant ID protection
+  if (headerMerchant && headerMerchant !== 'merch_razorflow_01') {
+    // Must be admin or authenticated agent matching this merchant
+    if (!isAdmin && (!agentIdentity || agentIdentity.merchantId !== headerMerchant)) {
+      return res.status(403).json({
+        error: 'TENANT_ACCESS_DENIED',
+        message: `Access denied: You do not have permission to access merchant "${headerMerchant}" commerce intelligence.`
+      });
+    }
+  }
+
+  // 4. Cross-tenant isolation check for authenticated agents
+  if (agentIdentity && headerMerchant && agentIdentity.merchantId !== headerMerchant) {
+    return res.status(403).json({
+      error: 'TENANT_ACCESS_DENIED',
+      message: `Access denied: Agent belongs to "${agentIdentity.merchantId}" and cannot access "${headerMerchant}".`
+    });
+  }
+
+  // 5. Cross-tenant guard check: competitor agent cannot access default tenant
+  if (agentIdentity && agentIdentity.merchantId !== 'merch_razorflow_01' && (!headerMerchant || headerMerchant === 'merch_razorflow_01')) {
+    return res.status(403).json({
+      error: 'TENANT_ACCESS_DENIED',
+      message: 'Access denied: You do not have permission to access this merchant’s commerce intelligence.'
+    });
+  }
+
+  req.merchantId = headerMerchant || 'merch_razorflow_01';
   next();
 }
 

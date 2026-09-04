@@ -37,7 +37,7 @@ export interface CartCalculationResult {
 }
 
 // In-Memory fallback store for resilient local state
-interface StoredCart {
+export interface StoredCart {
   id: string;
   merchantId: string;
   customerId: string | null;
@@ -63,6 +63,10 @@ interface StoredCart {
 import { INITIAL_PRODUCTS } from '../src/data/mockData.js';
 
 const inMemoryCarts = new Map<string, StoredCart>();
+
+export function getInMemoryCart(cartId: string): StoredCart | undefined {
+  return inMemoryCarts.get(cartId);
+}
 
 // Product catalog cache helper preloaded with catalog
 const productCatalogFallback = new Map<string, any>();

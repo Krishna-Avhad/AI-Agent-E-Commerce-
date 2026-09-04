@@ -329,6 +329,80 @@ export async function runCartOrderLifecycleTests(): Promise<boolean> {
     failed++;
   }
 
+  // --------------------------------------------------------------------------
+  // TEST 9: Cart Customer Isolation Under Simulated DB Latency/Timeout
+  // --------------------------------------------------------------------------
+  try {
+    process.stdout.write('\nTest 9: Cart Customer Isolation Under DB Latency/Timeout...\n');
+    const victimCustomerId = 'cust_victim_sec_01';
+    const attackerCustomerId = 'cust_attacker_sec_02';
+    const victimCartId = `cart_sec_test_${Date.now()}`;
+
+    // 1. Establish cart with victim ownership
+    await cartRepository.getCart(victimCartId, merchantId, victimCustomerId);
+
+    // 2. Normal check: Attacker rejected
+    let rejectedNormal = false;
+    try {
+      await cartRepository.getCart(victimCartId, merchantId, attackerCustomerId);
+    } catch (err: any) {
+      if (err.message.includes('CUSTOMER_ACCESS_DENIED')) rejectedNormal = true;
+    }
+    if (!rejectedNormal) throw new Error('Normal isolation failed: attacker accessed victim cart.');
+
+    // 3. Simulate DB timeout/latency
+    const originalQuery = pool.query.bind(pool);
+    (pool as any).query = async (...args: any[]) => {
+      if (typeof args[0] === 'string' && args[0].includes('SELECT * FROM carts WHERE id = $1')) {
+        await new Promise(r => setTimeout(r, 1200));
+        throw new Error('simulated DB query timeout');
+      }
+      return originalQuery(...args);
+    };
+
+    let rejectedUnderTimeout = false;
+    try {
+      // Attacker tries to access victim cart during DB timeout
+      await cartRepository.getCart(victimCartId, merchantId, attackerCustomerId);
+    } catch (err: any) {
+      if (err.message.includes('CUSTOMER_ACCESS_DENIED')) rejectedUnderTimeout = true;
+    } finally {
+      pool.query = originalQuery;
+    }
+
+    if (!rejectedUnderTimeout) {
+      throw new Error('Timeout isolation failed: DB timeout allowed attacker to access victim cart!');
+    }
+
+    // 4. Cold/unknown cart under DB timeout must fail closed
+    (pool as any).query = async (...args: any[]) => {
+      if (typeof args[0] === 'string' && args[0].includes('SELECT * FROM carts WHERE id = $1')) {
+        await new Promise(r => setTimeout(r, 1200));
+        throw new Error('simulated DB query timeout');
+      }
+      return originalQuery(...args);
+    };
+
+    let failClosed = false;
+    try {
+      await cartRepository.getCart(`cart_unknown_${Date.now()}`, merchantId, attackerCustomerId);
+    } catch (err: any) {
+      if (err.message.includes('CUSTOMER_ACCESS_DENIED')) failClosed = true;
+    } finally {
+      pool.query = originalQuery;
+    }
+
+    if (!failClosed) {
+      throw new Error('Fail-closed check failed: Cold cart under DB timeout was not rejected.');
+    }
+
+    console.log('  ✅ PASSED: Cart customer isolation verified under simulated DB latency/timeout (fail-closed).');
+    passed++;
+  } catch (err: any) {
+    console.log(`  ❌ FAILED: ${err.message}`);
+    failed++;
+  }
+
   // Cleanup test product
   if (testProductId) {
     try {

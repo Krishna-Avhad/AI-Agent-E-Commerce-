@@ -178,7 +178,52 @@ export class ShoppingAgent {
       }
     }
 
-    let category: string | null = null;
+    // 1. Parse Exclusions (Ordering step 1)
+    const exclusions: string[] = [];
+    const excludePatterns = [
+      /(?:don't show|dont show|do not show|avoid|without|excluding|exclude|except|that isn't|that is not|isn't|is not|no|not)\s+([a-z0-9\s]+?)(?:$|[.,;!]|(?:\band\b|\bwith\b|\bunder\b|\bfor\b|\bbut\b|\bones\b))/gi,
+      /(?:excluding|exclude|without|avoid)\s+([a-z0-9]+)/gi,
+      /(?:don't show|dont show|do not show)\s+([a-z0-9]+)/gi,
+      /(?:that isn't|that is not|isn't|is not|not|no)\s+([a-z0-9]+)/gi
+    ];
+    for (const pat of excludePatterns) {
+      const matches = Array.from(lower.matchAll(pat));
+      for (const m of matches) {
+        const term = m[1]?.trim();
+        if (term && term.length >= 2 && !exclusions.some(e => e.toLowerCase() === term.toLowerCase())) {
+          if (!['under', 'above', 'a', 'an', 'the', 'my', 'her', 'his'].includes(term)) {
+            exclusions.push(term);
+          }
+        }
+      }
+    }
+
+    // Explicit checks for common exclusion variations (e.g. cosmetics, refurbished, etc.)
+    const cosmeticsNegMatch = /\b(?:no|not|isn't|is not|that isn't|that is not|without|avoid|excluding|exclude|don't show|dont show|do not show)\s+cosmetics?\b/i;
+    if (cosmeticsNegMatch.test(lower) || lower.includes("isn't cosmetics") || lower.includes("is not cosmetics") || lower.includes("not cosmetics") || lower.includes("no cosmetics")) {
+      if (!exclusions.some(e => e.toLowerCase().includes('cosmetic'))) {
+        exclusions.push('cosmetics');
+        exclusions.push('Cosmetics');
+      }
+    }
+    if (lower.includes('no refurbished') || lower.includes('not refurbished')) exclusions.push('refurbished');
+    if (lower.includes('no used') || lower.includes('not used')) exclusions.push('used');
+    if (lower.includes('not wired') || lower.includes('no wired')) exclusions.push('wired');
+    if (lower.includes('no leather') || lower.includes('not leather')) exclusions.push('leather');
+
+    const knownBrands = ['Apple', 'Sony', 'Dell', 'Lenovo', 'HP', 'Asus', 'Logitech', 'Sennheiser', 'Bose', 'Samsung', 'Keychron', 'LG', 'Anker', 'Nike', 'Adidas', 'Puma'];
+    const brandPreferences: string[] = [];
+    for (const brand of knownBrands) {
+      if (lower.includes(brand.toLowerCase())) {
+        if (exclusions.some(e => e.toLowerCase() === brand.toLowerCase()) || lower.match(new RegExp(`\\b(?:not|no|avoid|without|except|excluding)\\s+${brand.toLowerCase()}\\b`))) {
+          if (!exclusions.some(e => e.toLowerCase() === brand.toLowerCase())) exclusions.push(brand);
+        } else {
+          brandPreferences.push(brand);
+        }
+      }
+    }
+
+    // 2. Resolve Excluded Categories (Ordering step 2)
     const categoryKeywords: Record<string, string[]> = {
       'Laptops': ['laptop', 'macbook', 'notebook', 'thinkpad', 'ultrabook', 'chromebook'],
       'Audio': ['headphone', 'earphone', 'earbud', 'headset', 'dac', 'audio', 'speaker', 'sound', 'microphone', 'mic'],
@@ -192,46 +237,34 @@ export class ShoppingAgent {
       'Cosmetics': ['cosmetics', 'makeup', 'lipstick', 'foundation', 'skincare'],
       'Watches': ['watch', 'smartwatch'],
       'Jewelry': ['jewelry', 'ring', 'necklace', 'bracelet'],
+      'Lighting': ['lamp', 'light', 'desk lamp', 'oled lamp'],
       'Home': ['home', 'decor', 'lamp', 'light']
     };
 
+    const excludedCategories = new Set<string>();
+    for (const exc of exclusions) {
+      const excLower = exc.toLowerCase();
+      for (const [catName, kws] of Object.entries(categoryKeywords)) {
+        if (catName.toLowerCase() === excLower || kws.some(kw => excLower.includes(kw) || kw.includes(excLower))) {
+          excludedCategories.add(catName);
+        }
+      }
+    }
+
+    // 3 & 4. Detect Positive Categories while Preventing Excluded Categories (Ordering steps 3 & 4)
+    let category: string | null = null;
     for (const [catName, kws] of Object.entries(categoryKeywords)) {
-      if (kws.some(kw => lower.includes(kw))) {
+      if (excludedCategories.has(catName)) {
+        continue; // Excluded categories must NEVER become primary search categories
+      }
+      const matchedKw = kws.find(kw => {
+        if (!lower.includes(kw)) return false;
+        const negPattern = new RegExp(`\\b(?:not|no|isn't|is not|without|avoid|excluding|exclude|that isn't|that is not)\\s+([a-z0-9\\s]*?\\b)?${kw}\\b`, 'i');
+        return !negPattern.test(lower);
+      });
+      if (matchedKw) {
         category = catName;
         break;
-      }
-    }
-
-    const exclusions: string[] = [];
-    const excludePatterns = [
-      /(?:don't show|dont show|do not show|avoid|not|no|without|excluding|exclude|except)\s+([a-z0-9\s]+?)(?:$|,|\band\b|\bwith\b|\bunder\b|\bfor\b|\bbut\b|\bones\b)/gi,
-      /(?:excluding|exclude|without|avoid)\s+([a-z0-9]+)/gi,
-      /(?:don't show|dont show|do not show)\s+([a-z0-9]+)/gi
-    ];
-    for (const pat of excludePatterns) {
-      const matches = Array.from(lower.matchAll(pat));
-      for (const m of matches) {
-        const term = m[1]?.trim();
-        if (term && term.length >= 2 && !exclusions.includes(term)) {
-          exclusions.push(term);
-        }
-      }
-    }
-    if (lower.includes('no refurbished') || lower.includes('not refurbished')) exclusions.push('refurbished');
-    if (lower.includes('no used') || lower.includes('not used')) exclusions.push('used');
-    if (lower.includes('not wired') || lower.includes('no wired')) exclusions.push('wired');
-    if (lower.includes('no cosmetics') || lower.includes('not cosmetics')) exclusions.push('cosmetics');
-    if (lower.includes('no leather') || lower.includes('not leather')) exclusions.push('leather');
-
-    const knownBrands = ['Apple', 'Sony', 'Dell', 'Lenovo', 'HP', 'Asus', 'Logitech', 'Sennheiser', 'Bose', 'Samsung', 'Keychron', 'LG', 'Anker', 'Nike', 'Adidas', 'Puma'];
-    const brandPreferences: string[] = [];
-    for (const brand of knownBrands) {
-      if (lower.includes(brand.toLowerCase())) {
-        if (exclusions.some(e => e.toLowerCase() === brand.toLowerCase() || lower.includes(`not ${brand.toLowerCase()}`) || lower.includes(`except ${brand.toLowerCase()}`))) {
-          if (!exclusions.includes(brand)) exclusions.push(brand);
-        } else {
-          brandPreferences.push(brand);
-        }
       }
     }
 
@@ -295,6 +328,8 @@ export class ShoppingAgent {
       rankingCriterion = 'PREMIUM';
     } else if (Object.keys(requiredSpecs).length > 0) {
       rankingCriterion = 'SPEC_MATCH';
+    } else if (lower.includes('useful') || lower.includes('practical') || lower.includes('utility')) {
+      rankingCriterion = 'BEST_VALUE';
     } else if (lower.includes('best') || lower.includes('good')) {
       rankingCriterion = 'BEST_VALUE';
     }
@@ -314,24 +349,31 @@ export class ShoppingAgent {
       intentType = 'add_to_cart';
     }
 
-    let searchQuery = text
+    let cleanQuery = text
       .replace(/compare(?: these(?: two)?)?/gi, '')
       .replace(/which( one)? is better/gi, '')
       .replace(/the best/gi, '')
-      .replace(/(?:find|show|give|get|look for|i want|i need|buy)\s+(?:me\s+)?/gi, '')
-      .replace(/(?:under|below|less than|max)\s*(?:rs\.?|inr|₹|\$|€)?\s*[0-9,]+k?/gi, '')
-      .replace(/(?:above|more than|over|min)\s*(?:rs\.?|inr|₹|\$|€)?\s*[0-9,]+k?/gi, '')
+      .replace(/(?:find|show|give|get|look for|i want|i need|buy)\s+(?:me\s+)?(?:a\s+|an\s+)?/gi, '')
+      .replace(/(?:useful|practical|handy|everyday)\s+/gi, '')
+      .replace(/(?:birthday|anniversary|holiday|party|college|room)\s+(?:gift\s+)?/gi, '')
+      .replace(/(?:gift|present)\s+(?:for\s+(?:my\s+)?[a-z]+\s*)?/gi, '')
+      .replace(/(?:for\s+(?:my\s+)?(?:sister|brother|dad|mom|father|mother|friend|wife|husband|colleague))/gi, '')
+      .replace(/(?:something\s+)?(?:that\s+)?(?:isn't|is not|not|without|excluding|avoid|no)\s+[a-z0-9\s]+/gi, '')
+      .replace(/(?:under|below|less than|max|up to)\s*(?:rs\.?|inr|₹|\$|€)?\s*[0-9,]+k?/gi, '')
+      .replace(/(?:above|more than|over|min|at least)\s*(?:rs\.?|inr|₹|\$|€)?\s*[0-9,]+k?/gi, '')
       .replace(/(?:between|from)\s*(?:rs\.?|inr|₹|\$|€)?\s*[0-9,]+k?\s*(?:and|to)\s*(?:rs\.?|inr|₹|\$|€)?\s*[0-9,]+k?/gi, '')
       .replace(/(?:excluding|exclude|without)\s+[a-z0-9]+/gi, '')
       .replace(/for\s+(ai\/ml|ai|ml|gaming|office|coding|programming)/gi, '')
       .replace(/you can find/gi, '')
       .replace(/top\s+[0-9]+/gi, '')
       .replace(/please/gi, '')
+      .replace(/[.,;!]/g, ' ')
       .replace(/\s+/g, ' ')
       .trim();
 
+    let searchQuery = cleanQuery;
     if (searchQuery.length < 2) {
-      searchQuery = category || occasion || text;
+      searchQuery = category || (occasion ? `${occasion} gift` : '') || text;
     }
 
     let followUpRequired = false;
@@ -366,11 +408,15 @@ export class ShoppingAgent {
     if (!currentIntent.category && (currentIntent.occasion || currentIntent.recipient)) {
       const discovered = new Set<string>();
       if (currentIntent.occasion === 'birthday' || currentIntent.occasion === 'gift' || currentIntent.occasion === 'party') {
+        discovered.add('Audio');
+        discovered.add('Workstation');
+        discovered.add('Accessories');
+        discovered.add('Displays');
+        discovered.add('Lighting');
+        discovered.add('Home');
         discovered.add('Watches');
         discovered.add('Bags');
-        discovered.add('Accessories');
         discovered.add('Jewelry');
-        discovered.add('Cosmetics');
       }
       if (currentIntent.occasion === 'college') {
         discovered.add('Laptops');
@@ -383,6 +429,11 @@ export class ShoppingAgent {
         discovered.add('Workstation');
         discovered.add('Audio');
         discovered.add('Home');
+      }
+      
+      // Excluded categories must NEVER become search categories
+      for (const excCat of excludedCategories) {
+        discovered.delete(excCat);
       }
       
       if (discovered.size > 0) {
@@ -575,9 +626,11 @@ export class ShoppingAgent {
     const failedProviders = new Set<string>();
     
     // Determine categories to search (Phase 3.3/3.4)
-    const categoriesToSearch = intent.category 
+    // Filter out any excluded categories from external search
+    const categoriesToSearch = (intent.category 
       ? [intent.category] 
-      : (intent.discoveredCategories || [undefined]);
+      : (intent.discoveredCategories || [undefined]))
+      .filter(cat => !cat || !intent.exclusions.some(exc => exc.toLowerCase().includes(cat.toLowerCase()) || cat.toLowerCase().includes(exc.toLowerCase())));
 
     // Phase 3.6 - Parallel Provider Execution across Multiple Categories
     try {
@@ -605,8 +658,18 @@ export class ShoppingAgent {
       console.warn('⚠️ External commerce search returned notice:', err.message);
     }
 
-    // Phase 3.4 & 3.5 - Multi-Provider Internal Catalog Fallback (Parallelized if semantic)
-    const internalCatPromises = categoriesToSearch.map(async cat => {
+    // Phase 3.4 & 3.5 - Multi-Provider Internal Catalog Search (Ensure internal orderable products)
+    const isBroadOccasionSearch = Boolean(intent.occasion || intent.recipient || !intent.category);
+    
+    // Internal categories to search, filtering out any excluded categories
+    const activeDiscoveredCats = (intent.discoveredCategories || ['Audio', 'Workstation', 'Accessories', 'Displays', 'Lighting'])
+      .filter(cat => !intent.exclusions.some(exc => exc.toLowerCase().includes(cat.toLowerCase()) || cat.toLowerCase().includes(exc.toLowerCase())));
+      
+    const internalCategories = intent.category 
+      ? [intent.category] 
+      : activeDiscoveredCats;
+
+    const internalCatPromises = internalCategories.map(async cat => {
       const isCatSynonym = cat && (
         intent.searchQuery.toLowerCase().includes(cat.toLowerCase()) ||
         cat.toLowerCase().includes(intent.searchQuery.toLowerCase()) ||
@@ -614,7 +677,7 @@ export class ShoppingAgent {
       );
       
       const internalCatalog = await productRepository.findCatalog({
-        search: isCatSynonym ? undefined : intent.searchQuery,
+        search: (isBroadOccasionSearch || isCatSynonym) ? undefined : (intent.searchQuery.length > 1 ? intent.searchQuery : undefined),
         category: cat,
         minPrice: intent.budget.min,
         maxPrice: intent.budget.max,
@@ -848,6 +911,18 @@ export class ShoppingAgent {
         score += product.rating * 3;
       } else if (intent.rankingCriterion === 'PREMIUM') {
         score += Math.min(15, product.price / 1000); // More expensive = more premium for this heuristic
+      }
+
+      // Boost internal merchant catalog items so they are orderable and prioritized
+      if (product.provider === 'opencatalog') {
+        score += 25;
+        matchReasons.push('Verified in-stock item directly orderable with fast delivery');
+      }
+
+      // If user indicated "useful" or value preference
+      if (intent.rankingCriterion === 'BEST_VALUE' && ['Audio', 'Workstation', 'Accessories', 'Displays', 'Lighting'].includes(product.category)) {
+        score += 15;
+        matchReasons.push('High everyday utility and exceptional value');
       }
 
       const matchScore = Math.min(99, Math.max(20, Math.round(score)));

@@ -5,7 +5,8 @@ import {
   addItemToCart, 
   removeItemFromCart, 
   updateCartItemQuantity, 
-  clearCart 
+  clearCart,
+  getInMemoryCart
 } from '../cartService.js';
 
 export class CartRepository {
@@ -22,32 +23,53 @@ export class CartRepository {
    * Fetch persistent cart with calculated totals and joined product prices
    */
   async getCart(cartId: string, merchantId: string = this.defaultMerchantId, customerId?: string) {
-    let resolvedCustomerId = customerId;
+    let resolvedCustomerId: string | null = null;
+    let foundInDb = false;
+    let dbFailedOrTimedOut = false;
+
     try {
       const existing = await Promise.race([
         pool.query('SELECT * FROM carts WHERE id = $1', [cartId]),
         new Promise<any>((_, reject) => setTimeout(() => reject(new Error('timeout')), 1000))
       ]);
       if (existing && existing.rows.length > 0) {
+        foundInDb = true;
         if (existing.rows[0].merchant_id !== merchantId) {
           throw new Error('TENANT_ACCESS_DENIED: Cart belongs to another merchant.');
         }
-        resolvedCustomerId = existing.rows[0].customer_id || resolvedCustomerId;
-      } else if (existing && existing.rows.length === 0) {
-        await Promise.race([
-          pool.query(
-            `INSERT INTO carts (id, merchant_id, customer_id, status, subtotal, discount, tax, shipping, total, currency, created_at, updated_at)
-             VALUES ($1, $2, $3, 'ACTIVE', 0, 0, 0, 0, 0, 'INR', NOW(), NOW())
-             ON CONFLICT (id) DO NOTHING`,
-            [cartId, merchantId, customerId || null]
-          ),
-          new Promise<any>((_, reject) => setTimeout(() => reject(new Error('timeout')), 1000))
-        ]);
+        resolvedCustomerId = existing.rows[0].customer_id || null;
       }
     } catch (e: any) {
       if (e.message.includes('TENANT_ACCESS_DENIED')) throw e;
+      // DB failed or timed out
+      dbFailedOrTimedOut = true;
     }
-    return calculateAndPersistCart(cartId, resolvedCustomerId, undefined, merchantId);
+
+    // 1. If DB query timed out, failed, or returned no rows, check authoritative in-memory state
+    if (!foundInDb) {
+      const memCart = getInMemoryCart(cartId);
+      if (memCart) {
+        if (memCart.merchantId !== merchantId) {
+          throw new Error('TENANT_ACCESS_DENIED: Cart belongs to another merchant.');
+        }
+        // 2. Resolve the cart's actual customer_id
+        resolvedCustomerId = memCart.customerId || null;
+      } else if (dbFailedOrTimedOut) {
+        // If DB timed out and memory does not have authoritative cart state, fail closed
+        throw new Error('CUSTOMER_ACCESS_DENIED: Authoritative cart ownership could not be verified under DB timeout.');
+      } else {
+        // DB healthy and cart doesn't exist yet: allow initialization with customerId
+        resolvedCustomerId = customerId || null;
+      }
+    }
+
+    // 3. Compare against requesting customer
+    // 4. Reject mismatches (never establish ownership from request headers on timeout)
+    if (resolvedCustomerId && customerId && resolvedCustomerId !== customerId) {
+      throw new Error('CUSTOMER_ACCESS_DENIED: Cart belongs to a different customer.');
+    }
+
+    return calculateAndPersistCart(cartId, resolvedCustomerId || customerId, undefined, merchantId);
   }
 
   /**

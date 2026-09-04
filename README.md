@@ -3,6 +3,33 @@
 > **Razorpay AI Buildathon — Track 01: AI Growth & Agentic Commerce**  
 > *"Grow the merchant's revenue, and make them sellable to AI buyers."*
 
+### 💡 The Core Idea: Agentic Commerce Hub
+
+```mermaid
+flowchart TD
+    subgraph "Shopper Interface"
+        UI[Shopper UI / Chat] --> |Natural Language| Copilot[AI Shopping Agent]
+    end
+    
+    subgraph "Autonomous Agents"
+        ExternalAgent[External AI Buyer] --> |Agentic API / MCP| Gateway[Agent API Gateway]
+    end
+    
+    subgraph "Merchant Command Center"
+        Merchant[Merchant Dashboard] --> |Live Telemetry| Growth[AI Revenue Engine]
+    end
+
+    subgraph "Deterministic Core"
+        Copilot --> Policy[Deterministic Policy Engine]
+        Gateway --> Policy
+        Policy -->|Enforces Business Rules & Limits| DB[(PostgreSQL Commerce State)]
+        Growth -->|Extracts Sales Data| DB
+        Policy --> Checkout[Razorpay Payment Gateway]
+    end
+    
+    Checkout -->|Webhook Verification| DB
+```
+
 ---
 
 ## 🚀 Key Highlights & Architectural Foundations

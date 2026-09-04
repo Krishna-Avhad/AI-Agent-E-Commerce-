@@ -33,7 +33,10 @@ export const ProductCatalogPage: React.FC = () => {
   const [onlyInStock, setOnlyInStock] = useState<boolean>(false);
   const [sortBy, setSortBy] = useState<'match' | 'price-low' | 'price-high' | 'rating'>('match');
 
-  const categories = ['All', 'Audio', 'Workstation', 'Displays', 'Lighting', 'Accessories'];
+  const categories = useMemo(() => {
+    const cats = Array.from(new Set(products.map(p => p.category)));
+    return ['All', ...cats];
+  }, [products]);
 
   const filteredProducts = useMemo(() => {
     return products
@@ -169,7 +172,7 @@ export const ProductCatalogPage: React.FC = () => {
           <div>
             <div className="flex items-center justify-between text-xs font-bold text-slate-700 mb-2">
               <span>Max Budget</span>
-              <span className="text-slate-900 font-mono">${maxPrice}</span>
+              <span className="text-slate-900 font-mono">₹{maxPrice}</span>
             </div>
             <input
               type="range"
@@ -181,8 +184,8 @@ export const ProductCatalogPage: React.FC = () => {
               className="w-full accent-slate-900 cursor-pointer"
             />
             <div className="flex justify-between text-[10px] text-slate-400 mt-1">
-              <span>$50</span>
-              <span>$1,000+</span>
+              <span>₹50</span>
+              <span>₹1,000+</span>
             </div>
           </div>
 
@@ -277,7 +280,7 @@ export const ProductCatalogPage: React.FC = () => {
                         {product.aiMatchScore}% Match
                       </div>
                       <div className="absolute top-2.5 right-2.5 bg-white/90 backdrop-blur-md text-slate-900 px-2 py-0.5 rounded-md text-[11px] font-bold shadow-sm">
-                        ${product.price}
+                        ₹{product.price}
                       </div>
                     </div>
 

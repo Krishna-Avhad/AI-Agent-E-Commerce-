@@ -11,7 +11,9 @@ import {
   ShieldCheck, 
   Store, 
   SlidersHorizontal,
-  Zap
+  Zap,
+  ArrowLeft,
+  Package
 } from 'lucide-react';
 
 export const Navbar: React.FC = () => {
@@ -99,21 +101,46 @@ export const Navbar: React.FC = () => {
 
       {/* Main Navbar */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
-        {/* Brand Logo */}
-        <div className="flex items-center space-x-3 cursor-pointer select-none" onClick={() => {
-          if (portalMode === 'shopper') setShopperRoute('home');
-          else setMerchantRoute('overview');
-        }}>
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-slate-900 via-teal-800 to-teal-500 flex items-center justify-center text-white shadow-md shadow-teal-900/10">
-            <Sparkles className="w-5 h-5 text-teal-200" />
-          </div>
-          <div>
-            <span className="font-heading font-bold text-lg text-slate-900 tracking-tight flex items-center">
-              RazorFlow <span className="text-teal-600 ml-1">AI</span>
-            </span>
-            <p className="text-[10px] text-slate-500 tracking-wider uppercase font-semibold">
-              {portalMode === 'shopper' ? 'Commerce Engine' : 'Intelligence Platform'}
-            </p>
+        {/* Navigation & Brand Logo */}
+        <div className="flex items-center space-x-3">
+          {(portalMode === 'shopper' && shopperRoute !== 'home') && (
+            <button
+              onClick={() => {
+                if (shopperRoute === 'product-detail' || shopperRoute === 'cart') setShopperRoute('catalog');
+                else if (shopperRoute === 'checkout') setShopperRoute('cart');
+                else setShopperRoute('home');
+              }}
+              className="p-2 mr-1 rounded-full hover:bg-slate-100 text-slate-500 hover:text-slate-900 transition flex items-center justify-center"
+              title="Go Back"
+            >
+              <ArrowLeft className="w-5 h-5" />
+            </button>
+          )}
+          {(portalMode === 'merchant' && merchantRoute !== 'overview') && (
+            <button
+              onClick={() => setMerchantRoute('overview')}
+              className="p-2 mr-1 rounded-full hover:bg-slate-100 text-slate-500 hover:text-slate-900 transition flex items-center justify-center"
+              title="Go Back"
+            >
+              <ArrowLeft className="w-5 h-5" />
+            </button>
+          )}
+
+          <div className="flex items-center space-x-3 cursor-pointer select-none" onClick={() => {
+            if (portalMode === 'shopper') setShopperRoute('home');
+            else setMerchantRoute('overview');
+          }}>
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-slate-900 via-teal-800 to-teal-500 flex items-center justify-center text-white shadow-md shadow-teal-900/10">
+              <Sparkles className="w-5 h-5 text-teal-200" />
+            </div>
+            <div>
+              <span className="font-heading font-bold text-lg text-slate-900 tracking-tight flex items-center">
+                RazorFlow <span className="text-teal-600 ml-1">AI</span>
+              </span>
+              <p className="text-[10px] text-slate-500 tracking-wider uppercase font-semibold">
+                {portalMode === 'shopper' ? 'Commerce Engine' : 'Intelligence Platform'}
+              </p>
+            </div>
           </div>
         </div>
 
@@ -128,7 +155,7 @@ export const Navbar: React.FC = () => {
                 type="text"
                 value={searchIntentQuery}
                 onChange={(e) => setSearchIntentQuery(e.target.value)}
-                placeholder="Ask AI: 'Noise cancelling under $300 for coding'..."
+                placeholder="Ask AI: 'Noise cancelling under ₹300 for coding'..."
                 className="w-full pl-10 pr-24 py-2 bg-slate-50 border border-slate-200 rounded-full text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 focus:bg-white transition"
               />
               <div className="absolute inset-y-0 right-1.5 flex items-center">
@@ -214,6 +241,15 @@ export const Navbar: React.FC = () => {
                     {compareProducts.length}
                   </span>
                 )}
+              </button>
+              <button
+                onClick={() => setShopperRoute('orders')}
+                className={`hidden sm:inline-flex items-center px-3 py-1.5 text-xs font-semibold rounded-lg transition ${
+                  shopperRoute === 'orders' ? 'bg-slate-900 text-white' : 'text-slate-700 hover:bg-slate-100'
+                }`}
+              >
+                <Package className="w-3.5 h-3.5 mr-1 text-teal-600" />
+                Orders
               </button>
 
               {/* Cart Button */}

@@ -1,23 +1,30 @@
 import { pool } from '../db.js';
 import { ExternalProduct } from './types.js';
 
+const inMemoryExternalCache = new Map<string, ExternalProduct>();
+
 export class ProductCache {
   private readonly defaultTtlHours = 24;
 
   public async getCachedProduct(provider: string, externalId: string): Promise<ExternalProduct | null> {
     try {
-      const res = await pool.query(
-        `SELECT normalized_data FROM external_products 
-         WHERE provider = $1 AND external_product_id = $2 AND expires_at > NOW()
-         LIMIT 1`,
-        [provider, externalId]
-      );
-      if (res.rows.length === 0) return null;
-      return res.rows[0].normalized_data as ExternalProduct;
+      const res = await Promise.race([
+        pool.query(
+          `SELECT normalized_data FROM external_products 
+           WHERE provider = $1 AND external_product_id = $2 AND expires_at > NOW()
+           LIMIT 1`,
+          [provider, externalId]
+        ),
+        new Promise<any>((_, reject) => setTimeout(() => reject(new Error('timeout')), 1000))
+      ]);
+      if (res && res.rows.length > 0) {
+        return res.rows[0].normalized_data as ExternalProduct;
+      }
     } catch (err: unknown) {
       console.warn('⚠️ Cache read warning:', err instanceof Error ? err.message : err);
-      return null;
     }
+    const memKey = `${provider}:${externalId}`;
+    return inMemoryExternalCache.get(memKey) || null;
   }
 
   public async searchCachedProducts(query: string, limit = 20): Promise<ExternalProduct[]> {
@@ -38,44 +45,48 @@ export class ProductCache {
   }
 
   public async cacheProduct(product: ExternalProduct): Promise<void> {
+    inMemoryExternalCache.set(`${product.provider}:${product.externalProductId}`, product);
     try {
       const id = `ext_${product.provider}_${product.externalProductId}`;
-      await pool.query(
-        `INSERT INTO external_products (
-          id, provider, external_product_id, title, brand, category,
-          price, currency, image_url, product_url, availability,
-          rating, review_count, normalized_data, fetched_at, expires_at
-        ) VALUES (
-          $1, $2, $3, $4, $5, $6,
-          $7, $8, $9, $10, $11,
-          $12, $13, $14, NOW(), NOW() + INTERVAL '${this.defaultTtlHours} HOURS'
-        )
-        ON CONFLICT (provider, external_product_id) DO UPDATE SET
-          title = EXCLUDED.title,
-          price = EXCLUDED.price,
-          availability = EXCLUDED.availability,
-          rating = EXCLUDED.rating,
-          review_count = EXCLUDED.review_count,
-          normalized_data = EXCLUDED.normalized_data,
-          fetched_at = NOW(),
-          expires_at = NOW() + INTERVAL '${this.defaultTtlHours} HOURS'`,
-        [
-          id,
-          product.provider,
-          product.externalProductId,
-          product.title,
-          product.brand,
-          product.category,
-          product.price,
-          product.currency,
-          product.imageUrl,
-          product.productUrl,
-          product.availability,
-          product.rating,
-          product.reviewCount,
-          JSON.stringify(product)
-        ]
-      );
+      await Promise.race([
+        pool.query(
+          `INSERT INTO external_products (
+            id, provider, external_product_id, title, brand, category,
+            price, currency, image_url, product_url, availability,
+            rating, review_count, normalized_data, fetched_at, expires_at
+          ) VALUES (
+            $1, $2, $3, $4, $5, $6,
+            $7, $8, $9, $10, $11,
+            $12, $13, $14, NOW(), NOW() + INTERVAL '${this.defaultTtlHours} HOURS'
+          )
+          ON CONFLICT (provider, external_product_id) DO UPDATE SET
+            title = EXCLUDED.title,
+            price = EXCLUDED.price,
+            availability = EXCLUDED.availability,
+            rating = EXCLUDED.rating,
+            review_count = EXCLUDED.review_count,
+            normalized_data = EXCLUDED.normalized_data,
+            fetched_at = NOW(),
+            expires_at = NOW() + INTERVAL '${this.defaultTtlHours} HOURS'`,
+          [
+            id,
+            product.provider,
+            product.externalProductId,
+            product.title,
+            product.brand,
+            product.category,
+            product.price,
+            product.currency,
+            product.imageUrl,
+            product.productUrl,
+            product.availability,
+            product.rating,
+            product.reviewCount,
+            JSON.stringify(product)
+          ]
+        ),
+        new Promise<any>((_, reject) => setTimeout(() => reject(new Error('timeout')), 1000))
+      ]);
 
       // Snapshot price history
       const snapId = `snap_${Date.now()}_${Math.floor(100 + Math.random() * 900)}`;

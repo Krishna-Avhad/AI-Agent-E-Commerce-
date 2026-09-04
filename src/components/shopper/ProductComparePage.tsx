@@ -114,7 +114,7 @@ export const ProductComparePage: React.FC = () => {
                           <h4 className="font-heading font-bold text-sm text-slate-900 line-clamp-1">
                             {prod.name}
                           </h4>
-                          <div className="font-bold text-base text-slate-900">${prod.price}</div>
+                          <div className="font-bold text-base text-slate-900">₹{prod.price}</div>
                         </div>
 
                         <button
@@ -152,7 +152,7 @@ export const ProductComparePage: React.FC = () => {
                         >
                           <option value="" disabled>Select hardware...</option>
                           {availableToAdd.map((p) => (
-                            <option key={p.id} value={p.id}>{p.name} (${p.price})</option>
+                            <option key={p.id} value={p.id}>{p.name} (₹{p.price})</option>
                           ))}
                         </select>
                       </div>

@@ -136,7 +136,7 @@ export const BundleManagementPage: React.FC = () => {
                 {bundle.products.map((p) => (
                   <div key={p.id} className="flex items-center justify-between text-xs text-slate-700">
                     <span className="truncate pr-2">• {p.name}</span>
-                    <span className="text-slate-400 shrink-0">${p.price}</span>
+                    <span className="text-slate-400 shrink-0">₹{p.price}</span>
                   </div>
                 ))}
               </div>
@@ -144,8 +144,8 @@ export const BundleManagementPage: React.FC = () => {
 
             <div className="pt-4 border-t border-slate-100 flex items-center justify-between">
               <div>
-                <div className="text-[10px] text-slate-400 line-through">${bundle.originalTotal}</div>
-                <div className="font-heading font-extrabold text-xl text-slate-900">${bundle.bundlePrice}</div>
+                <div className="text-[10px] text-slate-400 line-through">₹{bundle.originalTotal}</div>
+                <div className="font-heading font-extrabold text-xl text-slate-900">₹{bundle.bundlePrice}</div>
               </div>
 
               <button
@@ -247,7 +247,7 @@ export const BundleManagementPage: React.FC = () => {
                       >
                         <div className="truncate pr-2">
                           <div className="font-semibold text-slate-900 truncate">{p.name}</div>
-                          <span className="text-[10px] text-slate-400">${p.price}</span>
+                          <span className="text-[10px] text-slate-400">₹{p.price}</span>
                         </div>
                         {isSelected && <Check className="w-4 h-4 text-teal-600 shrink-0" />}
                       </div>
@@ -259,13 +259,13 @@ export const BundleManagementPage: React.FC = () => {
               {/* Pricing breakdown pill */}
               <div className="p-3 bg-slate-50 rounded-xl flex items-center justify-between border border-slate-200 text-xs">
                 <div>
-                  <span className="text-slate-400 block text-[10px]">Original Total: ${rawSum}</span>
+                  <span className="text-slate-400 block text-[10px]">Original Total: ₹{rawSum}</span>
                   <strong className="text-slate-900 font-heading font-extrabold text-sm">
-                    Bundle Price: ${calculatedBundlePrice}
+                    Bundle Price: ₹{calculatedBundlePrice}
                   </strong>
                 </div>
                 <span className="px-2 py-0.5 bg-emerald-100 text-emerald-800 font-bold rounded">
-                  Customer Saves ${rawSum - calculatedBundlePrice}
+                  Customer Saves ₹{rawSum - calculatedBundlePrice}
                 </span>
               </div>
 

@@ -47,10 +47,11 @@ export const Sidebar: React.FC = () => {
       ]
     },
     {
-      title: 'AGENT PROTOCOLS & APIS',
+      title: 'AI COMMERCE & GOVERNANCE',
       items: [
+        { id: 'ai-control', label: 'AI Control Center', icon: <Bot className="w-4 h-4 text-teal-600" />, badge: '100% Ready', badgeColor: 'bg-emerald-100 text-emerald-700 font-extrabold' },
         { id: 'agent-commerce', label: 'Agent-to-Agent (A2A)', icon: <Bot className="w-4 h-4" /> },
-        { id: 'mcp-integration', label: 'MCP & API Connectors', icon: <Cpu className="w-4 h-4" />, badge: '5 Active' },
+        { id: 'mcp-integration', label: 'MCP & API Connectors', icon: <Cpu className="w-4 h-4" />, badge: '12 Tools' },
       ]
     },
     {

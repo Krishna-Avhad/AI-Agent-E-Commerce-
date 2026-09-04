@@ -10,7 +10,9 @@ import {
   Tag, 
   ArrowLeft, 
   Check,
-  Plus
+  Plus,
+  Minus,
+  CheckCircle2
 } from 'lucide-react';
 
 export const CartPage: React.FC = () => {
@@ -101,11 +103,11 @@ export const CartPage: React.FC = () => {
                 <span>
                   {cartSubtotal >= 300 ? (
                     <strong className="font-semibold text-teal-800">
-                      🎉 You unlocked Free Express Priority Delivery ($15 Value)!
+                      🎉 You unlocked Free Express Priority Delivery (₹15 Value)!
                     </strong>
                   ) : (
                     <span>
-                      Add <strong>${300 - cartSubtotal}</strong> more to qualify for <strong>Free Express Priority Courier</strong>.
+                      Add <strong>₹{300 - cartSubtotal}</strong> more to qualify for <strong>Free Express Priority Courier</strong>.
                     </span>
                   )}
                 </span>
@@ -115,68 +117,70 @@ export const CartPage: React.FC = () => {
             {/* Items */}
             <div className="bg-white rounded-2xl border border-slate-200 shadow-sm divide-y divide-slate-100">
               {cart.map((item) => (
-                <div key={item.product.id} className="p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                  <div className="flex items-center space-x-4">
-                    <img
-                      src={item.product.image}
-                      alt={item.product.name}
-                      className="w-20 h-20 rounded-xl object-cover border border-slate-200 shrink-0"
+                <div key={item.productId} className="p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                  <div className="flex items-center gap-4 flex-1">
+                    <img 
+                      src={item.imageUrl} 
+                      alt={item.productName} 
+                      className="w-20 h-20 object-cover rounded-lg bg-slate-100"
                     />
                     <div>
-                      <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">
-                        {item.product.category}
-                      </span>
-                      <h4 className="font-heading font-bold text-sm text-slate-900">
-                        {item.product.name}
+                      <p className="text-xs text-slate-500 font-medium tracking-wider uppercase mb-1">
+                        {item.category}
+                      </p>
+                      <h4 className="font-semibold text-slate-900 leading-tight">
+                        {item.productName}
                       </h4>
-                      <div className="text-xs font-semibold text-teal-600 flex items-center mt-0.5">
-                        <Sparkles className="w-3 h-3 mr-1" />
-                        {item.product.aiMatchScore}% Intent Match
-                      </div>
-                      <div className="text-xs font-bold text-slate-900 mt-1">
-                        ${item.product.price} each
+                      <div className="flex items-center gap-2 mt-2">
+                        <span className="text-xs font-medium text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded flex items-center gap-1">
+                          <CheckCircle2 size={12} /> Verified Stock
+                        </span>
+                        <span className="text-xs text-slate-500">
+                          ₹{item.unitPrice} each
+                        </span>
                       </div>
                     </div>
                   </div>
 
                   {/* Quantity & Actions */}
-                  <div className="flex items-center space-x-4 self-end sm:self-center">
-                    <div className="flex items-center border border-slate-200 rounded-xl bg-slate-50 p-1">
-                      <button
-                        onClick={() => updateCartQuantity(item.product.id, item.quantity - 1)}
-                        className="w-7 h-7 flex items-center justify-center font-bold text-slate-600 hover:bg-white rounded-lg transition text-xs"
+                  <div className="flex items-center gap-6 w-full sm:w-auto justify-between sm:justify-end">
+                    <div className="flex items-center border border-slate-200 rounded-lg">
+                      <button 
+                        className="p-2 text-slate-500 hover:text-slate-900 hover:bg-slate-50 rounded-l-lg transition-colors"
+                        onClick={() => updateCartQuantity(item.productId, item.quantity - 1)}
                       >
-                        -
+                        <Minus size={16} />
                       </button>
-                      <span className="w-8 text-center font-bold text-xs text-slate-900">
+                      <span className="w-10 text-center text-sm font-semibold text-slate-900">
                         {item.quantity}
                       </span>
-                      <button
-                        onClick={() => updateCartQuantity(item.product.id, item.quantity + 1)}
-                        className="w-7 h-7 flex items-center justify-center font-bold text-slate-600 hover:bg-white rounded-lg transition text-xs"
+                      <button 
+                        className="p-2 text-slate-500 hover:text-slate-900 hover:bg-slate-50 rounded-r-lg transition-colors"
+                        onClick={() => updateCartQuantity(item.productId, item.quantity + 1)}
                       >
-                        +
+                        <Plus size={16} />
                       </button>
                     </div>
 
-                    <div className="w-20 text-right font-heading font-bold text-sm text-slate-900">
-                      ${item.product.price * item.quantity}
+                    <div className="text-right flex items-center gap-4">
+                      <span className="font-semibold text-slate-900 min-w-[80px]">
+                        ₹{item.unitPrice * item.quantity}
+                      </span>
+                      <button 
+                        className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                        onClick={() => removeFromCart(item.productId)}
+                        title="Remove Item"
+                      >
+                        <Trash2 size={18} />
+                      </button>
                     </div>
-
-                    <button
-                      onClick={() => removeFromCart(item.product.id)}
-                      className="text-slate-400 hover:text-rose-600 p-1 transition"
-                      title="Remove item"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
                   </div>
                 </div>
               ))}
             </div>
 
             {/* AI Cross-Sell suggestion */}
-            {upsellProduct && !cart.some((i) => i.product.id === upsellProduct.id) && (
+            {upsellProduct && !cart.some((i) => i.productId === upsellProduct.id) && (
               <div className="bg-gradient-to-r from-slate-900 to-indigo-950 text-white rounded-2xl p-4 flex flex-col sm:flex-row items-center justify-between gap-4">
                 <div className="flex items-center space-x-3">
                   <img
@@ -199,7 +203,7 @@ export const CartPage: React.FC = () => {
                   className="px-3.5 py-1.5 bg-teal-500 hover:bg-teal-400 text-slate-950 font-bold text-xs rounded-xl transition flex items-center space-x-1 whitespace-nowrap"
                 >
                   <Plus className="w-3.5 h-3.5" />
-                  <span>Add (${upsellProduct.price})</span>
+                  <span>Add (₹{upsellProduct.price})</span>
                 </button>
               </div>
             )}
@@ -242,7 +246,7 @@ export const CartPage: React.FC = () => {
               <div className="space-y-2.5 text-xs pt-3 border-t border-slate-100">
                 <div className="flex justify-between text-slate-600">
                   <span>Subtotal</span>
-                  <span className="font-medium text-slate-900">${cartSubtotal}</span>
+                  <span className="font-medium text-slate-900">₹{cartSubtotal}</span>
                 </div>
 
                 {cartDiscount > 0 && (
@@ -254,20 +258,20 @@ export const CartPage: React.FC = () => {
 
                 <div className="flex justify-between text-slate-600">
                   <span>Estimated Tax (8%)</span>
-                  <span className="font-medium text-slate-900">${cartTax}</span>
+                  <span className="font-medium text-slate-900">₹{cartTax}</span>
                 </div>
 
                 <div className="flex justify-between text-slate-600">
                   <span>Priority Shipping</span>
                   <span className="font-medium text-slate-900">
-                    {cartShipping === 0 ? <strong className="text-teal-600 font-semibold">FREE</strong> : `$${cartShipping}`}
+                    {cartShipping === 0 ? <strong className="text-teal-600 font-semibold">FREE</strong> : `₹${cartShipping}`}
                   </span>
                 </div>
 
                 <div className="pt-3 border-t border-slate-200 flex justify-between items-baseline">
                   <span className="font-heading font-bold text-sm text-slate-900">Final Total</span>
                   <span className="font-heading font-extrabold text-2xl text-slate-900">
-                    ${finalTotal}
+                    ₹{finalTotal}
                   </span>
                 </div>
               </div>

@@ -51,11 +51,14 @@ export async function evaluateAgentAction(
   };
 
   try {
-    const settingsRes = await pool.query(
-      'SELECT * FROM merchant_settings WHERE merchant_id = $1',
-      [merchantId]
-    );
-    if (settingsRes.rows.length > 0) {
+    const settingsRes = await Promise.race([
+      pool.query(
+        'SELECT * FROM merchant_settings WHERE merchant_id = $1',
+        [merchantId]
+      ),
+      new Promise<any>((_, reject) => setTimeout(() => reject(new Error('Settings query timeout')), 1500))
+    ]);
+    if (settingsRes && settingsRes.rows && settingsRes.rows.length > 0) {
       settings = settingsRes.rows[0];
     }
   } catch (err: any) {

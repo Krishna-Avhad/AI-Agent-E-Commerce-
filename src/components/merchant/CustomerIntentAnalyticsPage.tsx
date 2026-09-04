@@ -82,7 +82,7 @@ export const CustomerIntentAnalyticsPage: React.FC = () => {
               { query: 'Ergonomic 75% tactile mechanical keyboard wireless', count: '6,190 queries', match: '95% Kinesis KB', conversion: '16.5%' },
               { query: 'Single cable 4K monitor with 90W USB-C power delivery', count: '4,810 queries', match: '97% Nova 4K', conversion: '14.0%' },
               { query: 'Circadian task lamp for late night screen eye fatigue', count: '3,240 queries', match: '92% Lumix Lamp', conversion: '12.8%' },
-              { query: 'Complete ergonomic desk setup bundle under $1000', count: '2,950 queries', match: '99% Creator Stack', conversion: '22.4%' },
+              { query: 'Complete ergonomic desk setup bundle under ₹1000', count: '2,950 queries', match: '99% Creator Stack', conversion: '22.4%' },
             ].map((item, idx) => (
               <div key={idx} className="p-3.5 flex items-center justify-between hover:bg-slate-50 transition">
                 <div className="space-y-0.5 max-w-[60%]">

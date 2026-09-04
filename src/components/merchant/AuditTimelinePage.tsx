@@ -52,7 +52,7 @@ export const AuditTimelinePage: React.FC = () => {
       time: '20:15:30',
       actor: 'Cart Intelligence Engine',
       icon: <ShoppingBag className="w-4 h-4 text-emerald-600" />,
-      detail: 'Applied $40 instant bundle discount and locked stock reservation for 15 minutes.'
+      detail: 'Applied ₹40 instant bundle discount and locked stock reservation for 15 minutes.'
     },
     {
       step: 4,
@@ -68,7 +68,7 @@ export const AuditTimelinePage: React.FC = () => {
       time: '20:15:33',
       actor: 'Razorpay Instant Settlement Protocol',
       icon: <ShieldCheck className="w-4 h-4 text-teal-600" />,
-      detail: 'Disbursed $443.84 directly to merchant nodal account. Ledger entry AUD-88310 sealed.'
+      detail: 'Disbursed ₹443.84 directly to merchant nodal account. Ledger entry AUD-88310 sealed.'
     },
     {
       step: 6,
@@ -103,7 +103,7 @@ export const AuditTimelinePage: React.FC = () => {
 
         <div className="text-right bg-slate-50 p-3 rounded-2xl border border-slate-200 text-xs">
           <span className="text-slate-400 block text-[10px]">Settled Amount</span>
-          <strong className="text-slate-900 font-extrabold text-sm font-heading">${currentOrder.total}</strong>
+          <strong className="text-slate-900 font-extrabold text-sm font-heading">₹{currentOrder.total}</strong>
         </div>
       </div>
 

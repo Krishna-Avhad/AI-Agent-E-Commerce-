@@ -174,7 +174,7 @@ export const AgentCommercePage: React.FC = () => {
         <div className="space-y-3 font-mono text-xs">
           {(agentLogs.length > 0 ? agentLogs : [
             { timestamp: 'Just now', actor: 'Agent-Enterprise-042', action: 'DISPATCH_INTENT_QUERY', details: 'Looking for 5x 4K UHD Monitors with USB-C 90W PD', status: 'Success' },
-            { timestamp: 'Just now', actor: 'Store-Agent-RazorFlow', action: 'PROPOSE_BUNDLE_DISCOUNT', details: 'Granted 8.4% volume tier discount ($640/unit vs $699)', status: 'Success' },
+            { timestamp: 'Just now', actor: 'Store-Agent-RazorFlow', action: 'PROPOSE_BUNDLE_DISCOUNT', details: 'Granted 8.4% volume tier discount (₹640/unit vs ₹699)', status: 'Success' },
             { timestamp: 'Just now', actor: 'Agent-Enterprise-042', action: 'CRYPTOGRAPHIC_SETTLE', details: 'Signed payload HMAC-SHA256 with Razorpay Escrow lock', status: 'Success' }
           ]).map((log, idx) => (
             <div key={idx} className="p-3.5 bg-slate-900 text-slate-200 rounded-2xl border border-slate-800 space-y-1.5">

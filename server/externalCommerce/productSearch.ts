@@ -93,14 +93,30 @@ export class ProductSearchService {
       }
     }
 
-    // Deduplicate items by provider + externalProductId
+    // Deduplicate items
+    // Priority: SKU ↓ provider product ID ↓ normalized brand + model ↓ carefully normalized title
     const seen = new Set<string>();
     const deduplicated: ExternalProduct[] = [];
 
     for (const p of allProducts) {
-      const key = `${p.provider}:${p.externalProductId}`;
-      if (!seen.has(key)) {
-        seen.add(key);
+      const sku = p.identifiers?.sku ? `sku:${p.identifiers.sku}` : null;
+      const pid = `id:${p.provider}:${p.externalProductId}`;
+      const titleNorm = p.title.toLowerCase().replace(/[^a-z0-9]/g, '');
+      const brandModel = (p.brand && p.title) ? `bm:${p.brand.toLowerCase()}:${titleNorm}` : null;
+      
+      const titleKey = `title:${titleNorm}`;
+
+      // We only consider it unique if none of its available identifiers have been seen
+      const hasSku = sku && seen.has(sku);
+      const hasPid = seen.has(pid);
+      const hasBrandModel = brandModel && seen.has(brandModel);
+      const hasTitle = seen.has(titleKey);
+
+      if (!hasSku && !hasPid && !hasBrandModel && !hasTitle) {
+        if (sku) seen.add(sku);
+        seen.add(pid);
+        if (brandModel) seen.add(brandModel);
+        seen.add(titleKey);
         deduplicated.push(p);
       }
     }

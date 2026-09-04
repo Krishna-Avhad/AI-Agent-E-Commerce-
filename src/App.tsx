@@ -15,6 +15,7 @@ import { CartPage } from './components/shopper/CartPage';
 import { CheckoutPage } from './components/shopper/CheckoutPage';
 import { OrderSuccessPage } from './components/shopper/OrderSuccessPage';
 import { OrderDetailsPage } from './components/shopper/OrderDetailsPage';
+import { OrdersPage } from './components/shopper/OrdersPage';
 
 // Merchant Pages
 import { MerchantOverviewPage } from './components/merchant/MerchantOverviewPage';
@@ -29,6 +30,7 @@ import { MCPIntegrationPage } from './components/merchant/MCPIntegrationPage';
 import { AuditTrailPage } from './components/merchant/AuditTrailPage';
 import { AuditTimelinePage } from './components/merchant/AuditTimelinePage';
 import { SystemStatusPage } from './components/merchant/SystemStatusPage';
+import { MerchantAIControlCenter } from './components/merchant/ai-control/MerchantAIControlCenter';
 
 const AppContent: React.FC = () => {
   const {
@@ -55,6 +57,8 @@ const AppContent: React.FC = () => {
         return <CartPage />;
       case 'checkout':
         return <CheckoutPage />;
+      case 'orders':
+        return <OrdersPage />;
       case 'order-success':
         return <OrderSuccessPage />;
       case 'order-detail':
@@ -90,6 +94,8 @@ const AppContent: React.FC = () => {
         return <AuditTimelinePage />;
       case 'system-status':
         return <SystemStatusPage />;
+      case 'ai-control':
+        return <MerchantAIControlCenter />;
       default:
         return <MerchantOverviewPage />;
     }

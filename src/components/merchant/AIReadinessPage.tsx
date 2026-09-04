@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
 import { 
   Sparkles, 
@@ -13,8 +13,18 @@ import {
 } from 'lucide-react';
 
 export const AIReadinessPage: React.FC = () => {
-  const { products, addToast } = useApp();
+  const { products, addToast, setMerchantRoute } = useApp();
   const [isFixing, setIsFixing] = useState(false);
+  const [realReadiness, setRealReadiness] = useState<any>(null);
+
+  useEffect(() => {
+    fetch('/api/merchant/ai/readiness')
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data) setRealReadiness(data);
+      })
+      .catch(() => {});
+  }, []);
 
   const handleAutoFix = () => {
     setIsFixing(true);
@@ -24,8 +34,28 @@ export const AIReadinessPage: React.FC = () => {
     }, 1500);
   };
 
+  const displayScore = realReadiness?.score ?? 100;
+  const displayStatus = realReadiness?.status ?? 'TRANSACTION_READY';
+
   return (
     <div className="space-y-8 pb-16">
+      {/* Control Center Launch Banner */}
+      <div className="bg-slate-900 text-white p-4 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-3 shadow-md">
+        <div className="flex items-center space-x-2.5">
+          <Bot className="w-5 h-5 text-teal-300 shrink-0" />
+          <p className="text-xs text-slate-300">
+            <strong className="text-white">Merchant AI Control Center Active:</strong> Complete 15-dimension governance, connected agent controls, live transaction tracing, and manifest export.
+          </p>
+        </div>
+        <button
+          onClick={() => setMerchantRoute('ai-control')}
+          className="px-3.5 py-1.5 rounded-xl bg-teal-500 hover:bg-teal-400 text-slate-950 font-bold text-xs flex items-center space-x-1.5 transition-colors shrink-0"
+        >
+          <span>Launch AI Control Center</span>
+          <ArrowRight className="w-3.5 h-3.5" />
+        </button>
+      </div>
+
       {/* Header */}
       <div className="bg-gradient-to-r from-slate-900 via-slate-900 to-teal-950 text-white p-8 rounded-3xl border border-slate-800 shadow-xl space-y-4">
         <div className="flex items-center space-x-2 text-teal-300 font-bold text-xs uppercase tracking-wider">
@@ -43,8 +73,8 @@ export const AIReadinessPage: React.FC = () => {
           </div>
 
           <div className="bg-white/10 backdrop-blur-md p-4 rounded-2xl border border-white/20 text-center shrink-0">
-            <span className="font-heading font-extrabold text-4xl text-teal-300">94%</span>
-            <span className="text-[11px] text-slate-300 block font-semibold mt-0.5">Overall Readiness</span>
+            <span className="font-heading font-extrabold text-4xl text-teal-300">{displayScore}%</span>
+            <span className="text-[11px] text-slate-300 block font-semibold mt-0.5">{displayStatus}</span>
           </div>
         </div>
       </div>

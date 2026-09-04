@@ -1,0 +1,4270 @@
+{
+  "name": "LINQS Shop",
+  "generated_at": "2026-09-02T08:19:06.897Z",
+  "source_version": "linqs-llms-json-v2",
+  "schema_version": "1.0.0",
+  "canonicality": {
+    "llms_json": "Canonical for structured catalog fields and filtering.",
+    "product_pages": "Canonical for final public product details, live price display, and stock visibility.",
+    "policy_pages": "Canonical for shipping, returns, and support terms."
+  },
+  "site": {
+    "homepage": "https://shop.linqs.in/",
+    "shop": "https://shop.linqs.in/shop",
+    "checkout": "https://checkout.linqs.in/checkout",
+    "sitemap": "https://shop.linqs.in/sitemap.xml",
+    "llmsText": "https://shop.linqs.in/llms.txt",
+    "llmsFullText": "https://shop.linqs.in/llms-full.txt",
+    "llmsJson": "https://shop.linqs.in/llms-json",
+    "llmsJsonLegacyAlias": "https://shop.linqs.in/llms.json"
+  },
+  "contact": {
+    "email": "support@linqs.in",
+    "whatsappDisplay": "+91 93295 96820",
+    "whatsappE164": "+919329596820",
+    "contactUrl": "https://shop.linqs.in/contact"
+  },
+  "products": [
+    {
+      "id": "cG9zdDo2NDA=",
+      "slug": "nfc-ntag203-multi-color-stickers-30-mm-vinyl",
+      "title": "LINQS NFC NTAG203 Multi Color Stickers, 30 mm Vinyl",
+      "url": "https://shop.linqs.in/product/nfc-ntag203-multi-color-stickers-30-mm-vinyl",
+      "sku": "NH_St_203_Colored_VMom",
+      "status": "active",
+      "chip_family": "NTAG203",
+      "chip_variant": "NTAG203",
+      "chip_origin": "NXP",
+      "memory_bytes": 144,
+      "form_factor": "sticker",
+      "surface_support": [
+        "standard"
+      ],
+      "material": "",
+      "size": "30 mm",
+      "best_for": [
+        "Colored & Printed Designs",
+        "General Purpose",
+        "Marketing/Promo",
+        "NFC Stickers & Tags",
+        "NTAG203",
+        "Product Info & Labels"
+      ],
+      "avoid_if": [
+        "metal-backed placement",
+        "secure authentication workflows"
+      ],
+      "works_with": [
+        "iPhone",
+        "Android"
+      ],
+      "secure_auth_suitable": false,
+      "custom_print_available": true,
+      "encoding_available": true,
+      "bulk_quote_required_over_qty": 100,
+      "price_currency": "INR",
+      "price_from": 60,
+      "price_to": 60,
+      "stock_status": "in_stock",
+      "last_updated": "2026-09-02"
+    },
+    {
+      "id": "cG9zdDo2MTc=",
+      "slug": "nfc-mifare-ultralight-white-sticker-30mm",
+      "title": "LINQS NFC MIFARE Ultralight White Sticker, 30mm",
+      "url": "https://shop.linqs.in/product/nfc-mifare-ultralight-white-sticker-30mm",
+      "sku": "NH_MF_ALW_VMom",
+      "status": "active",
+      "chip_family": "MIFARE Ultralight EV1",
+      "chip_variant": "MIFARE Ultralight EV1",
+      "chip_origin": "NXP",
+      "memory_bytes": 48,
+      "form_factor": "sticker",
+      "surface_support": [
+        "standard"
+      ],
+      "material": "",
+      "size": "25 mm",
+      "best_for": [
+        "General Purpose",
+        "NFC Stickers & Tags",
+        "Sampling/Mass Deployment",
+        "Standard Stickers",
+        "Ultralight EV1"
+      ],
+      "avoid_if": [
+        "metal-backed placement"
+      ],
+      "works_with": [
+        "iPhone",
+        "Android"
+      ],
+      "secure_auth_suitable": false,
+      "custom_print_available": true,
+      "encoding_available": true,
+      "bulk_quote_required_over_qty": 100,
+      "price_currency": "INR",
+      "price_from": 45,
+      "price_to": 45,
+      "stock_status": "out_of_stock",
+      "last_updated": "2026-09-02"
+    },
+    {
+      "id": "cG9zdDo5MzY=",
+      "slug": "nfc-ultralight-ev1-paper-sticker-30-mm-ntag210",
+      "title": "LINQS NFC Ultralight EV1 Paper Sticker, 30 mm, NTAG210",
+      "url": "https://shop.linqs.in/product/nfc-ultralight-ev1-paper-sticker-30-mm-ntag210",
+      "sku": "S_Ultra_21_VMom",
+      "status": "active",
+      "chip_family": "NTAG210",
+      "chip_variant": "NTAG210",
+      "chip_origin": "NXP",
+      "memory_bytes": 48,
+      "form_factor": "sticker",
+      "surface_support": [
+        "standard"
+      ],
+      "material": "",
+      "size": "25 mm",
+      "best_for": [
+        "General Purpose",
+        "NFC Stickers & Tags",
+        "NTAG210 NXP",
+        "Sampling/Mass Deployment",
+        "Standard Stickers"
+      ],
+      "avoid_if": [
+        "metal-backed placement",
+        "secure authentication workflows"
+      ],
+      "works_with": [
+        "iPhone",
+        "Android"
+      ],
+      "secure_auth_suitable": false,
+      "custom_print_available": true,
+      "encoding_available": true,
+      "bulk_quote_required_over_qty": 100,
+      "price_currency": "INR",
+      "price_from": 50,
+      "price_to": 50,
+      "stock_status": "in_stock",
+      "last_updated": "2026-09-02"
+    },
+    {
+      "id": "cG9zdDo2NTE=",
+      "slug": "nfc-ntag203-white-sticker-40-mm-diameter",
+      "title": "LINQS NFC NTAG203 White Sticker, 40 mm Diameter",
+      "url": "https://shop.linqs.in/product/nfc-ntag203-white-sticker-40-mm-diameter",
+      "sku": "NH_St_W40_VMom",
+      "status": "active",
+      "chip_family": "NTAG203",
+      "chip_variant": "NTAG203",
+      "chip_origin": "NXP",
+      "memory_bytes": 144,
+      "form_factor": "sticker",
+      "surface_support": [
+        "standard"
+      ],
+      "material": "",
+      "size": "40 mm",
+      "best_for": [
+        "General Purpose",
+        "NFC Stickers & Tags",
+        "NTAG203",
+        "Smart Poster",
+        "Standard Stickers"
+      ],
+      "avoid_if": [
+        "metal-backed placement",
+        "secure authentication workflows"
+      ],
+      "works_with": [
+        "iPhone",
+        "Android"
+      ],
+      "secure_auth_suitable": false,
+      "custom_print_available": true,
+      "encoding_available": true,
+      "bulk_quote_required_over_qty": 100,
+      "price_currency": "INR",
+      "price_from": 60,
+      "price_to": 60,
+      "stock_status": "in_stock",
+      "last_updated": "2026-09-02"
+    },
+    {
+      "id": "cG9zdDo2NTk=",
+      "slug": "nfc-topaz512-18x18-mm-sticker",
+      "title": "LINQS NFC Topaz512 (18x18 mm) Sticker",
+      "url": "https://shop.linqs.in/product/nfc-topaz512-18x18-mm-sticker",
+      "sku": "NH_TZ_18_VMom",
+      "status": "active",
+      "chip_family": "TOPAZ 512",
+      "chip_variant": "TOPAZ 512",
+      "chip_origin": "other",
+      "memory_bytes": 480,
+      "form_factor": "sticker",
+      "surface_support": [
+        "standard"
+      ],
+      "material": "",
+      "size": "18mm x 18mm",
+      "best_for": [
+        "Asset Tracking",
+        "Device Setup",
+        "Merch/Accessories",
+        "NFC Stickers & Tags",
+        "Small Stickers",
+        "Topaz"
+      ],
+      "avoid_if": [
+        "metal-backed placement"
+      ],
+      "works_with": [
+        "iPhone",
+        "Android"
+      ],
+      "secure_auth_suitable": false,
+      "custom_print_available": true,
+      "encoding_available": true,
+      "bulk_quote_required_over_qty": 100,
+      "price_currency": "INR",
+      "price_from": 60,
+      "price_to": 60,
+      "stock_status": "in_stock",
+      "last_updated": "2026-09-02"
+    },
+    {
+      "id": "cG9zdDo2ODA=",
+      "slug": "nfc-nxp-ntag210-circus-sticker-22-mm-pet-tag",
+      "title": "LINQS NFC NXP NTAG210 Circus Sticker, 22 mm PET Tag",
+      "url": "https://shop.linqs.in/product/nfc-nxp-ntag210-circus-sticker-22-mm-pet-tag",
+      "sku": "S_210_21_VMom",
+      "status": "active",
+      "chip_family": "NTAG210",
+      "chip_variant": "NTAG210",
+      "chip_origin": "NXP",
+      "memory_bytes": 48,
+      "form_factor": "sticker",
+      "surface_support": [
+        "standard"
+      ],
+      "material": "",
+      "size": "22 mm",
+      "best_for": [
+        "General Purpose",
+        "NFC Stickers & Tags",
+        "NTAG210 NXP",
+        "Product Info & Labels",
+        "Transparent & Clear"
+      ],
+      "avoid_if": [
+        "metal-backed placement",
+        "secure authentication workflows"
+      ],
+      "works_with": [
+        "iPhone",
+        "Android"
+      ],
+      "secure_auth_suitable": false,
+      "custom_print_available": true,
+      "encoding_available": true,
+      "bulk_quote_required_over_qty": 100,
+      "price_currency": "INR",
+      "price_from": 45,
+      "price_to": 45,
+      "stock_status": "in_stock",
+      "last_updated": "2026-09-02"
+    },
+    {
+      "id": "cG9zdDoxNTA=",
+      "slug": "nfc-nxp-ntag213-circus-clear-sticker-22mm",
+      "title": "LINQS NFC NXP NTAG213 Circus Clear Sticker 22mm",
+      "url": "https://shop.linqs.in/product/nfc-nxp-ntag213-circus-clear-sticker-22mm",
+      "sku": "S_213_21_VMom",
+      "status": "active",
+      "chip_family": "NTAG213",
+      "chip_variant": "NTAG213",
+      "chip_origin": "NXP",
+      "memory_bytes": 144,
+      "form_factor": "sticker",
+      "surface_support": [
+        "standard"
+      ],
+      "material": "",
+      "size": "22 mm",
+      "best_for": [
+        "General Purpose",
+        "NFC Stickers & Tags",
+        "NTAG213 NXP",
+        "Product Info & Labels",
+        "Smart Poster",
+        "Transparent & Clear"
+      ],
+      "avoid_if": [
+        "metal-backed placement",
+        "secure authentication workflows"
+      ],
+      "works_with": [
+        "iPhone",
+        "Android"
+      ],
+      "secure_auth_suitable": false,
+      "custom_print_available": true,
+      "encoding_available": true,
+      "bulk_quote_required_over_qty": 100,
+      "price_currency": "INR",
+      "price_from": 60,
+      "price_to": 60,
+      "stock_status": "in_stock",
+      "last_updated": "2026-09-02"
+    },
+    {
+      "id": "cG9zdDo4Nzg=",
+      "slug": "nfc-nxp-ntag216-nmark-sticker",
+      "title": "LINQS NFC NXP NTAG216 NMark Sticker",
+      "url": "https://shop.linqs.in/product/nfc-nxp-ntag216-nmark-sticker",
+      "sku": "S_216_21_VMom",
+      "status": "active",
+      "chip_family": "NTAG216",
+      "chip_variant": "NTAG216",
+      "chip_origin": "NXP",
+      "memory_bytes": 888,
+      "form_factor": "sticker",
+      "surface_support": [
+        "standard"
+      ],
+      "material": "",
+      "size": "30 mm",
+      "best_for": [
+        "Colored & Printed Designs",
+        "General Purpose",
+        "NFC Stickers & Tags",
+        "NTAG216 NXP"
+      ],
+      "avoid_if": [
+        "metal-backed placement",
+        "secure authentication workflows"
+      ],
+      "works_with": [
+        "iPhone",
+        "Android"
+      ],
+      "secure_auth_suitable": false,
+      "custom_print_available": true,
+      "encoding_available": true,
+      "bulk_quote_required_over_qty": 100,
+      "price_currency": "INR",
+      "price_from": 90,
+      "price_to": 90,
+      "stock_status": "in_stock",
+      "last_updated": "2026-09-02"
+    },
+    {
+      "id": "cG9zdDozNDY=",
+      "slug": "nfc-nxp-ntag215-plain-sticker-30-mm",
+      "title": "LINQS NFC NXP NTAG215 Plain Sticker 30 mm",
+      "url": "https://shop.linqs.in/product/nfc-nxp-ntag215-plain-sticker-30-mm",
+      "sku": "S_215_27_VMom",
+      "status": "active",
+      "chip_family": "NTAG215",
+      "chip_variant": "NTAG215",
+      "chip_origin": "NXP",
+      "memory_bytes": 504,
+      "form_factor": "sticker",
+      "surface_support": [
+        "standard"
+      ],
+      "material": "",
+      "size": "30 mm",
+      "best_for": [
+        "General Purpose",
+        "Loyalty/Rewards",
+        "NFC Stickers & Tags",
+        "NTAG215 NXP",
+        "Scavenger Hunt/Gaming",
+        "Standard Stickers"
+      ],
+      "avoid_if": [
+        "metal-backed placement",
+        "secure authentication workflows"
+      ],
+      "works_with": [
+        "iPhone",
+        "Android"
+      ],
+      "secure_auth_suitable": false,
+      "custom_print_available": true,
+      "encoding_available": true,
+      "bulk_quote_required_over_qty": 100,
+      "price_currency": "INR",
+      "price_from": 70,
+      "price_to": 70,
+      "stock_status": "in_stock",
+      "last_updated": "2026-09-02"
+    },
+    {
+      "id": "cG9zdDo4NDI=",
+      "slug": "nfc-nxp-ntag215-anti-metal-sticker-25mm",
+      "title": "LINQS NFC NXP NTAG215 Anti Metal Sticker, 25mm",
+      "url": "https://shop.linqs.in/product/nfc-nxp-ntag215-anti-metal-sticker-25mm",
+      "sku": "S_215_23_VMom",
+      "status": "active",
+      "chip_family": "NTAG215",
+      "chip_variant": "NTAG215",
+      "chip_origin": "NXP",
+      "memory_bytes": 504,
+      "form_factor": "sticker",
+      "surface_support": [
+        "standard",
+        "anti-metal"
+      ],
+      "material": "",
+      "size": "25 mm",
+      "best_for": [
+        "Anti-Metal Stickers",
+        "NFC Stickers & Tags",
+        "NTAG215 NXP",
+        "Tool/Equipment ID"
+      ],
+      "avoid_if": [
+        "secure authentication workflows"
+      ],
+      "works_with": [
+        "iPhone",
+        "Android"
+      ],
+      "secure_auth_suitable": false,
+      "custom_print_available": true,
+      "encoding_available": true,
+      "bulk_quote_required_over_qty": 100,
+      "price_currency": "INR",
+      "price_from": 120,
+      "price_to": 120,
+      "stock_status": "out_of_stock",
+      "last_updated": "2026-09-02"
+    },
+    {
+      "id": "cG9zdDo2ODg=",
+      "slug": "nfc-nxp-ntag210-midas-plus-sticker",
+      "title": "LINQS NFC NXP NTAG210 Midas Plus Sticker",
+      "url": "https://shop.linqs.in/product/nfc-nxp-ntag210-midas-plus-sticker",
+      "sku": "S_210_22_VMom",
+      "status": "active",
+      "chip_family": "NTAG210",
+      "chip_variant": "NTAG210",
+      "chip_origin": "NXP",
+      "memory_bytes": 48,
+      "form_factor": "sticker",
+      "surface_support": [
+        "standard"
+      ],
+      "material": "",
+      "size": "13.5 x 21 mm",
+      "best_for": [
+        "Device Setup",
+        "General Purpose",
+        "Merch/Accessories",
+        "NFC Stickers & Tags",
+        "NTAG210 NXP",
+        "Transparent & Clear"
+      ],
+      "avoid_if": [
+        "metal-backed placement",
+        "secure authentication workflows"
+      ],
+      "works_with": [
+        "iPhone",
+        "Android"
+      ],
+      "secure_auth_suitable": false,
+      "custom_print_available": true,
+      "encoding_available": true,
+      "bulk_quote_required_over_qty": 100,
+      "price_currency": "INR",
+      "price_from": 45,
+      "price_to": 45,
+      "stock_status": "out_of_stock",
+      "last_updated": "2026-09-02"
+    },
+    {
+      "id": "cG9zdDo4NjY=",
+      "slug": "compatible-ntag215-plain-sticker-25-mm",
+      "title": "LINQS Compatible NTAG215 Plain Sticker 25 mm",
+      "url": "https://shop.linqs.in/product/compatible-ntag215-plain-sticker-25-mm",
+      "sku": "S_215_22_C_VMom",
+      "status": "active",
+      "chip_family": "NTAG215",
+      "chip_variant": "NTAG215",
+      "chip_origin": "other",
+      "memory_bytes": 504,
+      "form_factor": "sticker",
+      "surface_support": [
+        "standard"
+      ],
+      "material": "",
+      "size": "25 mm",
+      "best_for": [
+        "General Purpose",
+        "NFC Stickers & Tags",
+        "NTAG215 Compatible",
+        "Scavenger Hunt/Gaming",
+        "Standard Stickers"
+      ],
+      "avoid_if": [
+        "metal-backed placement",
+        "secure authentication workflows"
+      ],
+      "works_with": [
+        "iPhone",
+        "Android"
+      ],
+      "secure_auth_suitable": false,
+      "custom_print_available": true,
+      "encoding_available": true,
+      "bulk_quote_required_over_qty": 100,
+      "price_currency": "INR",
+      "price_from": 60,
+      "price_to": 60,
+      "stock_status": "in_stock",
+      "last_updated": "2026-09-02"
+    },
+    {
+      "id": "cG9zdDo4MTQ=",
+      "slug": "nfc-nxp-ntag213-micro-fpc-anti-metal-sticker-10mm",
+      "title": "LINQS NFC NXP NTAG213 Micro FPC Anti Metal Sticker 10mm",
+      "url": "https://shop.linqs.in/product/nfc-nxp-ntag213-micro-fpc-anti-metal-sticker-10mm",
+      "sku": "S_213_38_VMom",
+      "status": "active",
+      "chip_family": "NTAG213",
+      "chip_variant": "NTAG213",
+      "chip_origin": "NXP",
+      "memory_bytes": 144,
+      "form_factor": "sticker",
+      "surface_support": [
+        "standard",
+        "anti-metal"
+      ],
+      "material": "",
+      "size": "10 mm",
+      "best_for": [
+        "Anti-Metal Stickers",
+        "Device Setup",
+        "NFC Stickers & Tags",
+        "NTAG213 NXP",
+        "Tool/Equipment ID"
+      ],
+      "avoid_if": [
+        "secure authentication workflows"
+      ],
+      "works_with": [
+        "iPhone",
+        "Android"
+      ],
+      "secure_auth_suitable": false,
+      "custom_print_available": true,
+      "encoding_available": true,
+      "bulk_quote_required_over_qty": 100,
+      "price_currency": "INR",
+      "price_from": 100,
+      "price_to": 100,
+      "stock_status": "in_stock",
+      "last_updated": "2026-09-02"
+    },
+    {
+      "id": "cG9zdDo0MTA=",
+      "slug": "nfc-nxp-ntag213-micro-fpc-sticker-5mm",
+      "title": "LINQS NFC NXP NTAG213 Micro FPC Sticker 5mm",
+      "url": "https://shop.linqs.in/product/nfc-nxp-ntag213-micro-fpc-sticker-5mm",
+      "sku": "S_213_37_VMom",
+      "status": "active",
+      "chip_family": "NTAG213",
+      "chip_variant": "NTAG213",
+      "chip_origin": "NXP",
+      "memory_bytes": 144,
+      "form_factor": "sticker",
+      "surface_support": [
+        "standard"
+      ],
+      "material": "",
+      "size": "5 mm",
+      "best_for": [
+        "Device Setup",
+        "General Purpose",
+        "Merch Verification",
+        "Merch/Accessories",
+        "Micro & Ultra-Thin",
+        "NFC Stickers & Tags",
+        "NTAG213 NXP"
+      ],
+      "avoid_if": [
+        "metal-backed placement",
+        "secure authentication workflows"
+      ],
+      "works_with": [
+        "iPhone",
+        "Android"
+      ],
+      "secure_auth_suitable": false,
+      "custom_print_available": true,
+      "encoding_available": true,
+      "bulk_quote_required_over_qty": 100,
+      "price_currency": "INR",
+      "price_from": 100,
+      "price_to": 100,
+      "stock_status": "in_stock",
+      "last_updated": "2026-09-02"
+    },
+    {
+      "id": "cG9zdDo3OTA=",
+      "slug": "nfc-nxp-ntag213-10mm-fpc-anti-metal-sticker",
+      "title": "LINQS NFC NXP NTAG213 10mm FPC Anti Metal Sticker",
+      "url": "https://shop.linqs.in/product/nfc-nxp-ntag213-10mm-fpc-anti-metal-sticker",
+      "sku": "S_213_35_VMom",
+      "status": "active",
+      "chip_family": "NTAG213",
+      "chip_variant": "NTAG213",
+      "chip_origin": "NXP",
+      "memory_bytes": 144,
+      "form_factor": "sticker",
+      "surface_support": [
+        "standard",
+        "anti-metal"
+      ],
+      "material": "",
+      "size": "10 mm",
+      "best_for": [
+        "Anti-Metal Stickers",
+        "Device Setup",
+        "Merch/Accessories",
+        "NFC Stickers & Tags",
+        "NTAG213 NXP",
+        "Tool/Equipment ID"
+      ],
+      "avoid_if": [
+        "secure authentication workflows"
+      ],
+      "works_with": [
+        "iPhone",
+        "Android"
+      ],
+      "secure_auth_suitable": false,
+      "custom_print_available": true,
+      "encoding_available": true,
+      "bulk_quote_required_over_qty": 100,
+      "price_currency": "INR",
+      "price_from": 100,
+      "price_to": 100,
+      "stock_status": "in_stock",
+      "last_updated": "2026-09-02"
+    },
+    {
+      "id": "cG9zdDozOA==",
+      "slug": "nfc-ntag213-social-media-pvc-sticker-30mm",
+      "title": "LINQS NFC NTAG213 Social Media PVC Sticker 30mm",
+      "url": "https://shop.linqs.in/product/nfc-ntag213-social-media-pvc-sticker-30mm",
+      "sku": "S_213_34_VMom",
+      "status": "active",
+      "chip_family": "NTAG213 compatible",
+      "chip_variant": "NTAG213 compatible",
+      "chip_origin": "other",
+      "memory_bytes": 144,
+      "form_factor": "sticker",
+      "surface_support": [
+        "standard"
+      ],
+      "material": "",
+      "size": "30 mm",
+      "best_for": [
+        "Google Reviews",
+        "NFC Stickers & Tags",
+        "NTAG213 NXP",
+        "Profile & Social Links",
+        "Social Media & WiFi Sharing"
+      ],
+      "avoid_if": [
+        "metal-backed placement",
+        "secure authentication workflows"
+      ],
+      "works_with": [
+        "iPhone",
+        "Android"
+      ],
+      "secure_auth_suitable": false,
+      "custom_print_available": true,
+      "encoding_available": true,
+      "bulk_quote_required_over_qty": 100,
+      "price_currency": "INR",
+      "price_from": 70,
+      "price_to": 70,
+      "stock_status": "in_stock",
+      "last_updated": "2026-09-02"
+    },
+    {
+      "id": "cG9zdDo3Njc=",
+      "slug": "nfc-nxp-ntag213-micro-sticker-8x18mm",
+      "title": "LINQS NFC NXP NTAG213 Micro Sticker 8x18mm",
+      "url": "https://shop.linqs.in/product/nfc-nxp-ntag213-micro-sticker-8x18mm",
+      "sku": "S_213_33_VMom",
+      "status": "active",
+      "chip_family": "NTAG213",
+      "chip_variant": "NTAG213",
+      "chip_origin": "NXP",
+      "memory_bytes": 144,
+      "form_factor": "sticker",
+      "surface_support": [
+        "standard"
+      ],
+      "material": "",
+      "size": "8 mm x 18 mm",
+      "best_for": [
+        "Asset Tracking",
+        "General Purpose",
+        "Merch/Accessories",
+        "Micro & Ultra-Thin",
+        "NFC Stickers & Tags",
+        "NTAG213 NXP"
+      ],
+      "avoid_if": [
+        "metal-backed placement",
+        "secure authentication workflows"
+      ],
+      "works_with": [
+        "iPhone",
+        "Android"
+      ],
+      "secure_auth_suitable": false,
+      "custom_print_available": true,
+      "encoding_available": true,
+      "bulk_quote_required_over_qty": 100,
+      "price_currency": "INR",
+      "price_from": 70,
+      "price_to": 70,
+      "stock_status": "in_stock",
+      "last_updated": "2026-09-02"
+    },
+    {
+      "id": "cG9zdDo2MDQ=",
+      "slug": "nfc-nxp-ntag213-taphere-square-nfc-sticker",
+      "title": "LINQS NFC NXP NTAG213 TapHere Square NFC Sticker",
+      "url": "https://shop.linqs.in/product/nfc-nxp-ntag213-taphere-square-nfc-sticker",
+      "sku": "S_213_32_VMom",
+      "status": "active",
+      "chip_family": "NTAG213",
+      "chip_variant": "NTAG213",
+      "chip_origin": "NXP",
+      "memory_bytes": 144,
+      "form_factor": "sticker",
+      "surface_support": [
+        "standard"
+      ],
+      "material": "",
+      "size": "30 mm",
+      "best_for": [
+        "Colored & Printed Designs",
+        "Lost & Found/ICE",
+        "Marketing/Promo",
+        "NFC Stickers & Tags",
+        "NTAG213 NXP",
+        "Smart Home Onboarding",
+        "Smart Poster",
+        "SOP/How to"
+      ],
+      "avoid_if": [
+        "metal-backed placement",
+        "secure authentication workflows"
+      ],
+      "works_with": [
+        "iPhone",
+        "Android"
+      ],
+      "secure_auth_suitable": false,
+      "custom_print_available": true,
+      "encoding_available": true,
+      "bulk_quote_required_over_qty": 100,
+      "price_currency": "INR",
+      "price_from": 70,
+      "price_to": 70,
+      "stock_status": "in_stock",
+      "last_updated": "2026-09-02"
+    },
+    {
+      "id": "cG9zdDo3NDQ=",
+      "slug": "nfc-nxp-ntag213-nmark-sticker-30mm-waterproof",
+      "title": "LINQS NFC NXP NTAG213 NMark Sticker, 30mm Waterproof",
+      "url": "https://shop.linqs.in/product/nfc-nxp-ntag213-nmark-sticker-30mm-waterproof",
+      "sku": "S_213_31_VMom",
+      "status": "active",
+      "chip_family": "NTAG213",
+      "chip_variant": "NTAG213",
+      "chip_origin": "NXP",
+      "memory_bytes": 144,
+      "form_factor": "sticker",
+      "surface_support": [
+        "standard"
+      ],
+      "material": "",
+      "size": "30 mm",
+      "best_for": [
+        "Colored & Printed Designs",
+        "Marketing/Promo",
+        "NFC Stickers & Tags",
+        "NTAG213 NXP",
+        "Product Info & Labels"
+      ],
+      "avoid_if": [
+        "metal-backed placement",
+        "secure authentication workflows"
+      ],
+      "works_with": [
+        "iPhone",
+        "Android"
+      ],
+      "secure_auth_suitable": false,
+      "custom_print_available": true,
+      "encoding_available": true,
+      "bulk_quote_required_over_qty": 100,
+      "price_currency": "INR",
+      "price_from": 70,
+      "price_to": 70,
+      "stock_status": "in_stock",
+      "last_updated": "2026-09-02"
+    },
+    {
+      "id": "cG9zdDo3MzQ=",
+      "slug": "nfc-nxp-ntag213-tamperproof-sticker-45x30mm",
+      "title": "LINQS NFC NXP NTAG213 Tamperproof Sticker 45x30mm",
+      "url": "https://shop.linqs.in/product/nfc-nxp-ntag213-tamperproof-sticker-45x30mm",
+      "sku": "S_213_29_VMom",
+      "status": "active",
+      "chip_family": "NTAG213",
+      "chip_variant": "NTAG213",
+      "chip_origin": "NXP",
+      "memory_bytes": 144,
+      "form_factor": "sticker",
+      "surface_support": [
+        "standard"
+      ],
+      "material": "",
+      "size": "22 mm",
+      "best_for": [
+        "NFC Stickers & Tags",
+        "NTAG213 NXP",
+        "Product Authenticity",
+        "Tamper-Evident & Security"
+      ],
+      "avoid_if": [
+        "metal-backed placement",
+        "secure authentication workflows"
+      ],
+      "works_with": [
+        "iPhone",
+        "Android"
+      ],
+      "secure_auth_suitable": false,
+      "custom_print_available": true,
+      "encoding_available": true,
+      "bulk_quote_required_over_qty": 100,
+      "price_currency": "INR",
+      "price_from": 90,
+      "price_to": 90,
+      "stock_status": "in_stock",
+      "last_updated": "2026-09-02"
+    },
+    {
+      "id": "cG9zdDo1NjM=",
+      "slug": "nfc-nxp-ntag213-placemode-sticker-30-mm",
+      "title": "LINQS NFC NXP NTAG213 Placemode Sticker 30 mm",
+      "url": "https://shop.linqs.in/product/nfc-nxp-ntag213-placemode-sticker-30-mm",
+      "sku": "S_213_28_VMom",
+      "status": "active",
+      "chip_family": "NTAG213",
+      "chip_variant": "NTAG213",
+      "chip_origin": "NXP",
+      "memory_bytes": 144,
+      "form_factor": "sticker",
+      "surface_support": [
+        "standard"
+      ],
+      "material": "",
+      "size": "30 mm",
+      "best_for": [
+        "Colored & Printed Designs",
+        "General Purpose",
+        "Location & Directions",
+        "Marketing/Promo",
+        "NFC Stickers & Tags",
+        "NTAG213 NXP"
+      ],
+      "avoid_if": [
+        "metal-backed placement",
+        "secure authentication workflows"
+      ],
+      "works_with": [
+        "iPhone",
+        "Android"
+      ],
+      "secure_auth_suitable": false,
+      "custom_print_available": true,
+      "encoding_available": true,
+      "bulk_quote_required_over_qty": 100,
+      "price_currency": "INR",
+      "price_from": 70,
+      "price_to": 70,
+      "stock_status": "in_stock",
+      "last_updated": "2026-09-02"
+    },
+    {
+      "id": "cG9zdDo3NTU=",
+      "slug": "nfc-nxp-ntag213-on-metal-sticker-25mm",
+      "title": "LINQS NFC NXP NTAG213 On Metal Sticker, 25mm",
+      "url": "https://shop.linqs.in/product/nfc-nxp-ntag213-on-metal-sticker-25mm",
+      "sku": "S_213_26_VMom",
+      "status": "active",
+      "chip_family": "NTAG213",
+      "chip_variant": "NTAG213",
+      "chip_origin": "NXP",
+      "memory_bytes": 144,
+      "form_factor": "sticker",
+      "surface_support": [
+        "standard"
+      ],
+      "material": "",
+      "size": "25 mm",
+      "best_for": [
+        "Anti-Metal Stickers",
+        "Asset Tracking",
+        "NFC Stickers & Tags",
+        "NTAG213 NXP",
+        "Tool/Equipment ID"
+      ],
+      "avoid_if": [
+        "metal-backed placement",
+        "secure authentication workflows"
+      ],
+      "works_with": [
+        "iPhone",
+        "Android"
+      ],
+      "secure_auth_suitable": false,
+      "custom_print_available": true,
+      "encoding_available": true,
+      "bulk_quote_required_over_qty": 100,
+      "price_currency": "INR",
+      "price_from": 100,
+      "price_to": 100,
+      "stock_status": "in_stock",
+      "last_updated": "2026-09-02"
+    },
+    {
+      "id": "cG9zdDo0NjE=",
+      "slug": "nfc-nxp-ntag213-amaze-sticker",
+      "title": "LINQS NFC NXP NTAG213 Amaze Sticker",
+      "url": "https://shop.linqs.in/product/nfc-nxp-ntag213-amaze-sticker",
+      "sku": "S_213_25_VMom",
+      "status": "active",
+      "chip_family": "NTAG213",
+      "chip_variant": "NTAG213",
+      "chip_origin": "NXP",
+      "memory_bytes": 144,
+      "form_factor": "sticker",
+      "surface_support": [
+        "standard"
+      ],
+      "material": "",
+      "size": "30 mm",
+      "best_for": [
+        "Access Control",
+        "Anti-Metal Stickers",
+        "Asset Tracking",
+        "Attendance/Check in",
+        "Epoxy Domed & Premium",
+        "Maintenance Log",
+        "Marketing/Promo",
+        "NFC Stickers & Tags",
+        "NTAG213 NXP"
+      ],
+      "avoid_if": [
+        "metal-backed placement",
+        "secure authentication workflows"
+      ],
+      "works_with": [
+        "iPhone",
+        "Android"
+      ],
+      "secure_auth_suitable": false,
+      "custom_print_available": true,
+      "encoding_available": true,
+      "bulk_quote_required_over_qty": 100,
+      "price_currency": "INR",
+      "price_from": 140,
+      "price_to": 140,
+      "stock_status": "in_stock",
+      "last_updated": "2026-09-02"
+    },
+    {
+      "id": "cG9zdDo5MjU=",
+      "slug": "nfc-compatible-ntag216-plain-white-sticker",
+      "title": "LINQS NFC Compatible NTAG216 Plain White Sticker",
+      "url": "https://shop.linqs.in/product/nfc-compatible-ntag216-plain-white-sticker",
+      "sku": "S_216_26_C_VMom",
+      "status": "active",
+      "chip_family": "NTAG216",
+      "chip_variant": "NTAG216",
+      "chip_origin": "other",
+      "memory_bytes": 888,
+      "form_factor": "sticker",
+      "surface_support": [
+        "standard"
+      ],
+      "material": "",
+      "size": "25 mm",
+      "best_for": [
+        "General Purpose",
+        "High Memory Stickers",
+        "NFC Stickers & Tags",
+        "NTAG216 Compatible"
+      ],
+      "avoid_if": [
+        "metal-backed placement",
+        "secure authentication workflows"
+      ],
+      "works_with": [
+        "iPhone",
+        "Android"
+      ],
+      "secure_auth_suitable": false,
+      "custom_print_available": true,
+      "encoding_available": true,
+      "bulk_quote_required_over_qty": 100,
+      "price_currency": "INR",
+      "price_from": 70,
+      "price_to": 70,
+      "stock_status": "in_stock",
+      "last_updated": "2026-09-02"
+    },
+    {
+      "id": "cG9zdDo0Mzg=",
+      "slug": "nfc-nxp-ntag216-plain-white-sticker-30mm",
+      "title": "LINQS NFC NXP NTAG216 Plain White Sticker 25mm",
+      "url": "https://shop.linqs.in/product/nfc-nxp-ntag216-plain-white-sticker-30mm",
+      "sku": "S_216_26_VMom",
+      "status": "active",
+      "chip_family": "NTAG216",
+      "chip_variant": "NTAG216",
+      "chip_origin": "NXP",
+      "memory_bytes": 888,
+      "form_factor": "sticker",
+      "surface_support": [
+        "standard"
+      ],
+      "material": "",
+      "size": "25 mm",
+      "best_for": [
+        "General Purpose",
+        "High Memory Stickers",
+        "NFC Stickers & Tags",
+        "NTAG216 NXP"
+      ],
+      "avoid_if": [
+        "metal-backed placement",
+        "secure authentication workflows"
+      ],
+      "works_with": [
+        "iPhone",
+        "Android"
+      ],
+      "secure_auth_suitable": false,
+      "custom_print_available": true,
+      "encoding_available": true,
+      "bulk_quote_required_over_qty": 100,
+      "price_currency": "INR",
+      "price_from": 80,
+      "price_to": 80,
+      "stock_status": "in_stock",
+      "last_updated": "2026-09-02"
+    },
+    {
+      "id": "cG9zdDoyOTQ=",
+      "slug": "nfc-nxp-ntag213-pvc-led-card-white",
+      "title": "LINQS NFC NXP NTAG213 PVC LED Card White",
+      "url": "https://shop.linqs.in/product/nfc-nxp-ntag213-pvc-led-card-white",
+      "sku": "C_213_25_VMom",
+      "status": "active",
+      "chip_family": "NTAG213",
+      "chip_variant": "NTAG213",
+      "chip_origin": "NXP",
+      "memory_bytes": 144,
+      "form_factor": "card",
+      "surface_support": [
+        "standard"
+      ],
+      "material": "",
+      "size": "85.6 x 54 mm",
+      "best_for": [
+        "Access Control",
+        "Event Ticket",
+        "LED Cards",
+        "NFC Cards",
+        "NTAG213 NXP",
+        "Vehicle Info"
+      ],
+      "avoid_if": [
+        "metal-backed placement",
+        "secure authentication workflows"
+      ],
+      "works_with": [
+        "iPhone",
+        "Android"
+      ],
+      "secure_auth_suitable": false,
+      "custom_print_available": true,
+      "encoding_available": true,
+      "bulk_quote_required_over_qty": 100,
+      "price_currency": "INR",
+      "price_from": 125,
+      "price_to": 125,
+      "stock_status": "in_stock",
+      "last_updated": "2026-09-02"
+    },
+    {
+      "id": "cG9zdDo5MTQ=",
+      "slug": "nfc-nxp-ntag216-square-taphere-sticker-30-mm",
+      "title": "LINQS NFC NXP NTAG216 Square Taphere Sticker 30 mm",
+      "url": "https://shop.linqs.in/product/nfc-nxp-ntag216-square-taphere-sticker-30-mm",
+      "sku": "S_216_25_VMom",
+      "status": "active",
+      "chip_family": "NTAG216",
+      "chip_variant": "NTAG216",
+      "chip_origin": "NXP",
+      "memory_bytes": 888,
+      "form_factor": "sticker",
+      "surface_support": [
+        "standard"
+      ],
+      "material": "",
+      "size": "30 mm",
+      "best_for": [
+        "Colored & Printed Designs",
+        "NFC Stickers & Tags",
+        "NTAG216 NXP",
+        "Smart Home Onboarding",
+        "Smart Poster",
+        "SOP/How to"
+      ],
+      "avoid_if": [
+        "metal-backed placement",
+        "secure authentication workflows"
+      ],
+      "works_with": [
+        "iPhone",
+        "Android"
+      ],
+      "secure_auth_suitable": false,
+      "custom_print_available": true,
+      "encoding_available": true,
+      "bulk_quote_required_over_qty": 100,
+      "price_currency": "INR",
+      "price_from": 90,
+      "price_to": 90,
+      "stock_status": "in_stock",
+      "last_updated": "2026-09-02"
+    },
+    {
+      "id": "cG9zdDo5Ng==",
+      "slug": "nfc-nxp-ntag215-plain-coin-tag-sticker-25-mm",
+      "title": "LINQS NFC NXP NTAG215 Plain Coin Tag Sticker 25 mm",
+      "url": "https://shop.linqs.in/product/nfc-nxp-ntag215-plain-coin-tag-sticker-25-mm",
+      "sku": "S_215_26_VMom",
+      "status": "active",
+      "chip_family": "NTAG215",
+      "chip_variant": "NTAG215",
+      "chip_origin": "NXP",
+      "memory_bytes": 504,
+      "form_factor": "sticker",
+      "surface_support": [
+        "standard"
+      ],
+      "material": "",
+      "size": "25 mm",
+      "best_for": [
+        "Coin Tags",
+        "NTAG215 NXP",
+        "Scavenger Hunt/Gaming",
+        "Specialty Products"
+      ],
+      "avoid_if": [
+        "metal-backed placement",
+        "secure authentication workflows"
+      ],
+      "works_with": [
+        "iPhone",
+        "Android"
+      ],
+      "secure_auth_suitable": false,
+      "custom_print_available": true,
+      "encoding_available": true,
+      "bulk_quote_required_over_qty": 100,
+      "price_currency": "INR",
+      "price_from": 80,
+      "price_to": 80,
+      "stock_status": "in_stock",
+      "last_updated": "2026-09-02"
+    },
+    {
+      "id": "cG9zdDo0ODc=",
+      "slug": "nfc-nxp-desfire-8k-ev1-plain-pvc-card",
+      "title": "LINQS NFC NXP Desfire 8K EV1 Plain PVC Card",
+      "url": "https://shop.linqs.in/product/nfc-nxp-desfire-8k-ev1-plain-pvc-card",
+      "sku": "C_D8K_21_VMom",
+      "status": "active",
+      "chip_family": "MIFARE DESFIRE EV1 8k",
+      "chip_variant": "MIFARE DESFIRE EV1 8k",
+      "chip_origin": "NXP",
+      "memory_bytes": 8192,
+      "form_factor": "card",
+      "surface_support": [
+        "standard"
+      ],
+      "material": "",
+      "size": "85.6 x 54 mm",
+      "best_for": [
+        "Access Control",
+        "Desfire 8K EV1",
+        "General Purpose",
+        "High Memory Cards",
+        "NFC Cards",
+        "Vehicle Info"
+      ],
+      "avoid_if": [
+        "metal-backed placement"
+      ],
+      "works_with": [
+        "iPhone",
+        "Android"
+      ],
+      "secure_auth_suitable": true,
+      "custom_print_available": true,
+      "encoding_available": true,
+      "bulk_quote_required_over_qty": 100,
+      "price_currency": "INR",
+      "price_from": 240,
+      "price_to": 240,
+      "stock_status": "out_of_stock",
+      "last_updated": "2026-09-02"
+    },
+    {
+      "id": "cG9zdDo5MDI=",
+      "slug": "nfc-nxp-ntag216-phone-back-pvc-sticker",
+      "title": "LINQS NFC NXP NTAG216 Phone Back PVC Sticker",
+      "url": "https://shop.linqs.in/product/nfc-nxp-ntag216-phone-back-pvc-sticker",
+      "sku": "S_216_23_VMom",
+      "status": "active",
+      "chip_family": "NTAG216",
+      "chip_variant": "NTAG216",
+      "chip_origin": "NXP",
+      "memory_bytes": 888,
+      "form_factor": "sticker",
+      "surface_support": [
+        "standard"
+      ],
+      "material": "",
+      "size": "30 mm",
+      "best_for": [
+        "Coin Tags",
+        "Contact Sharing",
+        "NTAG216 NXP",
+        "Profile & Social Links",
+        "Specialty Products",
+        "Vehicle Info"
+      ],
+      "avoid_if": [
+        "metal-backed placement",
+        "secure authentication workflows"
+      ],
+      "works_with": [
+        "iPhone",
+        "Android"
+      ],
+      "secure_auth_suitable": false,
+      "custom_print_available": true,
+      "encoding_available": true,
+      "bulk_quote_required_over_qty": 100,
+      "price_currency": "INR",
+      "price_from": 130,
+      "price_to": 130,
+      "stock_status": "in_stock",
+      "last_updated": "2026-09-02"
+    },
+    {
+      "id": "cG9zdDo0OQ==",
+      "slug": "nfc-ntag216-phone-back-anti-metal-sticker-25mm",
+      "title": "LINQS NFC NTAG216 Phone Back Anti-Metal Sticker 25mm",
+      "url": "https://shop.linqs.in/product/nfc-ntag216-phone-back-anti-metal-sticker-25mm",
+      "sku": "S_216_24_VMom",
+      "status": "active",
+      "chip_family": "NTAG216",
+      "chip_variant": "NTAG216",
+      "chip_origin": "NXP",
+      "memory_bytes": 888,
+      "form_factor": "sticker",
+      "surface_support": [
+        "standard",
+        "anti-metal"
+      ],
+      "material": "",
+      "size": "30 mm",
+      "best_for": [
+        "Anti-Metal Stickers",
+        "Contact Sharing",
+        "General Purpose",
+        "NFC Stickers & Tags",
+        "NTAG216 NXP",
+        "Profile & Social Links",
+        "Vehicle Info"
+      ],
+      "avoid_if": [
+        "secure authentication workflows"
+      ],
+      "works_with": [
+        "iPhone",
+        "Android"
+      ],
+      "secure_auth_suitable": false,
+      "custom_print_available": true,
+      "encoding_available": true,
+      "bulk_quote_required_over_qty": 100,
+      "price_currency": "INR",
+      "price_from": 150,
+      "price_to": 150,
+      "stock_status": "in_stock",
+      "last_updated": "2026-09-02"
+    },
+    {
+      "id": "cG9zdDo0NzY=",
+      "slug": "nfc-ntag216-compatible-pvc-plain-card",
+      "title": "LINQS NFC NTAG216 Compatible PVC Plain Card",
+      "url": "https://shop.linqs.in/product/nfc-ntag216-compatible-pvc-plain-card",
+      "sku": "C_216_21_C_VMom",
+      "status": "active",
+      "chip_family": "NTAG216 compatible",
+      "chip_variant": "NTAG216 compatible",
+      "chip_origin": "other",
+      "memory_bytes": 888,
+      "form_factor": "card",
+      "surface_support": [
+        "standard"
+      ],
+      "material": "",
+      "size": "85.6 x 54 mm",
+      "best_for": [
+        "General Purpose",
+        "High Memory Cards",
+        "NFC Cards",
+        "NTAG216 NXP",
+        "Vehicle Info"
+      ],
+      "avoid_if": [
+        "metal-backed placement",
+        "secure authentication workflows"
+      ],
+      "works_with": [
+        "iPhone",
+        "Android"
+      ],
+      "secure_auth_suitable": false,
+      "custom_print_available": true,
+      "encoding_available": true,
+      "bulk_quote_required_over_qty": 100,
+      "price_currency": "INR",
+      "price_from": 90,
+      "price_to": 90,
+      "stock_status": "in_stock",
+      "last_updated": "2026-09-02"
+    },
+    {
+      "id": "cG9zdDo0MjM=",
+      "slug": "nfc-nxp-ntag216-pvc-plain-card",
+      "title": "LINQS NFC NXP NTAG216 PVC Plain Card",
+      "url": "https://shop.linqs.in/product/nfc-nxp-ntag216-pvc-plain-card",
+      "sku": "C_216_21_VMom",
+      "status": "active",
+      "chip_family": "NTAG216",
+      "chip_variant": "NTAG216",
+      "chip_origin": "NXP",
+      "memory_bytes": 888,
+      "form_factor": "card",
+      "surface_support": [
+        "standard"
+      ],
+      "material": "",
+      "size": "85.6 x 54 mm",
+      "best_for": [
+        "General Purpose",
+        "High Memory Cards",
+        "NFC Cards",
+        "NTAG216 NXP",
+        "Vehicle Info"
+      ],
+      "avoid_if": [
+        "metal-backed placement",
+        "secure authentication workflows"
+      ],
+      "works_with": [
+        "iPhone",
+        "Android"
+      ],
+      "secure_auth_suitable": false,
+      "custom_print_available": true,
+      "encoding_available": true,
+      "bulk_quote_required_over_qty": 100,
+      "price_currency": "INR",
+      "price_from": 125,
+      "price_to": 125,
+      "stock_status": "in_stock",
+      "last_updated": "2026-09-02"
+    },
+    {
+      "id": "cG9zdDo4OTA=",
+      "slug": "nfc-nxp-ntag216-micro-sticker-8x18mm",
+      "title": "LINQS NFC NXP NTAG216 Micro Sticker 8x18mm",
+      "url": "https://shop.linqs.in/product/nfc-nxp-ntag216-micro-sticker-8x18mm",
+      "sku": "S_216_22_VMom",
+      "status": "active",
+      "chip_family": "NTAG216",
+      "chip_variant": "NTAG216",
+      "chip_origin": "NXP",
+      "memory_bytes": 888,
+      "form_factor": "sticker",
+      "surface_support": [
+        "standard"
+      ],
+      "material": "",
+      "size": "8 mm x 18 mm",
+      "best_for": [
+        "Device Setup",
+        "General Purpose",
+        "Micro & Ultra-Thin",
+        "NFC Stickers & Tags",
+        "NTAG216 NXP"
+      ],
+      "avoid_if": [
+        "metal-backed placement",
+        "secure authentication workflows"
+      ],
+      "works_with": [
+        "iPhone",
+        "Android"
+      ],
+      "secure_auth_suitable": false,
+      "custom_print_available": true,
+      "encoding_available": true,
+      "bulk_quote_required_over_qty": 100,
+      "price_currency": "INR",
+      "price_from": 90,
+      "price_to": 90,
+      "stock_status": "in_stock",
+      "last_updated": "2026-09-02"
+    },
+    {
+      "id": "cG9zdDo0NTA=",
+      "slug": "nfc-nxp-ntag215-plain-sticker-30-mm-pet",
+      "title": "LINQS NFC NXP NTAG215 Plain Sticker, 30 mm, PET",
+      "url": "https://shop.linqs.in/product/nfc-nxp-ntag215-plain-sticker-30-mm-pet",
+      "sku": "S_215_22_VMom",
+      "status": "active",
+      "chip_family": "NTAG215",
+      "chip_variant": "NTAG215",
+      "chip_origin": "NXP",
+      "memory_bytes": 504,
+      "form_factor": "sticker",
+      "surface_support": [
+        "standard"
+      ],
+      "material": "",
+      "size": "25 mm",
+      "best_for": [
+        "General Purpose",
+        "NFC Stickers & Tags",
+        "NTAG215 NXP",
+        "Scavenger Hunt/Gaming",
+        "Standard Stickers"
+      ],
+      "avoid_if": [
+        "metal-backed placement",
+        "secure authentication workflows"
+      ],
+      "works_with": [
+        "iPhone",
+        "Android"
+      ],
+      "secure_auth_suitable": false,
+      "custom_print_available": true,
+      "encoding_available": true,
+      "bulk_quote_required_over_qty": 100,
+      "price_currency": "INR",
+      "price_from": 70,
+      "price_to": 70,
+      "stock_status": "in_stock",
+      "last_updated": "2026-09-02"
+    },
+    {
+      "id": "cG9zdDo4NTY=",
+      "slug": "nfc-nxp-ntag215-plain-coin-tag-20mm",
+      "title": "LINQS NFC NXP NTAG215 Plain Coin Tag 20mm",
+      "url": "https://shop.linqs.in/product/nfc-nxp-ntag215-plain-coin-tag-20mm",
+      "sku": "S_215_25_VMom",
+      "status": "active",
+      "chip_family": "NTAG215",
+      "chip_variant": "NTAG215",
+      "chip_origin": "NXP",
+      "memory_bytes": 504,
+      "form_factor": "other",
+      "surface_support": [
+        "standard"
+      ],
+      "material": "",
+      "size": "20 mm",
+      "best_for": [
+        "Coin Tags",
+        "NTAG215 NXP",
+        "Scavenger Hunt/Gaming",
+        "Specialty Products"
+      ],
+      "avoid_if": [
+        "metal-backed placement",
+        "secure authentication workflows"
+      ],
+      "works_with": [
+        "iPhone",
+        "Android"
+      ],
+      "secure_auth_suitable": false,
+      "custom_print_available": true,
+      "encoding_available": true,
+      "bulk_quote_required_over_qty": 100,
+      "price_currency": "INR",
+      "price_from": 80,
+      "price_to": 80,
+      "stock_status": "in_stock",
+      "last_updated": "2026-09-02"
+    },
+    {
+      "id": "cG9zdDozNzA=",
+      "slug": "nfc-ntag215-compatible-pvc-plain-card",
+      "title": "LINQS NFC NTAG215 Compatible PVC Plain Card",
+      "url": "https://shop.linqs.in/product/nfc-ntag215-compatible-pvc-plain-card",
+      "sku": "C_215_21_C_VMom",
+      "status": "active",
+      "chip_family": "NTAG215",
+      "chip_variant": "NTAG215",
+      "chip_origin": "other",
+      "memory_bytes": 504,
+      "form_factor": "card",
+      "surface_support": [
+        "standard"
+      ],
+      "material": "",
+      "size": "85.6 x 54 mm",
+      "best_for": [
+        "Access Control",
+        "General Purpose",
+        "High Memory Cards",
+        "NFC Cards",
+        "NTAG215 Compatible",
+        "Scavenger Hunt/Gaming"
+      ],
+      "avoid_if": [
+        "metal-backed placement",
+        "secure authentication workflows"
+      ],
+      "works_with": [
+        "iPhone",
+        "Android"
+      ],
+      "secure_auth_suitable": false,
+      "custom_print_available": true,
+      "encoding_available": true,
+      "bulk_quote_required_over_qty": 100,
+      "price_currency": "INR",
+      "price_from": 75,
+      "price_to": 75,
+      "stock_status": "in_stock",
+      "last_updated": "2026-09-02"
+    },
+    {
+      "id": "cG9zdDo2OTg=",
+      "slug": "wifi-nfc-sticker-m1-white-ntag213-chip",
+      "title": "LINQS WiFi NFC Sticker M1 White | NTAG213 Chip",
+      "url": "https://shop.linqs.in/product/wifi-nfc-sticker-m1-white-ntag213-chip",
+      "sku": "SP_WIFI_S_1_WHITE_VMom",
+      "status": "active",
+      "chip_family": "NTAG213",
+      "chip_variant": "NTAG213",
+      "chip_origin": "other",
+      "memory_bytes": 144,
+      "form_factor": "sticker",
+      "surface_support": [
+        "standard"
+      ],
+      "material": "",
+      "size": "50 mm",
+      "best_for": [
+        "General Purpose",
+        "NTAG213 Compatible",
+        "Specialty Products",
+        "Wi Fi Share",
+        "WiFi Sharing"
+      ],
+      "avoid_if": [
+        "metal-backed placement",
+        "secure authentication workflows"
+      ],
+      "works_with": [
+        "iPhone",
+        "Android"
+      ],
+      "secure_auth_suitable": false,
+      "custom_print_available": true,
+      "encoding_available": true,
+      "bulk_quote_required_over_qty": 100,
+      "price_currency": "INR",
+      "price_from": 100,
+      "price_to": 100,
+      "stock_status": "in_stock",
+      "last_updated": "2026-09-02"
+    },
+    {
+      "id": "cG9zdDoyMDc=",
+      "slug": "nfc-nxp-ntag216-pvc-key-card-hang-tag",
+      "title": "LINQS NFC NXP NTAG216 PVC Key Card Hang Tag",
+      "url": "https://shop.linqs.in/product/nfc-nxp-ntag216-pvc-key-card-hang-tag",
+      "sku": "H_216_22_VMom",
+      "status": "active",
+      "chip_family": "NTAG216",
+      "chip_variant": "NTAG216",
+      "chip_origin": "NXP",
+      "memory_bytes": 888,
+      "form_factor": "keychain",
+      "surface_support": [
+        "standard"
+      ],
+      "material": "",
+      "size": "56 mm x 28 mm",
+      "best_for": [
+        "Access Control",
+        "Asset Tracking",
+        "General Purpose",
+        "Hotel Room Key",
+        "Inventory Tagging",
+        "Lost & Found/ICE",
+        "NFC Keychains & Hang Tags",
+        "NTAG216 NXP",
+        "Profile & Social Links",
+        "Standard Hang Tags"
+      ],
+      "avoid_if": [
+        "metal-backed placement",
+        "secure authentication workflows"
+      ],
+      "works_with": [
+        "iPhone",
+        "Android"
+      ],
+      "secure_auth_suitable": false,
+      "custom_print_available": true,
+      "encoding_available": true,
+      "bulk_quote_required_over_qty": 100,
+      "price_currency": "INR",
+      "price_from": 160,
+      "price_to": 160,
+      "stock_status": "in_stock",
+      "last_updated": "2026-09-02"
+    },
+    {
+      "id": "cG9zdDozMDY=",
+      "slug": "nfc-nxp-ntag215-pvc-plain-card",
+      "title": "LINQS NFC NXP NTAG215 PVC Plain Card",
+      "url": "https://shop.linqs.in/product/nfc-nxp-ntag215-pvc-plain-card",
+      "sku": "C_215_21_VMom",
+      "status": "active",
+      "chip_family": "NTAG215",
+      "chip_variant": "NTAG215",
+      "chip_origin": "NXP",
+      "memory_bytes": 504,
+      "form_factor": "card",
+      "surface_support": [
+        "standard"
+      ],
+      "material": "",
+      "size": "85.6 x 54 mm",
+      "best_for": [
+        "Access Control",
+        "General Purpose",
+        "High Memory Cards",
+        "NFC Cards",
+        "NTAG215 NXP",
+        "Scavenger Hunt/Gaming"
+      ],
+      "avoid_if": [
+        "metal-backed placement",
+        "secure authentication workflows"
+      ],
+      "works_with": [
+        "iPhone",
+        "Android"
+      ],
+      "secure_auth_suitable": false,
+      "custom_print_available": true,
+      "encoding_available": true,
+      "bulk_quote_required_over_qty": 100,
+      "price_currency": "INR",
+      "price_from": 100,
+      "price_to": 100,
+      "stock_status": "in_stock",
+      "last_updated": "2026-09-02"
+    },
+    {
+      "id": "cG9zdDo4MDI=",
+      "slug": "nfc-nxp-ntag215-nmark-sticker-30-mm-504-bytes",
+      "title": "LINQS NFC NXP NTAG215 Nmark Sticker, 30 mm, 504 Bytes",
+      "url": "https://shop.linqs.in/product/nfc-nxp-ntag215-nmark-sticker-30-mm-504-bytes",
+      "sku": "S_215_21_VMom",
+      "status": "active",
+      "chip_family": "NTAG215",
+      "chip_variant": "NTAG215",
+      "chip_origin": "NXP",
+      "memory_bytes": 504,
+      "form_factor": "sticker",
+      "surface_support": [
+        "standard"
+      ],
+      "material": "",
+      "size": "25 mm",
+      "best_for": [
+        "Colored & Printed Designs",
+        "General Purpose",
+        "NFC Stickers & Tags",
+        "NTAG215 NXP",
+        "Scavenger Hunt/Gaming"
+      ],
+      "avoid_if": [
+        "metal-backed placement",
+        "secure authentication workflows"
+      ],
+      "works_with": [
+        "iPhone",
+        "Android"
+      ],
+      "secure_auth_suitable": false,
+      "custom_print_available": true,
+      "encoding_available": true,
+      "bulk_quote_required_over_qty": 100,
+      "price_currency": "INR",
+      "price_from": 80,
+      "price_to": 80,
+      "stock_status": "out_of_stock",
+      "last_updated": "2026-09-02"
+    },
+    {
+      "id": "cG9zdDoyMjg=",
+      "slug": "nxp-ntag216-keychain-nfc-house-tag",
+      "title": "LINQS NXP NTAG216 Keychain NFC House Tag",
+      "url": "https://shop.linqs.in/product/nxp-ntag216-keychain-nfc-house-tag",
+      "sku": "H_NH_216_23_VMom",
+      "status": "active",
+      "chip_family": "NTAG216",
+      "chip_variant": "NTAG216",
+      "chip_origin": "NXP",
+      "memory_bytes": 888,
+      "form_factor": "keychain",
+      "surface_support": [
+        "standard"
+      ],
+      "material": "",
+      "size": "30 mm",
+      "best_for": [
+        "Asset Tracking",
+        "Epoxy Domed & Premium",
+        "General Purpose",
+        "Inventory Tagging",
+        "Lost & Found/ICE",
+        "NFC Keychains & Hang Tags",
+        "NTAG216 NXP",
+        "Profile & Social Links",
+        "Smart Home Onboarding"
+      ],
+      "avoid_if": [
+        "metal-backed placement",
+        "secure authentication workflows"
+      ],
+      "works_with": [
+        "iPhone",
+        "Android"
+      ],
+      "secure_auth_suitable": false,
+      "custom_print_available": true,
+      "encoding_available": true,
+      "bulk_quote_required_over_qty": 100,
+      "price_currency": "INR",
+      "price_from": 150,
+      "price_to": 150,
+      "stock_status": "in_stock",
+      "last_updated": "2026-09-02"
+    },
+    {
+      "id": "cG9zdDo4Mjk=",
+      "slug": "nfc-nxp-ntag213-nerdi-tags",
+      "title": "LINQS NXP NTAG213 Nerdi NFC Tags, Epoxy Domed Stickers",
+      "url": "https://shop.linqs.in/product/nfc-nxp-ntag213-nerdi-tags",
+      "sku": "S_213_Nerdi_5_VMom",
+      "status": "active",
+      "chip_family": "NTAG213",
+      "chip_variant": "NTAG213",
+      "chip_origin": "NXP",
+      "memory_bytes": 144,
+      "form_factor": "sticker",
+      "surface_support": [
+        "standard"
+      ],
+      "material": "",
+      "size": "30 mm",
+      "best_for": [
+        "Colored & Printed Designs",
+        "Event Ticket",
+        "Loyalty/Rewards",
+        "NFC Stickers & Tags",
+        "NTAG213 NXP",
+        "Scavenger Hunt/Gaming",
+        "Smart Home Onboarding"
+      ],
+      "avoid_if": [
+        "metal-backed placement",
+        "secure authentication workflows"
+      ],
+      "works_with": [
+        "iPhone",
+        "Android"
+      ],
+      "secure_auth_suitable": false,
+      "custom_print_available": true,
+      "encoding_available": true,
+      "bulk_quote_required_over_qty": 100,
+      "price_currency": "INR",
+      "price_from": 70,
+      "price_to": 70,
+      "stock_status": "in_stock",
+      "last_updated": "2026-09-02"
+    },
+    {
+      "id": "cG9zdDo4Mw==",
+      "slug": "nfc-nxp-ntag215-coin-tag-25mm",
+      "title": "LINQS NFC NXP NTAG215 Coin Tag 25mm",
+      "url": "https://shop.linqs.in/product/nfc-nxp-ntag215-coin-tag-25mm",
+      "sku": "S_215_24_VMom",
+      "status": "active",
+      "chip_family": "NTAG215",
+      "chip_variant": "NTAG215",
+      "chip_origin": "NXP",
+      "memory_bytes": 504,
+      "form_factor": "other",
+      "surface_support": [
+        "standard"
+      ],
+      "material": "",
+      "size": "25 mm",
+      "best_for": [
+        "Coin Tags",
+        "General Purpose",
+        "NTAG215 NXP",
+        "Scavenger Hunt/Gaming",
+        "Specialty Products"
+      ],
+      "avoid_if": [
+        "metal-backed placement",
+        "secure authentication workflows"
+      ],
+      "works_with": [
+        "iPhone",
+        "Android"
+      ],
+      "secure_auth_suitable": false,
+      "custom_print_available": true,
+      "encoding_available": true,
+      "bulk_quote_required_over_qty": 100,
+      "price_currency": "INR",
+      "price_from": 90,
+      "price_to": 90,
+      "stock_status": "in_stock",
+      "last_updated": "2026-09-02"
+    },
+    {
+      "id": "cG9zdDoyNTI=",
+      "slug": "nfc-nxp-ntag213-pvc-matte-black-card",
+      "title": "LINQS NFC NXP NTAG213 PVC Matte Black Card",
+      "url": "https://shop.linqs.in/product/nfc-nxp-ntag213-pvc-matte-black-card",
+      "sku": "C_213_24_VMom",
+      "status": "active",
+      "chip_family": "NTAG213",
+      "chip_variant": "NTAG213",
+      "chip_origin": "NXP",
+      "memory_bytes": 144,
+      "form_factor": "card",
+      "surface_support": [
+        "standard"
+      ],
+      "material": "",
+      "size": "85.6 x 54 mm",
+      "best_for": [
+        "Access Control",
+        "Black Cards",
+        "Loyalty/Rewards",
+        "NFC Cards",
+        "NTAG213 NXP",
+        "Vehicle Info"
+      ],
+      "avoid_if": [
+        "metal-backed placement",
+        "secure authentication workflows"
+      ],
+      "works_with": [
+        "iPhone",
+        "Android"
+      ],
+      "secure_auth_suitable": false,
+      "custom_print_available": true,
+      "encoding_available": true,
+      "bulk_quote_required_over_qty": 100,
+      "price_currency": "INR",
+      "price_from": 80,
+      "price_to": 80,
+      "stock_status": "in_stock",
+      "last_updated": "2026-09-02"
+    },
+    {
+      "id": "cG9zdDo0MTM0",
+      "slug": "nfc-nxp-ntag213-pvc-glossy-black-card",
+      "title": "LINQS NFC NXP NTAG213 PVC Glossy Black Card",
+      "url": "https://shop.linqs.in/product/nfc-nxp-ntag213-pvc-glossy-black-card",
+      "sku": "C_213_24_G_VMom",
+      "status": "active",
+      "chip_family": "NTAG213",
+      "chip_variant": "NTAG213",
+      "chip_origin": "NXP",
+      "memory_bytes": 144,
+      "form_factor": "card",
+      "surface_support": [
+        "standard"
+      ],
+      "material": "",
+      "size": "85.6 x 54 mm",
+      "best_for": [
+        "Access Control",
+        "Black Cards",
+        "Loyalty/Rewards",
+        "NFC Cards",
+        "NTAG213 NXP",
+        "Vehicle Info"
+      ],
+      "avoid_if": [
+        "metal-backed placement",
+        "secure authentication workflows"
+      ],
+      "works_with": [
+        "iPhone",
+        "Android"
+      ],
+      "secure_auth_suitable": false,
+      "custom_print_available": true,
+      "encoding_available": true,
+      "bulk_quote_required_over_qty": 100,
+      "price_currency": "INR",
+      "price_from": 80,
+      "price_to": 80,
+      "stock_status": "in_stock",
+      "last_updated": "2026-09-02"
+    },
+    {
+      "id": "cG9zdDoxMjc=",
+      "slug": "nxp-ntag213-nfc-nail-tag",
+      "title": "LINQS NXP NTAG213 NFC Nail Tag",
+      "url": "https://shop.linqs.in/product/nxp-ntag213-nfc-nail-tag",
+      "sku": "N_213_21_VMom",
+      "status": "active",
+      "chip_family": "NTAG213",
+      "chip_variant": "NTAG213",
+      "chip_origin": "NXP",
+      "memory_bytes": 144,
+      "form_factor": "other",
+      "surface_support": [
+        "standard"
+      ],
+      "material": "",
+      "size": "28 mm dia x 41 mm length",
+      "best_for": [
+        "Asset Tracking",
+        "Nail Tags",
+        "NTAG213 NXP",
+        "Smart Poster",
+        "Specialty Products"
+      ],
+      "avoid_if": [
+        "metal-backed placement",
+        "secure authentication workflows"
+      ],
+      "works_with": [
+        "iPhone",
+        "Android"
+      ],
+      "secure_auth_suitable": false,
+      "custom_print_available": true,
+      "encoding_available": true,
+      "bulk_quote_required_over_qty": 100,
+      "price_currency": "INR",
+      "price_from": 110,
+      "price_to": 110,
+      "stock_status": "in_stock",
+      "last_updated": "2026-09-02"
+    },
+    {
+      "id": "cG9zdDozMzQ=",
+      "slug": "ntag213-compatible-pvc-black-nfc-card-black",
+      "title": "LINQS NTAG213 Compatible PVC Black NFC Card, Black",
+      "url": "https://shop.linqs.in/product/ntag213-compatible-pvc-black-nfc-card-black",
+      "sku": "C_213_24_C_VMom",
+      "status": "active",
+      "chip_family": "NTAG213",
+      "chip_variant": "NTAG213",
+      "chip_origin": "other",
+      "memory_bytes": 144,
+      "form_factor": "card",
+      "surface_support": [
+        "standard"
+      ],
+      "material": "",
+      "size": "85.6 x 54 mm",
+      "best_for": [
+        "Access Control",
+        "Black Cards",
+        "Loyalty/Rewards",
+        "NFC Cards",
+        "NTAG213 Compatible",
+        "Vehicle Info"
+      ],
+      "avoid_if": [
+        "metal-backed placement",
+        "secure authentication workflows"
+      ],
+      "works_with": [
+        "iPhone",
+        "Android"
+      ],
+      "secure_auth_suitable": false,
+      "custom_print_available": true,
+      "encoding_available": true,
+      "bulk_quote_required_over_qty": 100,
+      "price_currency": "INR",
+      "price_from": 60,
+      "price_to": 60,
+      "stock_status": "out_of_stock",
+      "last_updated": "2026-09-02"
+    },
+    {
+      "id": "cG9zdDo1MjY=",
+      "slug": "nfc-nxp-ntag216-jelly-hang-tag",
+      "title": "LINQS NFC NXP NTAG216 Jelly Hang Tag",
+      "url": "https://shop.linqs.in/product/nfc-nxp-ntag216-jelly-hang-tag",
+      "sku": "H_216_21_VMom",
+      "status": "active",
+      "chip_family": "NTAG216",
+      "chip_variant": "NTAG216",
+      "chip_origin": "NXP",
+      "memory_bytes": 888,
+      "form_factor": "keychain",
+      "surface_support": [
+        "standard"
+      ],
+      "material": "",
+      "size": "30 mm",
+      "best_for": [
+        "Asset Tracking",
+        "Epoxy Domed & Premium",
+        "General Purpose",
+        "Inventory Tagging",
+        "Lost & Found/ICE",
+        "NFC Keychains & Hang Tags",
+        "NTAG216 NXP",
+        "Profile & Social Links"
+      ],
+      "avoid_if": [
+        "metal-backed placement",
+        "secure authentication workflows"
+      ],
+      "works_with": [
+        "iPhone",
+        "Android"
+      ],
+      "secure_auth_suitable": false,
+      "custom_print_available": true,
+      "encoding_available": true,
+      "bulk_quote_required_over_qty": 100,
+      "price_currency": "INR",
+      "price_from": 160,
+      "price_to": 160,
+      "stock_status": "in_stock",
+      "last_updated": "2026-09-02"
+    },
+    {
+      "id": "cG9zdDoyMTY=",
+      "slug": "nfc-nxp-ntag213-large-sticker-50x75mm",
+      "title": "LINQS NFC NXP NTAG213 Large Sticker 50x75mm",
+      "url": "https://shop.linqs.in/product/nfc-nxp-ntag213-large-sticker-50x75mm",
+      "sku": "S_213_30_VMom",
+      "status": "active",
+      "chip_family": "NTAG213",
+      "chip_variant": "NTAG213",
+      "chip_origin": "NXP",
+      "memory_bytes": 144,
+      "form_factor": "sticker",
+      "surface_support": [
+        "standard"
+      ],
+      "material": "",
+      "size": "50x75 mm",
+      "best_for": [
+        "General Purpose",
+        "Large Stickers",
+        "NFC Stickers & Tags",
+        "NTAG213 NXP",
+        "Smart Poster"
+      ],
+      "avoid_if": [
+        "metal-backed placement",
+        "secure authentication workflows"
+      ],
+      "works_with": [
+        "iPhone",
+        "Android"
+      ],
+      "secure_auth_suitable": false,
+      "custom_print_available": true,
+      "encoding_available": true,
+      "bulk_quote_required_over_qty": 100,
+      "price_currency": "INR",
+      "price_from": 75,
+      "price_to": 75,
+      "stock_status": "in_stock",
+      "last_updated": "2026-09-02"
+    },
+    {
+      "id": "cG9zdDozMjE=",
+      "slug": "social-media-whatsapp-nfc-qr-code-keychain-model-1",
+      "title": "LINQS Social Media Whatsapp NFC & QR Code Keychain Model 1",
+      "url": "https://shop.linqs.in/product/social-media-whatsapp-nfc-qr-code-keychain-model-1",
+      "sku": "LINQS_SMKC_WA_1_VMom",
+      "status": "active",
+      "chip_family": "NTAG213",
+      "chip_variant": "NTAG213",
+      "chip_origin": "NXP",
+      "memory_bytes": 144,
+      "form_factor": "keychain",
+      "surface_support": [
+        "standard"
+      ],
+      "material": "",
+      "size": "50 mm",
+      "best_for": [
+        "Business Card",
+        "Contact Sharing",
+        "NFC Keychains & Hang Tags",
+        "NTAG213 Compatible",
+        "Social Media Keychains",
+        "WhatsApp Chat/Support"
+      ],
+      "avoid_if": [
+        "metal-backed placement",
+        "secure authentication workflows"
+      ],
+      "works_with": [
+        "iPhone",
+        "Android"
+      ],
+      "secure_auth_suitable": false,
+      "custom_print_available": true,
+      "encoding_available": true,
+      "bulk_quote_required_over_qty": 100,
+      "price_currency": "INR",
+      "price_from": 275,
+      "price_to": 275,
+      "stock_status": "in_stock",
+      "last_updated": "2026-09-02"
+    },
+    {
+      "id": "cG9zdDo1MTc=",
+      "slug": "nfc-nxp-ntag216-dry-inlay-30mm-high-memory",
+      "title": "LINQS NFC NXP NTAG216 Dry Inlay, 30mm, High Memory",
+      "url": "https://shop.linqs.in/product/nfc-nxp-ntag216-dry-inlay-30mm-high-memory",
+      "sku": "DI_216_21_VMom",
+      "status": "active",
+      "chip_family": "NTAG216",
+      "chip_variant": "NTAG216",
+      "chip_origin": "NXP",
+      "memory_bytes": 888,
+      "form_factor": "inlay",
+      "surface_support": [
+        "standard"
+      ],
+      "material": "",
+      "size": "25 mm",
+      "best_for": [
+        "Developer Testing/Prototyping",
+        "Developer Tools & Kits",
+        "Dry Inlays",
+        "NTAG216 NXP",
+        "Sampling/Mass Deployment"
+      ],
+      "avoid_if": [
+        "metal-backed placement",
+        "secure authentication workflows"
+      ],
+      "works_with": [
+        "iPhone",
+        "Android"
+      ],
+      "secure_auth_suitable": false,
+      "custom_print_available": true,
+      "encoding_available": true,
+      "bulk_quote_required_over_qty": 100,
+      "price_currency": "INR",
+      "price_from": 80,
+      "price_to": 80,
+      "stock_status": "in_stock",
+      "last_updated": "2026-09-02"
+    },
+    {
+      "id": "cG9zdDoyODA=",
+      "slug": "nfc-nxp-ntag213-pvc-matte-card",
+      "title": "LINQS NFC NXP NTAG213 PVC Matte Card",
+      "url": "https://shop.linqs.in/product/nfc-nxp-ntag213-pvc-matte-card",
+      "sku": "C_213_23_VMom",
+      "status": "active",
+      "chip_family": "NTAG213",
+      "chip_variant": "NTAG213",
+      "chip_origin": "NXP",
+      "memory_bytes": 144,
+      "form_factor": "card",
+      "surface_support": [
+        "standard"
+      ],
+      "material": "",
+      "size": "85.6 x 54 mm",
+      "best_for": [
+        "NFC Cards",
+        "NTAG213 NXP",
+        "Special Finish Cards",
+        "Vehicle Info"
+      ],
+      "avoid_if": [
+        "metal-backed placement",
+        "secure authentication workflows"
+      ],
+      "works_with": [
+        "iPhone",
+        "Android"
+      ],
+      "secure_auth_suitable": false,
+      "custom_print_available": true,
+      "encoding_available": true,
+      "bulk_quote_required_over_qty": 100,
+      "price_currency": "INR",
+      "price_from": 80,
+      "price_to": 80,
+      "stock_status": "in_stock",
+      "last_updated": "2026-09-02"
+    },
+    {
+      "id": "cG9zdDo3MjE=",
+      "slug": "nfc-nxp-ntag213-micro-fpc-sticker-10mm",
+      "title": "LINQS NFC NXP NTAG213 Micro FPC Sticker, 10mm",
+      "url": "https://shop.linqs.in/product/nfc-nxp-ntag213-micro-fpc-sticker-10mm",
+      "sku": "S_213_27_VMom",
+      "status": "active",
+      "chip_family": "NTAG213",
+      "chip_variant": "NTAG213",
+      "chip_origin": "NXP",
+      "memory_bytes": 144,
+      "form_factor": "sticker",
+      "surface_support": [
+        "standard"
+      ],
+      "material": "",
+      "size": "10 mm",
+      "best_for": [
+        "Device Setup",
+        "General Purpose",
+        "Merch Verification",
+        "Micro & Ultra-Thin",
+        "NFC Stickers & Tags",
+        "NTAG213 NXP"
+      ],
+      "avoid_if": [
+        "metal-backed placement",
+        "secure authentication workflows"
+      ],
+      "works_with": [
+        "iPhone",
+        "Android"
+      ],
+      "secure_auth_suitable": false,
+      "custom_print_available": true,
+      "encoding_available": true,
+      "bulk_quote_required_over_qty": 100,
+      "price_currency": "INR",
+      "price_from": 90,
+      "price_to": 90,
+      "stock_status": "out_of_stock",
+      "last_updated": "2026-09-02"
+    },
+    {
+      "id": "cG9zdDo2Mjc=",
+      "slug": "nfc-nxp-ntag213-laundry-tag-black-18mm",
+      "title": "LINQS NFC NXP NTAG213 Laundry Tag Black (18mm)",
+      "url": "https://shop.linqs.in/product/nfc-nxp-ntag213-laundry-tag-black-18mm",
+      "sku": "L_213_23_VMom",
+      "status": "active",
+      "chip_family": "NTAG213",
+      "chip_variant": "NTAG213",
+      "chip_origin": "NXP",
+      "memory_bytes": 144,
+      "form_factor": "other",
+      "surface_support": [
+        "standard"
+      ],
+      "material": "",
+      "size": "18 mm",
+      "best_for": [
+        "Laundry Tagging",
+        "Laundry Tags",
+        "NTAG213 NXP",
+        "Specialty Products"
+      ],
+      "avoid_if": [
+        "metal-backed placement",
+        "secure authentication workflows"
+      ],
+      "works_with": [
+        "iPhone",
+        "Android"
+      ],
+      "secure_auth_suitable": false,
+      "custom_print_available": true,
+      "encoding_available": true,
+      "bulk_quote_required_over_qty": 100,
+      "price_currency": "INR",
+      "price_from": 150,
+      "price_to": 150,
+      "stock_status": "in_stock",
+      "last_updated": "2026-09-02"
+    },
+    {
+      "id": "cG9zdDo1OTU=",
+      "slug": "nfc-social-media-spotify-keychain-model-1",
+      "title": "LINQS NFC Social Media Spotify Keychain Model 1",
+      "url": "https://shop.linqs.in/product/nfc-social-media-spotify-keychain-model-1",
+      "sku": "LINQS_SMKC_SPOTIFY_1_VMom",
+      "status": "active",
+      "chip_family": "NTAG213",
+      "chip_variant": "NTAG213",
+      "chip_origin": "other",
+      "memory_bytes": 144,
+      "form_factor": "keychain",
+      "surface_support": [
+        "standard"
+      ],
+      "material": "",
+      "size": "50 mm",
+      "best_for": [
+        "Loyalty/Rewards",
+        "Music Tap",
+        "NFC Keychains & Hang Tags",
+        "NTAG213 Compatible",
+        "Social Media Keychains"
+      ],
+      "avoid_if": [
+        "metal-backed placement",
+        "secure authentication workflows"
+      ],
+      "works_with": [
+        "iPhone",
+        "Android"
+      ],
+      "secure_auth_suitable": false,
+      "custom_print_available": true,
+      "encoding_available": true,
+      "bulk_quote_required_over_qty": 100,
+      "price_currency": "INR",
+      "price_from": 275,
+      "price_to": 275,
+      "stock_status": "in_stock",
+      "last_updated": "2026-09-02"
+    },
+    {
+      "id": "cG9zdDo5NDk=",
+      "slug": "nfc-nxp-ntag213-vinyl-printed-sticker-30mm",
+      "title": "LINQS NFC NXP NTAG213 Vinyl Printed Sticker 30mm",
+      "url": "https://shop.linqs.in/product/nfc-nxp-ntag213-vinyl-printed-sticker-30mm",
+      "sku": "S_213_23_VMom",
+      "status": "active",
+      "chip_family": "NTAG213",
+      "chip_variant": "NTAG213",
+      "chip_origin": "NXP",
+      "memory_bytes": 144,
+      "form_factor": "sticker",
+      "surface_support": [
+        "standard"
+      ],
+      "material": "",
+      "size": "30 mm",
+      "best_for": [
+        "Colored & Printed Designs",
+        "General Purpose",
+        "Loyalty/Rewards",
+        "Marketing/Promo",
+        "NFC Stickers & Tags",
+        "NTAG213 NXP",
+        "Product Info & Labels",
+        "Smart Home Onboarding"
+      ],
+      "avoid_if": [
+        "metal-backed placement",
+        "secure authentication workflows"
+      ],
+      "works_with": [
+        "iPhone",
+        "Android"
+      ],
+      "secure_auth_suitable": false,
+      "custom_print_available": true,
+      "encoding_available": true,
+      "bulk_quote_required_over_qty": 100,
+      "price_currency": "INR",
+      "price_from": 70,
+      "price_to": 70,
+      "stock_status": "in_stock",
+      "last_updated": "2026-09-02"
+    },
+    {
+      "id": "cG9zdDozOTg=",
+      "slug": "nfc-nxp-ntag213-pvc-inkjet-card",
+      "title": "LINQS NFC NXP NTAG213 PVC Inkjet Card",
+      "url": "https://shop.linqs.in/product/nfc-nxp-ntag213-pvc-inkjet-card",
+      "sku": "C_213_22_VMom",
+      "status": "active",
+      "chip_family": "NTAG213",
+      "chip_variant": "NTAG213",
+      "chip_origin": "NXP",
+      "memory_bytes": 144,
+      "form_factor": "card",
+      "surface_support": [
+        "standard"
+      ],
+      "material": "",
+      "size": "85.6 x 54 mm",
+      "best_for": [
+        "Event Ticket",
+        "Marketing/Promo",
+        "NFC Cards",
+        "NTAG213 NXP",
+        "Special Finish Cards",
+        "Vehicle Info"
+      ],
+      "avoid_if": [
+        "metal-backed placement",
+        "secure authentication workflows"
+      ],
+      "works_with": [
+        "iPhone",
+        "Android"
+      ],
+      "secure_auth_suitable": false,
+      "custom_print_available": true,
+      "encoding_available": true,
+      "bulk_quote_required_over_qty": 100,
+      "price_currency": "INR",
+      "price_from": 80,
+      "price_to": 80,
+      "stock_status": "out_of_stock",
+      "last_updated": "2026-09-02"
+    },
+    {
+      "id": "cG9zdDo0MDI5",
+      "slug": "nfc-nxp-ntag213-black-no-hole-laundry-tag-button-20mm",
+      "title": "LINQS NFC NXP NTAG213 Black No-Hole Laundry Tag Button 20mm",
+      "url": "https://shop.linqs.in/product/nfc-nxp-ntag213-black-no-hole-laundry-tag-button-20mm",
+      "sku": "L_213_25_VMom",
+      "status": "active",
+      "chip_family": "NTAG213",
+      "chip_variant": "NTAG213",
+      "chip_origin": "NXP",
+      "memory_bytes": 144,
+      "form_factor": "other",
+      "surface_support": [
+        "standard"
+      ],
+      "material": "",
+      "size": "20 mm",
+      "best_for": [
+        "Inventory Tagging",
+        "Laundry Tagging",
+        "Laundry Tags",
+        "NTAG213 NXP",
+        "Specialty Products"
+      ],
+      "avoid_if": [
+        "metal-backed placement",
+        "secure authentication workflows"
+      ],
+      "works_with": [
+        "iPhone",
+        "Android"
+      ],
+      "secure_auth_suitable": false,
+      "custom_print_available": true,
+      "encoding_available": true,
+      "bulk_quote_required_over_qty": 100,
+      "price_currency": "INR",
+      "price_from": 135,
+      "price_to": 135,
+      "stock_status": "in_stock",
+      "last_updated": "2026-09-02"
+    },
+    {
+      "id": "cG9zdDo0MTUw",
+      "slug": "nfc-nxp-ntag213-black-no-hole-laundry-tag-button-15mm",
+      "title": "LINQS NFC NXP NTAG213 Black No-Hole Laundry Tag Button 15mm",
+      "url": "https://shop.linqs.in/product/nfc-nxp-ntag213-black-no-hole-laundry-tag-button-15mm",
+      "sku": "L_213_26_VMom",
+      "status": "active",
+      "chip_family": "NTAG213",
+      "chip_variant": "NTAG213",
+      "chip_origin": "NXP",
+      "memory_bytes": 144,
+      "form_factor": "other",
+      "surface_support": [
+        "standard"
+      ],
+      "material": "",
+      "size": "15 mm",
+      "best_for": [
+        "Inventory Tagging",
+        "Laundry Tagging",
+        "Laundry Tags",
+        "NTAG213 NXP",
+        "Specialty Products"
+      ],
+      "avoid_if": [
+        "metal-backed placement",
+        "secure authentication workflows"
+      ],
+      "works_with": [
+        "iPhone",
+        "Android"
+      ],
+      "secure_auth_suitable": false,
+      "custom_print_available": true,
+      "encoding_available": true,
+      "bulk_quote_required_over_qty": 100,
+      "price_currency": "INR",
+      "price_from": 135,
+      "price_to": 135,
+      "stock_status": "in_stock",
+      "last_updated": "2026-09-02"
+    },
+    {
+      "id": "cG9zdDo5OTg=",
+      "slug": "nfc-nxp-ntag213-black-laundry-tag-button",
+      "title": "LINQS NFC NXP NTAG213 Black Laundry Tag Button",
+      "url": "https://shop.linqs.in/product/nfc-nxp-ntag213-black-laundry-tag-button",
+      "sku": "L_213_22_VMom",
+      "status": "active",
+      "chip_family": "NTAG213",
+      "chip_variant": "NTAG213",
+      "chip_origin": "NXP",
+      "memory_bytes": 144,
+      "form_factor": "other",
+      "surface_support": [
+        "standard"
+      ],
+      "material": "",
+      "size": "25 mm",
+      "best_for": [
+        "Inventory Tagging",
+        "Laundry Tagging",
+        "Laundry Tags",
+        "NTAG213 NXP",
+        "Specialty Products"
+      ],
+      "avoid_if": [
+        "metal-backed placement",
+        "secure authentication workflows"
+      ],
+      "works_with": [
+        "iPhone",
+        "Android"
+      ],
+      "secure_auth_suitable": false,
+      "custom_print_available": true,
+      "encoding_available": true,
+      "bulk_quote_required_over_qty": 100,
+      "price_currency": "INR",
+      "price_from": 150,
+      "price_to": 150,
+      "stock_status": "in_stock",
+      "last_updated": "2026-09-02"
+    },
+    {
+      "id": "cG9zdDoyNjU=",
+      "slug": "ntag213-compatible-white-printable-pvc-nfc-card",
+      "title": "LINQS NTAG213 Compatible White Printable PVC NFC Card",
+      "url": "https://shop.linqs.in/product/ntag213-compatible-white-printable-pvc-nfc-card",
+      "sku": "C_213_21_C_VMom",
+      "status": "active",
+      "chip_family": "NTAG213",
+      "chip_variant": "NTAG213",
+      "chip_origin": "other",
+      "memory_bytes": 144,
+      "form_factor": "card",
+      "surface_support": [
+        "standard"
+      ],
+      "material": "",
+      "size": "85.6 x 54 mm",
+      "best_for": [
+        "Access Control",
+        "Google Reviews",
+        "NFC Cards",
+        "NTAG213 Compatible",
+        "Profile & Social Links",
+        "Standard White Cards",
+        "Vehicle Info"
+      ],
+      "avoid_if": [
+        "metal-backed placement",
+        "secure authentication workflows"
+      ],
+      "works_with": [
+        "iPhone",
+        "Android"
+      ],
+      "secure_auth_suitable": false,
+      "custom_print_available": true,
+      "encoding_available": true,
+      "bulk_quote_required_over_qty": 100,
+      "price_currency": "INR",
+      "price_from": 25,
+      "price_to": 25,
+      "stock_status": "in_stock",
+      "last_updated": "2026-09-02"
+    },
+    {
+      "id": "cG9zdDo1NTQ=",
+      "slug": "nfc-social-media-keychain-snapchat-model-1",
+      "title": "LINQS NFC Social Media Keychain Snapchat Model 1",
+      "url": "https://shop.linqs.in/product/nfc-social-media-keychain-snapchat-model-1",
+      "sku": "LINQS_SMKC_SC_1_VMom",
+      "status": "active",
+      "chip_family": "NTAG213",
+      "chip_variant": "NTAG213",
+      "chip_origin": "other",
+      "memory_bytes": 144,
+      "form_factor": "keychain",
+      "surface_support": [
+        "standard"
+      ],
+      "material": "",
+      "size": "50 mm",
+      "best_for": [
+        "Business Card",
+        "NFC Keychains & Hang Tags",
+        "NTAG213 Compatible",
+        "Profile & Social Links",
+        "Social Media Keychains"
+      ],
+      "avoid_if": [
+        "metal-backed placement",
+        "secure authentication workflows"
+      ],
+      "works_with": [
+        "iPhone",
+        "Android"
+      ],
+      "secure_auth_suitable": false,
+      "custom_print_available": true,
+      "encoding_available": true,
+      "bulk_quote_required_over_qty": 100,
+      "price_currency": "INR",
+      "price_from": 275,
+      "price_to": 275,
+      "stock_status": "in_stock",
+      "last_updated": "2026-09-02"
+    },
+    {
+      "id": "cG9zdDo0MDA0",
+      "slug": "nfc-nxp-ntag213-white-laundry-tag-button-15mm",
+      "title": "LINQS NFC NXP NTAG213 White Laundry Tag Button 15mm",
+      "url": "https://shop.linqs.in/product/nfc-nxp-ntag213-white-laundry-tag-button-15mm",
+      "sku": "L_213_24_VMom",
+      "status": "active",
+      "chip_family": "NTAG213",
+      "chip_variant": "NTAG213",
+      "chip_origin": "NXP",
+      "memory_bytes": 144,
+      "form_factor": "other",
+      "surface_support": [
+        "standard"
+      ],
+      "material": "",
+      "size": "15 mm",
+      "best_for": [
+        "Inventory Tagging",
+        "Laundry Tagging",
+        "Laundry Tags",
+        "NTAG213 NXP",
+        "Specialty Products"
+      ],
+      "avoid_if": [
+        "metal-backed placement",
+        "secure authentication workflows"
+      ],
+      "works_with": [
+        "iPhone",
+        "Android"
+      ],
+      "secure_auth_suitable": false,
+      "custom_print_available": true,
+      "encoding_available": true,
+      "bulk_quote_required_over_qty": 100,
+      "price_currency": "INR",
+      "price_from": 150,
+      "price_to": 150,
+      "stock_status": "in_stock",
+      "last_updated": "2026-09-02"
+    },
+    {
+      "id": "cG9zdDo5NjY=",
+      "slug": "nfc-ntag213-white-laundry-button-tag",
+      "title": "LINQS NFC NTAG213 White Laundry Button Tag",
+      "url": "https://shop.linqs.in/product/nfc-ntag213-white-laundry-button-tag",
+      "sku": "L_213_21_VMom",
+      "status": "active",
+      "chip_family": "NTAG213",
+      "chip_variant": "NTAG213",
+      "chip_origin": "NXP",
+      "memory_bytes": 144,
+      "form_factor": "other",
+      "surface_support": [
+        "standard"
+      ],
+      "material": "",
+      "size": "25 mm",
+      "best_for": [
+        "Inventory Tagging",
+        "Laundry Tagging",
+        "Laundry Tags",
+        "NTAG213 NXP",
+        "Specialty Products"
+      ],
+      "avoid_if": [
+        "metal-backed placement",
+        "secure authentication workflows"
+      ],
+      "works_with": [
+        "iPhone",
+        "Android"
+      ],
+      "secure_auth_suitable": false,
+      "custom_print_available": true,
+      "encoding_available": true,
+      "bulk_quote_required_over_qty": 100,
+      "price_currency": "INR",
+      "price_from": 150,
+      "price_to": 150,
+      "stock_status": "out_of_stock",
+      "last_updated": "2026-09-02"
+    },
+    {
+      "id": "cG9zdDozODE=",
+      "slug": "nfc-ntag213-compatible-white-sticker-30mm",
+      "title": "LINQS NFC NTAG213 Compatible White Sticker 30mm",
+      "url": "https://shop.linqs.in/product/nfc-ntag213-compatible-white-sticker-30mm",
+      "sku": "S_213_24_C_VMom",
+      "status": "active",
+      "chip_family": "NTAG213",
+      "chip_variant": "NTAG213",
+      "chip_origin": "other",
+      "memory_bytes": 144,
+      "form_factor": "sticker",
+      "surface_support": [
+        "standard"
+      ],
+      "material": "",
+      "size": "25 mm",
+      "best_for": [
+        "General Purpose",
+        "NFC Stickers & Tags",
+        "NTAG213 Compatible",
+        "Standard Stickers"
+      ],
+      "avoid_if": [
+        "metal-backed placement",
+        "secure authentication workflows"
+      ],
+      "works_with": [
+        "iPhone",
+        "Android"
+      ],
+      "secure_auth_suitable": false,
+      "custom_print_available": true,
+      "encoding_available": true,
+      "bulk_quote_required_over_qty": 100,
+      "price_currency": "INR",
+      "price_from": 25,
+      "price_to": 25,
+      "stock_status": "in_stock",
+      "last_updated": "2026-09-02"
+    },
+    {
+      "id": "cG9zdDoxMjI=",
+      "slug": "nfc-developer-starter-kit",
+      "title": "LINQS NFC Developer Starter Kit",
+      "url": "https://shop.linqs.in/product/nfc-developer-starter-kit",
+      "sku": "K_22",
+      "status": "active",
+      "chip_family": "unknown",
+      "chip_variant": "unknown",
+      "chip_origin": "NXP",
+      "memory_bytes": 888,
+      "form_factor": "kit",
+      "surface_support": [
+        "standard"
+      ],
+      "material": "",
+      "size": "NA",
+      "best_for": [
+        "Complete Kits",
+        "Developer Testing/Prototyping",
+        "Developer Tools & Kits",
+        "NA",
+        "Sampling/Mass Deployment"
+      ],
+      "avoid_if": [
+        "metal-backed placement"
+      ],
+      "works_with": [
+        "iPhone",
+        "Android"
+      ],
+      "secure_auth_suitable": false,
+      "custom_print_available": true,
+      "encoding_available": true,
+      "bulk_quote_required_over_qty": 100,
+      "price_currency": "INR",
+      "price_from": 600,
+      "price_to": 600,
+      "stock_status": "in_stock",
+      "last_updated": "2026-09-02"
+    },
+    {
+      "id": "cG9zdDo1MDk=",
+      "slug": "rfid-blocking-card-2-pvc-rfid-protection-card",
+      "title": "LINQS RFID Blocking Card 2 | PVC RFID Protection Card",
+      "url": "https://shop.linqs.in/product/rfid-blocking-card-2-pvc-rfid-protection-card",
+      "sku": "C_RFIDBC_2_VMom",
+      "status": "active",
+      "chip_family": "unknown",
+      "chip_variant": "unknown",
+      "chip_origin": "other",
+      "memory_bytes": 0,
+      "form_factor": "card",
+      "surface_support": [
+        "standard"
+      ],
+      "material": "",
+      "size": "85.6 x 54 mm",
+      "best_for": [
+        "RFID Blocking Card 2",
+        "RFID Blocking Cards",
+        "RFID Blocking/Security",
+        "RFID Security & Accessories",
+        "Vehicle Info"
+      ],
+      "avoid_if": [
+        "metal-backed placement"
+      ],
+      "works_with": [
+        "iPhone",
+        "Android"
+      ],
+      "secure_auth_suitable": false,
+      "custom_print_available": true,
+      "encoding_available": true,
+      "bulk_quote_required_over_qty": 100,
+      "price_currency": "INR",
+      "price_from": 200,
+      "price_to": 200,
+      "stock_status": "in_stock",
+      "last_updated": "2026-09-02"
+    },
+    {
+      "id": "cG9zdDo0OTg=",
+      "slug": "nfc-spotify-sticker-model-1",
+      "title": "LINQS NFC Spotify Sticker Model 1",
+      "url": "https://shop.linqs.in/product/nfc-spotify-sticker-model-1",
+      "sku": "SP_SPOTIFY_1_S_213_24_C_VMom",
+      "status": "active",
+      "chip_family": "NTAG213",
+      "chip_variant": "NTAG213",
+      "chip_origin": "other",
+      "memory_bytes": 144,
+      "form_factor": "sticker",
+      "surface_support": [
+        "standard"
+      ],
+      "material": "",
+      "size": "35 x 40 mm",
+      "best_for": [
+        "Loyalty/Rewards",
+        "Music Tap",
+        "NTAG213 Compatible",
+        "Specialty Products",
+        "Spotify Stickers"
+      ],
+      "avoid_if": [
+        "metal-backed placement",
+        "secure authentication workflows"
+      ],
+      "works_with": [
+        "iPhone",
+        "Android"
+      ],
+      "secure_auth_suitable": false,
+      "custom_print_available": true,
+      "encoding_available": true,
+      "bulk_quote_required_over_qty": 100,
+      "price_currency": "INR",
+      "price_from": 75,
+      "price_to": 75,
+      "stock_status": "in_stock",
+      "last_updated": "2026-09-02"
+    },
+    {
+      "id": "cG9zdDoxMTI=",
+      "slug": "nfc-social-media-keychain-instagram-model-1",
+      "title": "LINQS NFC Social Media Keychain Instagram Model 1",
+      "url": "https://shop.linqs.in/product/nfc-social-media-keychain-instagram-model-1",
+      "sku": "LINQS_SMKC_IG_1_VMom",
+      "status": "active",
+      "chip_family": "NTAG213",
+      "chip_variant": "NTAG213",
+      "chip_origin": "other",
+      "memory_bytes": 144,
+      "form_factor": "keychain",
+      "surface_support": [
+        "standard"
+      ],
+      "material": "",
+      "size": "50 mm",
+      "best_for": [
+        "Business Card",
+        "NFC Keychains & Hang Tags",
+        "NTAG213 Compatible",
+        "Profile & Social Links",
+        "Social Media Keychains"
+      ],
+      "avoid_if": [
+        "metal-backed placement",
+        "secure authentication workflows"
+      ],
+      "works_with": [
+        "iPhone",
+        "Android"
+      ],
+      "secure_auth_suitable": false,
+      "custom_print_available": true,
+      "encoding_available": true,
+      "bulk_quote_required_over_qty": 100,
+      "price_currency": "INR",
+      "price_from": 275,
+      "price_to": 275,
+      "stock_status": "in_stock",
+      "last_updated": "2026-09-02"
+    },
+    {
+      "id": "cG9zdDo1Nzk=",
+      "slug": "nfc-nxp-ntag216-silicone-wristband",
+      "title": "LINQS NFC NXP NTAG216 Silicone Wristband",
+      "url": "https://shop.linqs.in/product/nfc-nxp-ntag216-silicone-wristband",
+      "sku": "W_216_21_VMom",
+      "status": "active",
+      "chip_family": "NTAG216",
+      "chip_variant": "NTAG216",
+      "chip_origin": "NXP",
+      "memory_bytes": 888,
+      "form_factor": "wristband",
+      "surface_support": [
+        "standard"
+      ],
+      "material": "",
+      "size": "NA",
+      "best_for": [
+        "Access Control",
+        "Event Ticket",
+        "Locker/Gym",
+        "NFC Wearables",
+        "NFC Wristbands",
+        "NTAG216 NXP",
+        "Smart Poster"
+      ],
+      "avoid_if": [
+        "metal-backed placement",
+        "secure authentication workflows"
+      ],
+      "works_with": [
+        "iPhone",
+        "Android"
+      ],
+      "secure_auth_suitable": false,
+      "custom_print_available": true,
+      "encoding_available": true,
+      "bulk_quote_required_over_qty": 100,
+      "price_currency": "INR",
+      "price_from": 260,
+      "price_to": 260,
+      "stock_status": "out_of_stock",
+      "last_updated": "2026-09-02"
+    },
+    {
+      "id": "cG9zdDo3MDk=",
+      "slug": "nfc-nxp-ntag213-white-sticker-30-mm-pet-tag",
+      "title": "LINQS NFC NXP NTAG213 White Sticker 30 mm PET Tag",
+      "url": "https://shop.linqs.in/product/nfc-nxp-ntag213-white-sticker-30-mm-pet-tag",
+      "sku": "S_213_24_VMom",
+      "status": "active",
+      "chip_family": "NTAG213",
+      "chip_variant": "NTAG213",
+      "chip_origin": "NXP",
+      "memory_bytes": 144,
+      "form_factor": "sticker",
+      "surface_support": [
+        "standard"
+      ],
+      "material": "",
+      "size": "25 mm",
+      "best_for": [
+        "Asset Tracking",
+        "General Purpose",
+        "NFC Stickers & Tags",
+        "NTAG213 NXP",
+        "Payments/UPI",
+        "Scavenger Hunt/Gaming",
+        "Standard Stickers"
+      ],
+      "avoid_if": [
+        "metal-backed placement",
+        "secure authentication workflows"
+      ],
+      "works_with": [
+        "iPhone",
+        "Android"
+      ],
+      "secure_auth_suitable": false,
+      "custom_print_available": true,
+      "encoding_available": true,
+      "bulk_quote_required_over_qty": 100,
+      "price_currency": "INR",
+      "price_from": 45,
+      "price_to": 45,
+      "stock_status": "in_stock",
+      "last_updated": "2026-09-02"
+    },
+    {
+      "id": "cG9zdDoxMzg=",
+      "slug": "nfc-nxp-ntag213-pvc-plain-card",
+      "title": "LINQS NFC NXP NTAG213 PVC Plain Card",
+      "url": "https://shop.linqs.in/product/nfc-nxp-ntag213-pvc-plain-card",
+      "sku": "C_213_21_VMom",
+      "status": "active",
+      "chip_family": "NTAG213",
+      "chip_variant": "NTAG213",
+      "chip_origin": "NXP",
+      "memory_bytes": 144,
+      "form_factor": "card",
+      "surface_support": [
+        "standard"
+      ],
+      "material": "",
+      "size": "85.6 x 54 mm",
+      "best_for": [
+        "Access Control",
+        "ID/Badge",
+        "NFC Cards",
+        "NTAG213 NXP",
+        "Standard White Cards",
+        "Vehicle Info"
+      ],
+      "avoid_if": [
+        "metal-backed placement",
+        "secure authentication workflows"
+      ],
+      "works_with": [
+        "iPhone",
+        "Android"
+      ],
+      "secure_auth_suitable": false,
+      "custom_print_available": true,
+      "encoding_available": true,
+      "bulk_quote_required_over_qty": 100,
+      "price_currency": "INR",
+      "price_from": 50,
+      "price_to": 50,
+      "stock_status": "in_stock",
+      "last_updated": "2026-09-02"
+    },
+    {
+      "id": "cG9zdDo1NDY=",
+      "slug": "nfc-developer-pro-kit",
+      "title": "LINQS NFC Developer Pro Kit",
+      "url": "https://shop.linqs.in/product/nfc-developer-pro-kit",
+      "sku": "K_21",
+      "status": "active",
+      "chip_family": "unknown",
+      "chip_variant": "unknown",
+      "chip_origin": "NXP",
+      "memory_bytes": 504,
+      "form_factor": "kit",
+      "surface_support": [
+        "standard"
+      ],
+      "material": "",
+      "size": "NA",
+      "best_for": [
+        "Complete Kits",
+        "Developer Testing/Prototyping",
+        "Developer Tools & Kits",
+        "NA",
+        "Sampling/Mass Deployment"
+      ],
+      "avoid_if": [
+        "metal-backed placement"
+      ],
+      "works_with": [
+        "iPhone",
+        "Android"
+      ],
+      "secure_auth_suitable": false,
+      "custom_print_available": true,
+      "encoding_available": true,
+      "bulk_quote_required_over_qty": 100,
+      "price_currency": "INR",
+      "price_from": 800,
+      "price_to": 800,
+      "stock_status": "in_stock",
+      "last_updated": "2026-09-02"
+    },
+    {
+      "id": "cG9zdDoyMzg=",
+      "slug": "wifi-nfc-sticker-m1-black-ntag213-chip",
+      "title": "LINQS WiFi NFC Sticker M1 Black | NTAG213 Chip",
+      "url": "https://shop.linqs.in/product/wifi-nfc-sticker-m1-black-ntag213-chip",
+      "sku": "SP_WIFI_S_1_BLACK_VMom",
+      "status": "active",
+      "chip_family": "NTAG213",
+      "chip_variant": "NTAG213",
+      "chip_origin": "other",
+      "memory_bytes": 144,
+      "form_factor": "sticker",
+      "surface_support": [
+        "standard"
+      ],
+      "material": "",
+      "size": "50 mm",
+      "best_for": [
+        "Specialty Products",
+        "WiFi Sharing"
+      ],
+      "avoid_if": [
+        "metal-backed placement",
+        "secure authentication workflows"
+      ],
+      "works_with": [
+        "iPhone",
+        "Android"
+      ],
+      "secure_auth_suitable": false,
+      "custom_print_available": true,
+      "encoding_available": true,
+      "bulk_quote_required_over_qty": 100,
+      "price_currency": "INR",
+      "price_from": 100,
+      "price_to": 100,
+      "stock_status": "in_stock",
+      "last_updated": "2026-09-02"
+    },
+    {
+      "id": "cG9zdDozNTk=",
+      "slug": "waterproof-glossy-nfc-stickers-30mm",
+      "title": "LINQS Waterproof Glossy NFC Stickers 30mm",
+      "url": "https://shop.linqs.in/product/waterproof-glossy-nfc-stickers-30mm",
+      "sku": "S_213_39_VMom",
+      "status": "active",
+      "chip_family": "NTAG213",
+      "chip_variant": "NTAG213",
+      "chip_origin": "other",
+      "memory_bytes": 144,
+      "form_factor": "sticker",
+      "surface_support": [
+        "standard"
+      ],
+      "material": "",
+      "size": "30 mm",
+      "best_for": [
+        "Asset Tracking",
+        "Colored & Printed Designs",
+        "General Purpose",
+        "Marketing/Promo",
+        "NFC Stickers & Tags",
+        "NTAG213 Compatible",
+        "Product Info & Labels",
+        "Profile & Social Links",
+        "Smart Poster",
+        "SOP/How to"
+      ],
+      "avoid_if": [
+        "metal-backed placement",
+        "secure authentication workflows"
+      ],
+      "works_with": [
+        "iPhone",
+        "Android"
+      ],
+      "secure_auth_suitable": false,
+      "custom_print_available": true,
+      "encoding_available": true,
+      "bulk_quote_required_over_qty": 100,
+      "price_currency": "INR",
+      "price_from": 60,
+      "price_to": 60,
+      "stock_status": "in_stock",
+      "last_updated": "2026-09-02"
+    },
+    {
+      "id": "cG9zdDozMDAx",
+      "slug": "linqs-smart-nfc-qr-dynamic-sticker",
+      "title": "LINQS Smart NFC + QR Dynamic Sticker, 55x35mm, Change Link Anytime, Tap or Scan, No App, No Subscription",
+      "url": "https://shop.linqs.in/product/linqs-smart-nfc-qr-dynamic-sticker",
+      "sku": "S_203_22_VMom",
+      "status": "active",
+      "chip_family": "NTAG203",
+      "chip_variant": "NTAG203",
+      "chip_origin": "NXP",
+      "memory_bytes": 144,
+      "form_factor": "sticker",
+      "surface_support": [
+        "standard"
+      ],
+      "material": "",
+      "size": "55 x 35 x 3 mm",
+      "best_for": [
+        "Colored & Printed Designs",
+        "Epoxy Domed & Premium",
+        "General Purpose",
+        "Google Reviews",
+        "Large Stickers",
+        "LINQS Smart QR Codes",
+        "Marketing/Promo",
+        "NFC Stickers & Tags",
+        "NTAG203",
+        "Payments/UPI"
+      ],
+      "avoid_if": [
+        "metal-backed placement",
+        "secure authentication workflows"
+      ],
+      "works_with": [
+        "iPhone",
+        "Android"
+      ],
+      "secure_auth_suitable": false,
+      "custom_print_available": true,
+      "encoding_available": true,
+      "bulk_quote_required_over_qty": 100,
+      "price_currency": "INR",
+      "price_from": 149,
+      "price_to": 149,
+      "stock_status": "in_stock",
+      "last_updated": "2026-09-02"
+    },
+    {
+      "id": "cG9zdDoyOA==",
+      "slug": "pebble-nfc-sticker-tags-m1-30mm-ntag213",
+      "title": "LINQS Pebble NFC Sticker Tags M1 30mm NTAG213",
+      "url": "https://shop.linqs.in/product/pebble-nfc-sticker-tags-m1-30mm-ntag213",
+      "sku": "C_213_PNS_1_VMom",
+      "status": "active",
+      "chip_family": "NTAG213",
+      "chip_variant": "NTAG213",
+      "chip_origin": "other",
+      "memory_bytes": 144,
+      "form_factor": "sticker",
+      "surface_support": [
+        "standard"
+      ],
+      "material": "",
+      "size": "30 mm",
+      "best_for": [
+        "Asset Tracking",
+        "Attendance/Check in",
+        "Epoxy Domed & Premium",
+        "General Purpose",
+        "Marketing/Promo",
+        "Music Tap",
+        "NFC Stickers & Tags",
+        "NTAG213 Compatible",
+        "Payments/UPI",
+        "Product Info & Labels"
+      ],
+      "avoid_if": [
+        "metal-backed placement",
+        "secure authentication workflows"
+      ],
+      "works_with": [
+        "iPhone",
+        "Android"
+      ],
+      "secure_auth_suitable": false,
+      "custom_print_available": true,
+      "encoding_available": true,
+      "bulk_quote_required_over_qty": 100,
+      "price_currency": "INR",
+      "price_from": 200,
+      "price_to": 200,
+      "stock_status": "in_stock",
+      "last_updated": "2026-09-02"
+    },
+    {
+      "id": "cG9zdDozNjQ3",
+      "slug": "nxp-ntag213-micro-fpc-anti-metal-nfc-sticker-5mm",
+      "title": "LINQS NXP NTAG213 Micro FPC Anti Metal NFC Sticker 5mm",
+      "url": "https://shop.linqs.in/product/nxp-ntag213-micro-fpc-anti-metal-nfc-sticker-5mm",
+      "sku": "S_213_42_VMom",
+      "status": "active",
+      "chip_family": "NTAG213",
+      "chip_variant": "NTAG213",
+      "chip_origin": "NXP",
+      "memory_bytes": 144,
+      "form_factor": "wristband",
+      "surface_support": [
+        "standard",
+        "anti-metal"
+      ],
+      "material": "",
+      "size": "5 mm",
+      "best_for": [
+        "Anti-Metal Stickers",
+        "Device Setup",
+        "Merch/Accessories",
+        "Micro & Ultra-Thin",
+        "NFC Stickers & Tags",
+        "NFC Wearables",
+        "NTAG213 NXP",
+        "Product Info & Labels"
+      ],
+      "avoid_if": [
+        "secure authentication workflows"
+      ],
+      "works_with": [
+        "iPhone",
+        "Android"
+      ],
+      "secure_auth_suitable": false,
+      "custom_print_available": true,
+      "encoding_available": true,
+      "bulk_quote_required_over_qty": 100,
+      "price_currency": "INR",
+      "price_from": 130,
+      "price_to": 130,
+      "stock_status": "in_stock",
+      "last_updated": "2026-09-02"
+    },
+    {
+      "id": "cG9zdDo0Mzc5",
+      "slug": "nfc-nxp-ntag213-anti-metal-sticker-25mm",
+      "title": "LINQS NXP NTAG213 Anti Metal NFC Sticker 25mm",
+      "url": "https://shop.linqs.in/product/nfc-nxp-ntag213-anti-metal-sticker-25mm",
+      "sku": "S_213_41_VMom",
+      "status": "active",
+      "chip_family": "NTAG213",
+      "chip_variant": "NTAG213",
+      "chip_origin": "NXP",
+      "memory_bytes": 144,
+      "form_factor": "sticker",
+      "surface_support": [
+        "standard",
+        "anti-metal"
+      ],
+      "material": "",
+      "size": "25 mm",
+      "best_for": [
+        "Anti-Metal Stickers",
+        "Asset Tracking",
+        "Device Setup",
+        "General Purpose",
+        "NFC Stickers & Tags",
+        "NTAG213 NXP",
+        "Product Info & Labels",
+        "Tool/Equipment ID"
+      ],
+      "avoid_if": [
+        "secure authentication workflows"
+      ],
+      "works_with": [
+        "iPhone",
+        "Android"
+      ],
+      "secure_auth_suitable": false,
+      "custom_print_available": true,
+      "encoding_available": true,
+      "bulk_quote_required_over_qty": 100,
+      "price_currency": "INR",
+      "price_from": 100,
+      "price_to": 100,
+      "stock_status": "in_stock",
+      "last_updated": "2026-09-02"
+    },
+    {
+      "id": "cG9zdDo2Mg==",
+      "slug": "ntag213-transparent-micro-nfc-tag-18mm-sticker",
+      "title": "LINQS NTAG213 Transparent Micro NFC Tag 18mm Sticker",
+      "url": "https://shop.linqs.in/product/ntag213-transparent-micro-nfc-tag-18mm-sticker",
+      "sku": "S_213_40_VMom",
+      "status": "active",
+      "chip_family": "NTAG213 compatible",
+      "chip_variant": "NTAG213 compatible",
+      "chip_origin": "other",
+      "memory_bytes": 144,
+      "form_factor": "sticker",
+      "surface_support": [
+        "standard"
+      ],
+      "material": "",
+      "size": "18 mm",
+      "best_for": [
+        "Access Control",
+        "Asset Tracking",
+        "Attendance/Check in",
+        "General Purpose",
+        "Google Reviews",
+        "Inventory Tagging",
+        "Maintenance Log",
+        "Micro & Ultra-Thin",
+        "NFC Stickers & Tags",
+        "NTAG213 Compatible"
+      ],
+      "avoid_if": [
+        "metal-backed placement",
+        "secure authentication workflows"
+      ],
+      "works_with": [
+        "iPhone",
+        "Android"
+      ],
+      "secure_auth_suitable": false,
+      "custom_print_available": true,
+      "encoding_available": true,
+      "bulk_quote_required_over_qty": 100,
+      "price_currency": "INR",
+      "price_from": 28,
+      "price_to": 28,
+      "stock_status": "in_stock",
+      "last_updated": "2026-09-02"
+    },
+    {
+      "id": "cG9zdDo0MDk3",
+      "slug": "ntag213-compatible-nfc-silicone-wristband",
+      "title": "LINQS NTAG213 Compatible NFC Silicone Wristband",
+      "url": "https://shop.linqs.in/product/ntag213-compatible-nfc-silicone-wristband",
+      "sku": "W_213_21_VMom",
+      "status": "active",
+      "chip_family": "NTAG213",
+      "chip_variant": "NTAG213",
+      "chip_origin": "other",
+      "memory_bytes": 144,
+      "form_factor": "wristband",
+      "surface_support": [
+        "standard"
+      ],
+      "material": "",
+      "size": "Standard wristband",
+      "best_for": [
+        "Access Control",
+        "Event Ticket",
+        "Locker/Gym",
+        "NFC Wearables",
+        "NFC Wristbands",
+        "NTAG213 Compatible",
+        "Smart Poster"
+      ],
+      "avoid_if": [
+        "metal-backed placement",
+        "secure authentication workflows"
+      ],
+      "works_with": [
+        "iPhone",
+        "Android"
+      ],
+      "secure_auth_suitable": false,
+      "custom_print_available": true,
+      "encoding_available": true,
+      "bulk_quote_required_over_qty": 100,
+      "price_currency": "INR",
+      "price_from": 140,
+      "price_to": 140,
+      "stock_status": "in_stock",
+      "last_updated": "2026-09-02"
+    },
+    {
+      "id": "cG9zdDo3Mw==",
+      "slug": "mifare-ultralight-nfc-sticker-25-mm-vinyl",
+      "title": "LINQS MIFARE Ultralight NFC Sticker, 25 mm Vinyl",
+      "url": "https://shop.linqs.in/product/mifare-ultralight-nfc-sticker-25-mm-vinyl",
+      "sku": "NH_MF_PR_VMom",
+      "status": "active",
+      "chip_family": "MIFARE Ultralight EV1",
+      "chip_variant": "MIFARE Ultralight EV1",
+      "chip_origin": "NXP",
+      "memory_bytes": 48,
+      "form_factor": "sticker",
+      "surface_support": [
+        "standard"
+      ],
+      "material": "",
+      "size": "25 mm",
+      "best_for": [
+        "Access Control",
+        "Colored & Printed Designs",
+        "Event Ticket",
+        "NFC Stickers & Tags",
+        "Ultralight EV1"
+      ],
+      "avoid_if": [
+        "metal-backed placement"
+      ],
+      "works_with": [
+        "iPhone",
+        "Android"
+      ],
+      "secure_auth_suitable": false,
+      "custom_print_available": true,
+      "encoding_available": true,
+      "bulk_quote_required_over_qty": 100,
+      "price_currency": "INR",
+      "price_from": 60,
+      "price_to": 60,
+      "stock_status": "in_stock",
+      "last_updated": "2026-09-02"
+    },
+    {
+      "id": "cG9zdDoyOTMz",
+      "slug": "smart-dynamic-qr-code",
+      "title": "LINQS Dynamic QR Code | Change QR Link Anytime | No Subscription | Scan Analytics",
+      "url": "https://shop.linqs.in/product/smart-dynamic-qr-code",
+      "sku": "LINQS_SMART_QR_1_P1",
+      "status": "active",
+      "chip_family": "unknown",
+      "chip_variant": "unknown",
+      "chip_origin": "other",
+      "memory_bytes": 0,
+      "form_factor": "other",
+      "surface_support": [
+        "standard"
+      ],
+      "material": "",
+      "size": "",
+      "best_for": [
+        "Business Card",
+        "Event Ticket",
+        "General Purpose",
+        "LINQS Smart QR Codes",
+        "Marketing/Promo",
+        "Payments/UPI",
+        "Product Info & Labels",
+        "Profile & Social Links",
+        "Smart Poster",
+        "Software & Services"
+      ],
+      "avoid_if": [
+        "metal-backed placement"
+      ],
+      "works_with": [
+        "iPhone",
+        "Android"
+      ],
+      "secure_auth_suitable": false,
+      "custom_print_available": true,
+      "encoding_available": true,
+      "bulk_quote_required_over_qty": 100,
+      "price_currency": "INR",
+      "price_from": 99,
+      "price_to": 99,
+      "stock_status": "in_stock",
+      "last_updated": "2026-09-02"
+    },
+    {
+      "id": "cG9zdDo0MTI2",
+      "slug": "nfc-desfire-8k-ev1-compatible-plain-pvc-card",
+      "title": "LINQS Desfire 8K EV1 Compatible Plain PVC NFC Card",
+      "url": "https://shop.linqs.in/product/nfc-desfire-8k-ev1-compatible-plain-pvc-card",
+      "sku": "C_D8K_21_C_VMom",
+      "status": "active",
+      "chip_family": "DESFIRE EV1 8k compatible",
+      "chip_variant": "DESFIRE EV1 8k compatible",
+      "chip_origin": "other",
+      "memory_bytes": 8192,
+      "form_factor": "card",
+      "surface_support": [
+        "standard"
+      ],
+      "material": "",
+      "size": "85.6 x 54 mm",
+      "best_for": [
+        "Access Control",
+        "Desfire 8K EV1",
+        "General Purpose",
+        "High Memory Cards",
+        "NFC Cards",
+        "Vehicle Info"
+      ],
+      "avoid_if": [
+        "metal-backed placement"
+      ],
+      "works_with": [
+        "iPhone",
+        "Android"
+      ],
+      "secure_auth_suitable": true,
+      "custom_print_available": true,
+      "encoding_available": true,
+      "bulk_quote_required_over_qty": 100,
+      "price_currency": "INR",
+      "price_from": 180,
+      "price_to": 180,
+      "stock_status": "in_stock",
+      "last_updated": "2026-09-02"
+    },
+    {
+      "id": "cG9zdDoyOTY3",
+      "slug": "lessworry-smart-custom-pet-tag-silver-kitty",
+      "title": "LessWorry Smart Pet Tag With Name Engraving | Silver Kitty",
+      "url": "https://shop.linqs.in/product/lessworry-smart-custom-pet-tag-silver-kitty",
+      "sku": "H_QRC_METAL_SILVER_CUSTOM1_P1",
+      "status": "active",
+      "chip_family": "unknown",
+      "chip_variant": "unknown",
+      "chip_origin": "other",
+      "memory_bytes": 0,
+      "form_factor": "keychain",
+      "surface_support": [
+        "standard"
+      ],
+      "material": "",
+      "size": "30mm",
+      "best_for": [
+        "Contact Sharing",
+        "General Purpose",
+        "ID/Badge",
+        "LessWorrry Pet Tags",
+        "LessWorry Tags",
+        "Lost & Found/ICE",
+        "NA",
+        "NFC Keychains & Hang Tags",
+        "Pet ID Tag",
+        "Profile & Social Links"
+      ],
+      "avoid_if": [
+        "metal-backed placement"
+      ],
+      "works_with": [
+        "iPhone",
+        "Android"
+      ],
+      "secure_auth_suitable": false,
+      "custom_print_available": true,
+      "encoding_available": true,
+      "bulk_quote_required_over_qty": 100,
+      "price_currency": "INR",
+      "price_from": 749,
+      "price_to": 749,
+      "stock_status": "in_stock",
+      "last_updated": "2026-09-02"
+    },
+    {
+      "id": "cG9zdDoyOTY4",
+      "slug": "lessworry-smart-pet-tag-with-name-engraving-golden-pup",
+      "title": "LessWorry Smart Pet Tag With Name Engraving | Golden Pup",
+      "url": "https://shop.linqs.in/product/lessworry-smart-pet-tag-with-name-engraving-golden-pup",
+      "sku": "H_QRC_METAL_GOLDEN_CUSTOM1_P1",
+      "status": "active",
+      "chip_family": "unknown",
+      "chip_variant": "unknown",
+      "chip_origin": "other",
+      "memory_bytes": 0,
+      "form_factor": "keychain",
+      "surface_support": [
+        "standard"
+      ],
+      "material": "",
+      "size": "30mm",
+      "best_for": [
+        "Contact Sharing",
+        "General Purpose",
+        "ID/Badge",
+        "LessWorrry Pet Tags",
+        "LessWorry Tags",
+        "Lost & Found/ICE",
+        "NA",
+        "NFC Keychains & Hang Tags",
+        "Pet ID Tag",
+        "Profile & Social Links"
+      ],
+      "avoid_if": [
+        "metal-backed placement"
+      ],
+      "works_with": [
+        "iPhone",
+        "Android"
+      ],
+      "secure_auth_suitable": false,
+      "custom_print_available": true,
+      "encoding_available": true,
+      "bulk_quote_required_over_qty": 100,
+      "price_currency": "INR",
+      "price_from": 699,
+      "price_to": 699,
+      "stock_status": "in_stock",
+      "last_updated": "2026-09-02"
+    },
+    {
+      "id": "cG9zdDoyNDQw",
+      "slug": "lessworry-smart-pet-tag-sunny-pup",
+      "title": "LessWorry Smart Pet Tag - Sunny Pup by LINQS",
+      "url": "https://shop.linqs.in/product/lessworry-smart-pet-tag-sunny-pup",
+      "sku": "LW_PT_SUP_P1",
+      "status": "active",
+      "chip_family": "unknown",
+      "chip_variant": "unknown",
+      "chip_origin": "other",
+      "memory_bytes": 0,
+      "form_factor": "other",
+      "surface_support": [
+        "standard"
+      ],
+      "material": "",
+      "size": "35mm",
+      "best_for": [
+        "LessWorrry Pet Tags",
+        "LessWorry Tags",
+        "Pet ID Tag",
+        "Specialty Products"
+      ],
+      "avoid_if": [
+        "metal-backed placement"
+      ],
+      "works_with": [
+        "iPhone",
+        "Android"
+      ],
+      "secure_auth_suitable": false,
+      "custom_print_available": true,
+      "encoding_available": true,
+      "bulk_quote_required_over_qty": 100,
+      "price_currency": "INR",
+      "price_from": 299,
+      "price_to": 299,
+      "stock_status": "in_stock",
+      "last_updated": "2026-09-02"
+    },
+    {
+      "id": "cG9zdDoyNDMx",
+      "slug": "lessworry-smart-pet-tag-snow-pup",
+      "title": "LessWorry Smart Pet Tag - Snow Pup by LINQS",
+      "url": "https://shop.linqs.in/product/lessworry-smart-pet-tag-snow-pup",
+      "sku": "LW_PT_SP_P1",
+      "status": "active",
+      "chip_family": "unknown",
+      "chip_variant": "unknown",
+      "chip_origin": "other",
+      "memory_bytes": 0,
+      "form_factor": "other",
+      "surface_support": [
+        "standard"
+      ],
+      "material": "",
+      "size": "35mm",
+      "best_for": [
+        "LessWorrry Pet Tags",
+        "LessWorry Tags",
+        "Pet ID Tag",
+        "Specialty Products"
+      ],
+      "avoid_if": [
+        "metal-backed placement"
+      ],
+      "works_with": [
+        "iPhone",
+        "Android"
+      ],
+      "secure_auth_suitable": false,
+      "custom_print_available": true,
+      "encoding_available": true,
+      "bulk_quote_required_over_qty": 100,
+      "price_currency": "INR",
+      "price_from": 299,
+      "price_to": 299,
+      "stock_status": "in_stock",
+      "last_updated": "2026-09-02"
+    },
+    {
+      "id": "cG9zdDoyMzYy",
+      "slug": "lessworry-smart-pet-tag-silver-kitty",
+      "title": "LessWorry Smart Pet Tag - Silver Kitty",
+      "url": "https://shop.linqs.in/product/lessworry-smart-pet-tag-silver-kitty",
+      "sku": "H_QRC_METAL_SILVER_1_VMom",
+      "status": "active",
+      "chip_family": "unknown",
+      "chip_variant": "unknown",
+      "chip_origin": "other",
+      "memory_bytes": 0,
+      "form_factor": "keychain",
+      "surface_support": [
+        "standard"
+      ],
+      "material": "",
+      "size": "30mm",
+      "best_for": [
+        "Contact Sharing",
+        "General Purpose",
+        "ID/Badge",
+        "LessWorrry Pet Tags",
+        "LessWorry Tags",
+        "Lost & Found/ICE",
+        "NA",
+        "NFC Keychains & Hang Tags",
+        "Pet ID Tag",
+        "Profile & Social Links"
+      ],
+      "avoid_if": [
+        "metal-backed placement"
+      ],
+      "works_with": [
+        "iPhone",
+        "Android"
+      ],
+      "secure_auth_suitable": false,
+      "custom_print_available": true,
+      "encoding_available": true,
+      "bulk_quote_required_over_qty": 100,
+      "price_currency": "INR",
+      "price_from": 499,
+      "price_to": 499,
+      "stock_status": "in_stock",
+      "last_updated": "2026-09-02"
+    },
+    {
+      "id": "cG9zdDoyNDI0",
+      "slug": "lessworry-smart-pet-tag-sage-paw",
+      "title": "LessWorry Smart Pet Tag - Sage Paw by LINQS",
+      "url": "https://shop.linqs.in/product/lessworry-smart-pet-tag-sage-paw",
+      "sku": "LW_PT_SGP_P1",
+      "status": "active",
+      "chip_family": "unknown",
+      "chip_variant": "unknown",
+      "chip_origin": "other",
+      "memory_bytes": 0,
+      "form_factor": "other",
+      "surface_support": [
+        "standard"
+      ],
+      "material": "",
+      "size": "35mm",
+      "best_for": [
+        "LessWorrry Pet Tags",
+        "LessWorry Tags",
+        "Pet ID Tag",
+        "Specialty Products"
+      ],
+      "avoid_if": [
+        "metal-backed placement"
+      ],
+      "works_with": [
+        "iPhone",
+        "Android"
+      ],
+      "secure_auth_suitable": false,
+      "custom_print_available": true,
+      "encoding_available": true,
+      "bulk_quote_required_over_qty": 100,
+      "price_currency": "INR",
+      "price_from": 299,
+      "price_to": 299,
+      "stock_status": "in_stock",
+      "last_updated": "2026-09-02"
+    },
+    {
+      "id": "cG9zdDoyNDEz",
+      "slug": "lessworry-smart-pet-tag-misty-pup",
+      "title": "LessWorry Smart Pet Tag - Misty Pup by LINQS",
+      "url": "https://shop.linqs.in/product/lessworry-smart-pet-tag-misty-pup",
+      "sku": "LW_PT_MP_P1",
+      "status": "active",
+      "chip_family": "unknown",
+      "chip_variant": "unknown",
+      "chip_origin": "other",
+      "memory_bytes": 0,
+      "form_factor": "other",
+      "surface_support": [
+        "standard"
+      ],
+      "material": "",
+      "size": "35mm",
+      "best_for": [
+        "LessWorrry Pet Tags",
+        "LessWorry Tags",
+        "Pet ID Tag",
+        "Specialty Products"
+      ],
+      "avoid_if": [
+        "metal-backed placement"
+      ],
+      "works_with": [
+        "iPhone",
+        "Android"
+      ],
+      "secure_auth_suitable": false,
+      "custom_print_available": true,
+      "encoding_available": true,
+      "bulk_quote_required_over_qty": 100,
+      "price_currency": "INR",
+      "price_from": 299,
+      "price_to": 299,
+      "stock_status": "in_stock",
+      "last_updated": "2026-09-02"
+    },
+    {
+      "id": "cG9zdDoyNDA0",
+      "slug": "lessworry-smart-pet-tag-mint-kitty",
+      "title": "LessWorry Smart Pet Tag - Mint Kitty by LINQS",
+      "url": "https://shop.linqs.in/product/lessworry-smart-pet-tag-mint-kitty",
+      "sku": "LW_PT_MK_P1",
+      "status": "active",
+      "chip_family": "unknown",
+      "chip_variant": "unknown",
+      "chip_origin": "other",
+      "memory_bytes": 0,
+      "form_factor": "other",
+      "surface_support": [
+        "standard"
+      ],
+      "material": "",
+      "size": "35mm",
+      "best_for": [
+        "LessWorrry Pet Tags",
+        "LessWorry Tags",
+        "Pet ID Tag",
+        "Specialty Products"
+      ],
+      "avoid_if": [
+        "metal-backed placement"
+      ],
+      "works_with": [
+        "iPhone",
+        "Android"
+      ],
+      "secure_auth_suitable": false,
+      "custom_print_available": true,
+      "encoding_available": true,
+      "bulk_quote_required_over_qty": 100,
+      "price_currency": "INR",
+      "price_from": 299,
+      "price_to": 299,
+      "stock_status": "in_stock",
+      "last_updated": "2026-09-02"
+    },
+    {
+      "id": "cG9zdDoyMzUw",
+      "slug": "lessworry-smart-pet-tag-midnight-paw",
+      "title": "LessWorry Smart Pet Tag - Midnight Paw",
+      "url": "https://shop.linqs.in/product/lessworry-smart-pet-tag-midnight-paw",
+      "sku": "H_QRC_METAL_BLACK_1_VMom",
+      "status": "active",
+      "chip_family": "unknown",
+      "chip_variant": "unknown",
+      "chip_origin": "other",
+      "memory_bytes": 0,
+      "form_factor": "keychain",
+      "surface_support": [
+        "standard"
+      ],
+      "material": "",
+      "size": "30mm",
+      "best_for": [
+        "Contact Sharing",
+        "General Purpose",
+        "ID/Badge",
+        "LessWorrry Pet Tags",
+        "LessWorry Tags",
+        "Lost & Found/ICE",
+        "NA",
+        "NFC Keychains & Hang Tags",
+        "Pet ID Tag",
+        "Profile & Social Links"
+      ],
+      "avoid_if": [
+        "metal-backed placement"
+      ],
+      "works_with": [
+        "iPhone",
+        "Android"
+      ],
+      "secure_auth_suitable": false,
+      "custom_print_available": true,
+      "encoding_available": true,
+      "bulk_quote_required_over_qty": 100,
+      "price_currency": "INR",
+      "price_from": 499,
+      "price_to": 499,
+      "stock_status": "in_stock",
+      "last_updated": "2026-09-02"
+    },
+    {
+      "id": "cG9zdDoyMzk2",
+      "slug": "lessworry-smart-pet-tag-honey-pup",
+      "title": "LessWorry Smart Pet Tag - Honey Pup by LINQS",
+      "url": "https://shop.linqs.in/product/lessworry-smart-pet-tag-honey-pup",
+      "sku": "LW_PT_HP_P1",
+      "status": "active",
+      "chip_family": "unknown",
+      "chip_variant": "unknown",
+      "chip_origin": "other",
+      "memory_bytes": 0,
+      "form_factor": "other",
+      "surface_support": [
+        "standard"
+      ],
+      "material": "",
+      "size": "35mm",
+      "best_for": [
+        "LessWorrry Pet Tags",
+        "LessWorry Tags",
+        "Pet ID Tag",
+        "Specialty Products"
+      ],
+      "avoid_if": [
+        "metal-backed placement"
+      ],
+      "works_with": [
+        "iPhone",
+        "Android"
+      ],
+      "secure_auth_suitable": false,
+      "custom_print_available": true,
+      "encoding_available": true,
+      "bulk_quote_required_over_qty": 100,
+      "price_currency": "INR",
+      "price_from": 299,
+      "price_to": 299,
+      "stock_status": "in_stock",
+      "last_updated": "2026-09-02"
+    },
+    {
+      "id": "cG9zdDoyMzgz",
+      "slug": "lessworry-smart-pet-tag-golden-pup",
+      "title": "LessWorry Smart Pet Tag - Golden Pup",
+      "url": "https://shop.linqs.in/product/lessworry-smart-pet-tag-golden-pup",
+      "sku": "H_QRC_METAL_GOLDEN_1_VMom",
+      "status": "active",
+      "chip_family": "unknown",
+      "chip_variant": "unknown",
+      "chip_origin": "other",
+      "memory_bytes": 0,
+      "form_factor": "keychain",
+      "surface_support": [
+        "standard"
+      ],
+      "material": "",
+      "size": "30mm",
+      "best_for": [
+        "Contact Sharing",
+        "General Purpose",
+        "ID/Badge",
+        "LessWorrry Pet Tags",
+        "LessWorry Tags",
+        "Lost & Found/ICE",
+        "NA",
+        "NFC Keychains & Hang Tags",
+        "Pet ID Tag",
+        "Profile & Social Links"
+      ],
+      "avoid_if": [
+        "metal-backed placement"
+      ],
+      "works_with": [
+        "iPhone",
+        "Android"
+      ],
+      "secure_auth_suitable": false,
+      "custom_print_available": true,
+      "encoding_available": true,
+      "bulk_quote_required_over_qty": 100,
+      "price_currency": "INR",
+      "price_from": 499,
+      "price_to": 499,
+      "stock_status": "in_stock",
+      "last_updated": "2026-09-02"
+    },
+    {
+      "id": "cG9zdDoyMzc0",
+      "slug": "lessworry-smart-pet-tag-ginger-kitty",
+      "title": "LessWorry Smart Pet Tag - Ginger Kitty by LINQS",
+      "url": "https://shop.linqs.in/product/lessworry-smart-pet-tag-ginger-kitty",
+      "sku": "LW_PT_GK_P1",
+      "status": "active",
+      "chip_family": "unknown",
+      "chip_variant": "unknown",
+      "chip_origin": "other",
+      "memory_bytes": 0,
+      "form_factor": "other",
+      "surface_support": [
+        "standard"
+      ],
+      "material": "",
+      "size": "35mm",
+      "best_for": [
+        "LessWorrry Pet Tags",
+        "LessWorry Tags",
+        "Pet ID Tag",
+        "Specialty Products"
+      ],
+      "avoid_if": [
+        "metal-backed placement"
+      ],
+      "works_with": [
+        "iPhone",
+        "Android"
+      ],
+      "secure_auth_suitable": false,
+      "custom_print_available": true,
+      "encoding_available": true,
+      "bulk_quote_required_over_qty": 100,
+      "price_currency": "INR",
+      "price_from": 299,
+      "price_to": 299,
+      "stock_status": "in_stock",
+      "last_updated": "2026-09-02"
+    },
+    {
+      "id": "cG9zdDoxOTM2",
+      "slug": "lessworry-nfc-qr-safety-keychain-m2-round",
+      "title": "LessWorry NFC & QR Safety Keychain - M2 Round",
+      "url": "https://shop.linqs.in/product/lessworry-nfc-qr-safety-keychain-m2-round",
+      "sku": "H_213C_SC_M2_VMom",
+      "status": "active",
+      "chip_family": "NTAG213",
+      "chip_variant": "NTAG213",
+      "chip_origin": "other",
+      "memory_bytes": 144,
+      "form_factor": "keychain",
+      "surface_support": [
+        "standard"
+      ],
+      "material": "",
+      "size": "50 mm",
+      "best_for": [
+        "Contact Sharing",
+        "General Purpose",
+        "ID/Badge",
+        "Lost & Found/ICE",
+        "NFC Keychains & Hang Tags",
+        "NTAG213 Compatible",
+        "Profile & Social Links",
+        "Specialty Products",
+        "Standard Hang Tags",
+        "WhatsApp Chat/Support"
+      ],
+      "avoid_if": [
+        "metal-backed placement",
+        "secure authentication workflows"
+      ],
+      "works_with": [
+        "iPhone",
+        "Android"
+      ],
+      "secure_auth_suitable": false,
+      "custom_print_available": true,
+      "encoding_available": true,
+      "bulk_quote_required_over_qty": 100,
+      "price_currency": "INR",
+      "price_from": 299,
+      "price_to": 299,
+      "stock_status": "in_stock",
+      "last_updated": "2026-09-02"
+    },
+    {
+      "id": "cG9zdDoxOTIy",
+      "slug": "lessworry-nfc-qr-safety-keychain-m1-square",
+      "title": "LessWorry NFC & QR Safety Keychain - M1 Square",
+      "url": "https://shop.linqs.in/product/lessworry-nfc-qr-safety-keychain-m1-square",
+      "sku": "H_213C_SC_M1_VMom",
+      "status": "active",
+      "chip_family": "NTAG213",
+      "chip_variant": "NTAG213",
+      "chip_origin": "other",
+      "memory_bytes": 144,
+      "form_factor": "keychain",
+      "surface_support": [
+        "standard"
+      ],
+      "material": "",
+      "size": "50 mm",
+      "best_for": [
+        "Contact Sharing",
+        "General Purpose",
+        "ID/Badge",
+        "Lost & Found/ICE",
+        "NFC Keychains & Hang Tags",
+        "NTAG213 Compatible",
+        "Profile & Social Links",
+        "Specialty Products",
+        "Standard Hang Tags",
+        "WhatsApp Chat/Support"
+      ],
+      "avoid_if": [
+        "metal-backed placement",
+        "secure authentication workflows"
+      ],
+      "works_with": [
+        "iPhone",
+        "Android"
+      ],
+      "secure_auth_suitable": false,
+      "custom_print_available": true,
+      "encoding_available": true,
+      "bulk_quote_required_over_qty": 100,
+      "price_currency": "INR",
+      "price_from": 299,
+      "price_to": 299,
+      "stock_status": "in_stock",
+      "last_updated": "2026-09-02"
+    }
+  ]
+}

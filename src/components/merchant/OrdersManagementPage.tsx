@@ -155,7 +155,7 @@ export const OrdersManagementPage: React.FC = () => {
                   </td>
 
                   <td className="p-3.5 font-heading font-extrabold text-slate-900 text-xs">
-                    ${order.total}
+                    ₹{order.total}
                   </td>
 
                   <td className="p-3.5">
@@ -232,18 +232,27 @@ export const OrdersManagementPage: React.FC = () => {
             <div className="space-y-2">
               <h4 className="text-xs font-bold text-slate-700 uppercase">Item Manifest</h4>
               <div className="divide-y divide-slate-100 border border-slate-200 rounded-xl p-2 max-h-44 overflow-y-auto">
-                {inspectModalOrder.items.map((i) => (
-                  <div key={i.product.id} className="py-2 px-2 flex items-center justify-between text-xs">
-                    <div className="flex items-center space-x-2.5">
-                      <img src={i.product.image} alt={i.product.name} className="w-9 h-9 rounded-lg object-cover" />
-                      <div>
-                        <h5 className="font-semibold text-slate-900 line-clamp-1">{i.product.name}</h5>
-                        <span className="text-[10px] text-slate-400">SKU: {i.product.sku} × {i.quantity}</span>
+                {inspectModalOrder.items.map((i, idx) => {
+                  const p = i.product || {
+                    id: i.productId || `item-${idx}`,
+                    image: i.imageUrl || 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=400&q=80',
+                    name: i.productName || i.name || 'Product',
+                    sku: i.sku || 'SKU-REC',
+                    price: i.unitPrice || i.price || 0
+                  };
+                  return (
+                    <div key={p.id} className="py-2 px-2 flex items-center justify-between text-xs">
+                      <div className="flex items-center space-x-2.5">
+                        <img src={p.image} alt={p.name} className="w-9 h-9 rounded-lg object-cover" />
+                        <div>
+                          <h5 className="font-semibold text-slate-900 line-clamp-1">{p.name}</h5>
+                          <span className="text-[10px] text-slate-400">SKU: {p.sku} × {i.quantity}</span>
+                        </div>
                       </div>
+                      <span className="font-bold text-slate-900">₹{p.price * i.quantity}</span>
                     </div>
-                    <span className="font-bold text-slate-900">${i.product.price * i.quantity}</span>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
 
@@ -262,7 +271,7 @@ export const OrdersManagementPage: React.FC = () => {
 
               <div className="flex items-center space-x-3">
                 <span className="font-heading font-extrabold text-base text-slate-900">
-                  Total: ${inspectModalOrder.total}
+                  Total: ₹{inspectModalOrder.total}
                 </span>
                 <button
                   onClick={() => setInspectModalOrder(null)}

@@ -171,6 +171,15 @@ export const AIHomePage: React.FC = () => {
         }
       }
 
+      // Handle Assistant Action: EXECUTE_CHECKOUT
+      if (data.action?.type === 'EXECUTE_CHECKOUT') {
+        if (checkoutReviewState) {
+          executeInlinePurchase(checkoutReviewState);
+        } else {
+          addToast('error', 'Checkout Error', 'No active checkout session. Please say "checkout" to review your cart first.');
+        }
+      }
+
       setMessages(prev => [...prev, {
         id: Date.now().toString() + '1',
         role: 'assistant',

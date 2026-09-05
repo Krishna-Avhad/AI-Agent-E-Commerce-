@@ -3,6 +3,24 @@
 > **Razorpay AI Buildathon — Track 01: AI Growth & Agentic Commerce**  
 > *"Grow the merchant's revenue, and make them sellable to AI buyers."*
 
+### 💡 The Core Idea: End-to-End Autonomous Commerce Lifecycle
+
+```mermaid
+flowchart TD
+    Shopper([AI SHOPPER]) -->|Intent / Search| Discovery[Discovery + Ranking]
+    Discovery -->|Recommendation| Commerce[Persistent Commerce \n Cart + Checkout]
+    Commerce -->|Explicit Confirm| Payment[Razorpay Test Mode \n Payment Verification]
+    Payment -->|PAID| Revenue[Revenue Attribution \n + Commerce Events]
+    Revenue -->|Updates| Intelligence[Merchant Intelligence \n + AI Growth Insights]
+    
+    style Shopper fill:#f9f9f9,stroke:#333,stroke-width:2px
+    style Discovery fill:#e1f5fe,stroke:#0288d1,stroke-width:2px
+    style Commerce fill:#e8f5e9,stroke:#388e3c,stroke-width:2px
+    style Payment fill:#fff3e0,stroke:#f57c00,stroke-width:2px
+    style Revenue fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    style Intelligence fill:#e8eaf6,stroke:#303f9f,stroke-width:2px
+```
+
 ---
 
 ## 🚀 Key Highlights & Architectural Foundations
@@ -15,6 +33,30 @@
 6. **Zero-Trust Price Recalculation**: Prices, taxes, discounts, and inventory availability are recomputed server-side from PostgreSQL on every lifecycle mutation. Client amounts are never trusted.
 7. **Real Razorpay Test Mode Payment Lifecycle**: Full HMAC-SHA256 signature verification, idempotent webhooks, and strict order binding.
 8. **AI Growth Engine & Revenue Intelligence**: Direct Supabase SQL metric calculation (GMV, AOV, orders), abandoned cart recovery, statistical upsell pairing, and automated bundle discovery.
+
+### 🧠 AI Orchestration Flow
+
+```mermaid
+flowchart TD
+    User([Shopper Prompt]) --> UI[RazorFlow Chat UI]
+    UI -->|POST /api/ai/shop| Router[AI Commerce Router]
+    Router --> Agent[Shopping Agent Orchestrator]
+    
+    subagent_Intent[Intent Parsing Engine]
+    Agent -->|Extract Entities & Constraints| subagent_Intent
+    
+    subagent_Intent -->|Search Query| Catalog[(PostgreSQL Catalog)]
+    subagent_Intent -->|Federated Query| ExtAPI[External Providers]
+    
+    Catalog --> Ranker[Semantic Match & Ranking]
+    ExtAPI --> Ranker
+    
+    Ranker -->|Top Recommendations| Policy[Deterministic Policy Engine]
+    Policy -->|Enforce Discounts & Security| Formatter[Response Builder]
+    
+    Formatter -->|Structured JSON Payload| UI
+    UI -->|Interactive UI rendering| Visuals([Product Comparison Matrix, Add to Cart])
+```
 
 ---
 
@@ -90,9 +132,9 @@ npm run dev
 ---
 
 ## 📖 Comprehensive Documentation
-- [Merchant AI Control Center (Phase 10)](file:///Users/krish/Razorpay/docs/merchant-ai-control-center.md)
-- [MCP & Agent Commerce Specification](file:///Users/krish/Razorpay/docs/mcp-agent-commerce.md)
-- [Deterministic AI Readiness Engine](file:///Users/krish/Razorpay/docs/ai-readiness.md)
-- [Agent Transaction Tracing Engine](file:///Users/krish/Razorpay/docs/agent-tracing.md)
-- [Agentic Commerce Protocol (Phase 8)](file:///Users/krish/Razorpay/docs/agent-commerce.md)
-- [Architecture & Domain Models](file:///Users/krish/Razorpay/docs/architecture.md)
+- [Merchant AI Control Center (Phase 10)](docs/merchant-ai-control-center.md)
+- [MCP & Agent Commerce Specification](docs/mcp-agent-commerce.md)
+- [Deterministic AI Readiness Engine](docs/ai-readiness.md)
+- [Agent Transaction Tracing Engine](docs/agent-tracing.md)
+- [Agentic Commerce Protocol (Phase 8)](docs/agent-commerce.md)
+- [Architecture & Domain Models](docs/architecture.md)

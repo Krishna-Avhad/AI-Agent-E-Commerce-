@@ -1,3 +1,5 @@
+import { USD_TO_INR_RATE } from './constants.js';
+import { randomUUID } from 'crypto';
 import { pool } from './db.js';
 
 export async function seedNormalizedDatabase() {
@@ -13,9 +15,10 @@ export async function seedNormalizedDatabase() {
   // 2. Merchant Settings
   await pool.query(`
     INSERT INTO merchant_settings (merchant_id, agent_enabled, agent_max_order_value, agent_daily_limit, require_payment_confirmation, max_discount_percent, max_discount_amount, auto_upsell_enabled, auto_campaign_enabled)
-    VALUES ('merch_razorflow_01', true, 50000.00, 500000.00, true, 15.00, 2500.00, true, true)
+    VALUES ('merch_razorflow_01', true, 500000.00, 2500000.00, true, 15.00, 25000.00, true, true)
     ON CONFLICT (merchant_id) DO UPDATE SET 
       agent_max_order_value = EXCLUDED.agent_max_order_value, 
+      agent_daily_limit = EXCLUDED.agent_daily_limit,
       max_discount_percent = EXCLUDED.max_discount_percent,
       max_discount_amount = EXCLUDED.max_discount_amount;
   `);
@@ -31,14 +34,36 @@ export async function seedNormalizedDatabase() {
 
   // 4. Products (25 Curated Hardware SKUs)
   const products = [
+    {
+      merchant_id: 'merch_razorflow_01',
+      name: 'Titanium Display Pro XDR',
+      category: 'Displays',
+      price: 999999,
+      original_price: 1199999,
+      currency: 'INR',
+      rating: 4.9,
+      review_count: 42,
+      stock_quantity: 5,
+      image_url: 'https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=800&auto=format&fit=crop&q=80',
+      gallery: JSON.stringify([]),
+      description: 'Ultra-premium titanium frame 6K reference display for professional color grading and high-end workstations.',
+      sku: 'SKU-TITAN-XDR',
+      brand: 'Titanium',
+      featured: true,
+      ai_match_score: 99,
+      ai_match_reason: 'Ultimate visual fidelity for zero-compromise creators.',
+      ai_readiness_score: 95,
+      vector_embedding_status: 'synced',
+      tags: JSON.stringify(['Monitor', '6K', 'Reference', 'Titanium']),
+      specs: JSON.stringify({'Resolution': '6016 x 3384', 'Brightness': '1600 nits'})
+    },
     // --- CATEGORY: Audio (prod-01 to prod-05) ---
     {
-      id: 'prod-01',
       merchant_id: 'merch_razorflow_01',
       name: 'Aether Pro Spatial Headphone',
       category: 'Audio',
-      price: 349,
-      original_price: 399,
+      price: Math.round(349 * USD_TO_INR_RATE),
+      original_price: Math.round(399 * USD_TO_INR_RATE),
       currency: 'INR',
       rating: 4.9,
       review_count: 428,
@@ -66,12 +91,11 @@ export async function seedNormalizedDatabase() {
       })
     },
     {
-      id: 'prod-02',
       merchant_id: 'merch_razorflow_01',
       name: 'Vortex Studio Podcaster Microphone',
       category: 'Audio',
-      price: 159,
-      original_price: 199,
+      price: Math.round(159 * USD_TO_INR_RATE),
+      original_price: Math.round(199 * USD_TO_INR_RATE),
       currency: 'INR',
       rating: 4.8,
       review_count: 284,
@@ -94,12 +118,11 @@ export async function seedNormalizedDatabase() {
       })
     },
     {
-      id: 'prod-03',
       merchant_id: 'merch_razorflow_01',
       name: 'AcousticShield Desk Isolation Screen',
       category: 'Audio',
-      price: 89,
-      original_price: 110,
+      price: Math.round(89 * USD_TO_INR_RATE),
+      original_price: Math.round(110 * USD_TO_INR_RATE),
       currency: 'INR',
       rating: 4.7,
       review_count: 142,
@@ -122,12 +145,11 @@ export async function seedNormalizedDatabase() {
       })
     },
     {
-      id: 'prod-04',
       merchant_id: 'merch_razorflow_01',
       name: 'SonicDAC Pro Audiophile USB-C Amp',
       category: 'Audio',
-      price: 129,
-      original_price: 159,
+      price: Math.round(129 * USD_TO_INR_RATE),
+      original_price: Math.round(159 * USD_TO_INR_RATE),
       currency: 'INR',
       rating: 4.9,
       review_count: 198,
@@ -150,12 +172,11 @@ export async function seedNormalizedDatabase() {
       })
     },
     {
-      id: 'prod-05',
       merchant_id: 'merch_razorflow_01',
       name: 'StudioFlex Articulated Boom Arm',
       category: 'Audio',
-      price: 69,
-      original_price: 85,
+      price: Math.round(69 * USD_TO_INR_RATE),
+      original_price: Math.round(85 * USD_TO_INR_RATE),
       currency: 'INR',
       rating: 4.8,
       review_count: 310,
@@ -180,12 +201,11 @@ export async function seedNormalizedDatabase() {
 
     // --- CATEGORY: Workstation & Keyboards (prod-06 to prod-10) ---
     {
-      id: 'prod-06',
       merchant_id: 'merch_razorflow_01',
       name: 'Kinesis Precision Mechanical Keyboard',
       category: 'Workstation',
-      price: 189,
-      original_price: 220,
+      price: Math.round(189 * USD_TO_INR_RATE),
+      original_price: Math.round(220 * USD_TO_INR_RATE),
       currency: 'INR',
       rating: 4.8,
       review_count: 312,
@@ -210,12 +230,11 @@ export async function seedNormalizedDatabase() {
       })
     },
     {
-      id: 'prod-07',
       merchant_id: 'merch_razorflow_01',
       name: 'Pulse MX Ergonomic Vertical Mouse',
       category: 'Workstation',
-      price: 99,
-      original_price: 119,
+      price: Math.round(99 * USD_TO_INR_RATE),
+      original_price: Math.round(119 * USD_TO_INR_RATE),
       currency: 'INR',
       rating: 4.7,
       review_count: 220,
@@ -238,12 +257,11 @@ export async function seedNormalizedDatabase() {
       })
     },
     {
-      id: 'prod-08',
       merchant_id: 'merch_razorflow_01',
       name: 'AeroLift Dual Motor Standing Desk',
       category: 'Workstation',
-      price: 549,
-      original_price: 620,
+      price: Math.round(549 * USD_TO_INR_RATE),
+      original_price: Math.round(620 * USD_TO_INR_RATE),
       currency: 'INR',
       rating: 4.9,
       review_count: 388,
@@ -266,12 +284,11 @@ export async function seedNormalizedDatabase() {
       })
     },
     {
-      id: 'prod-09',
       merchant_id: 'merch_razorflow_01',
       name: 'ErgoRest Memory Foam Wrist Support',
       category: 'Workstation',
-      price: 29,
-      original_price: 39,
+      price: Math.round(29 * USD_TO_INR_RATE),
+      original_price: Math.round(39 * USD_TO_INR_RATE),
       currency: 'INR',
       rating: 4.6,
       review_count: 175,
@@ -294,12 +311,11 @@ export async function seedNormalizedDatabase() {
       })
     },
     {
-      id: 'prod-10',
       merchant_id: 'merch_razorflow_01',
       name: 'Titanium Anodized Keycap Artisan Set',
       category: 'Workstation',
-      price: 79,
-      original_price: 99,
+      price: Math.round(79 * USD_TO_INR_RATE),
+      original_price: Math.round(99 * USD_TO_INR_RATE),
       currency: 'INR',
       rating: 4.8,
       review_count: 96,
@@ -324,12 +340,11 @@ export async function seedNormalizedDatabase() {
 
     // --- CATEGORY: Displays (prod-11 to prod-14) ---
     {
-      id: 'prod-11',
       merchant_id: 'merch_razorflow_01',
       name: 'Nova Pro 4K HDR USB-C Monitor',
       category: 'Displays',
-      price: 699,
-      original_price: 799,
+      price: Math.round(699 * USD_TO_INR_RATE),
+      original_price: Math.round(799 * USD_TO_INR_RATE),
       currency: 'INR',
       rating: 4.9,
       review_count: 512,
@@ -353,12 +368,11 @@ export async function seedNormalizedDatabase() {
       })
     },
     {
-      id: 'prod-12',
       merchant_id: 'merch_razorflow_01',
       name: 'Nova Ultrawide 34" Curved Studio Display',
       category: 'Displays',
-      price: 899,
-      original_price: 999,
+      price: Math.round(899 * USD_TO_INR_RATE),
+      original_price: Math.round(999 * USD_TO_INR_RATE),
       currency: 'INR',
       rating: 4.9,
       review_count: 240,
@@ -381,12 +395,11 @@ export async function seedNormalizedDatabase() {
       })
     },
     {
-      id: 'prod-13',
       merchant_id: 'merch_razorflow_01',
       name: 'OmniArm Gas-Spring Heavy-Duty Monitor Arm',
       category: 'Displays',
-      price: 119,
-      original_price: 149,
+      price: Math.round(119 * USD_TO_INR_RATE),
+      original_price: Math.round(149 * USD_TO_INR_RATE),
       currency: 'INR',
       rating: 4.8,
       review_count: 320,
@@ -409,12 +422,11 @@ export async function seedNormalizedDatabase() {
       })
     },
     {
-      id: 'prod-14',
       merchant_id: 'merch_razorflow_01',
       name: 'Thunderbolt 4 10-in-1 Dual 4K Dock',
       category: 'Displays',
-      price: 249,
-      original_price: 299,
+      price: Math.round(249 * USD_TO_INR_RATE),
+      original_price: Math.round(299 * USD_TO_INR_RATE),
       currency: 'INR',
       rating: 4.9,
       review_count: 188,
@@ -439,12 +451,11 @@ export async function seedNormalizedDatabase() {
 
     // --- CATEGORY: Lighting & Smart Sensors (prod-15 to prod-18) ---
     {
-      id: 'prod-15',
       merchant_id: 'merch_razorflow_01',
       name: 'Lumix Ergonomic OLED Desk Lamp',
       category: 'Lighting',
-      price: 129,
-      original_price: 149,
+      price: Math.round(129 * USD_TO_INR_RATE),
+      original_price: Math.round(149 * USD_TO_INR_RATE),
       currency: 'INR',
       rating: 4.7,
       review_count: 195,
@@ -468,12 +479,11 @@ export async function seedNormalizedDatabase() {
       })
     },
     {
-      id: 'prod-16',
       merchant_id: 'merch_razorflow_01',
       name: 'ScreenGlow Pro Asymmetric Monitor Lightbar',
       category: 'Lighting',
-      price: 79,
-      original_price: 99,
+      price: Math.round(79 * USD_TO_INR_RATE),
+      original_price: Math.round(99 * USD_TO_INR_RATE),
       currency: 'INR',
       rating: 4.8,
       review_count: 410,
@@ -496,12 +506,11 @@ export async function seedNormalizedDatabase() {
       })
     },
     {
-      id: 'prod-17',
       merchant_id: 'merch_razorflow_01',
       name: 'AuraAmbient RGB Backlight Diffusion Tube',
       category: 'Lighting',
-      price: 59,
-      original_price: 75,
+      price: Math.round(59 * USD_TO_INR_RATE),
+      original_price: Math.round(75 * USD_TO_INR_RATE),
       currency: 'INR',
       rating: 4.6,
       review_count: 165,
@@ -524,12 +533,11 @@ export async function seedNormalizedDatabase() {
       })
     },
     {
-      id: 'prod-18',
       merchant_id: 'merch_razorflow_01',
       name: 'AirSense Precision Desk Environmental Sensor',
       category: 'Lighting',
-      price: 99,
-      original_price: 120,
+      price: Math.round(99 * USD_TO_INR_RATE),
+      original_price: Math.round(120 * USD_TO_INR_RATE),
       currency: 'INR',
       rating: 4.8,
       review_count: 88,
@@ -554,12 +562,11 @@ export async function seedNormalizedDatabase() {
 
     // --- CATEGORY: Accessories & Desk Mats (prod-19 to prod-25) ---
     {
-      id: 'prod-19',
       merchant_id: 'merch_razorflow_01',
       name: 'Nexus Magnetic Modular Desk Mat',
       category: 'Accessories',
-      price: 49,
-      original_price: 65,
+      price: Math.round(49 * USD_TO_INR_RATE),
+      original_price: Math.round(65 * USD_TO_INR_RATE),
       currency: 'INR',
       rating: 4.6,
       review_count: 140,
@@ -582,12 +589,11 @@ export async function seedNormalizedDatabase() {
       })
     },
     {
-      id: 'prod-20',
       merchant_id: 'merch_razorflow_01',
       name: 'MagAnchor Precision Cable Clamps (4-Pack)',
       category: 'Accessories',
-      price: 24,
-      original_price: 32,
+      price: Math.round(24 * USD_TO_INR_RATE),
+      original_price: Math.round(32 * USD_TO_INR_RATE),
       currency: 'INR',
       rating: 4.7,
       review_count: 215,
@@ -610,12 +616,11 @@ export async function seedNormalizedDatabase() {
       })
     },
     {
-      id: 'prod-21',
       merchant_id: 'merch_razorflow_01',
       name: 'UnderDesk PowerHub Cable Management Raceway',
       category: 'Accessories',
-      price: 39,
-      original_price: 49,
+      price: Math.round(39 * USD_TO_INR_RATE),
+      original_price: Math.round(49 * USD_TO_INR_RATE),
       currency: 'INR',
       rating: 4.8,
       review_count: 178,
@@ -638,12 +643,11 @@ export async function seedNormalizedDatabase() {
       })
     },
     {
-      id: 'prod-22',
       merchant_id: 'merch_razorflow_01',
       name: 'ChargeStand MagSafe 3-in-1 Fast Station',
       category: 'Accessories',
-      price: 89,
-      original_price: 110,
+      price: Math.round(89 * USD_TO_INR_RATE),
+      original_price: Math.round(110 * USD_TO_INR_RATE),
       currency: 'INR',
       rating: 4.9,
       review_count: 280,
@@ -666,12 +670,11 @@ export async function seedNormalizedDatabase() {
       })
     },
     {
-      id: 'prod-23',
       merchant_id: 'merch_razorflow_01',
       name: 'Walnut Solid Wood Headphone Stand',
       category: 'Accessories',
-      price: 45,
-      original_price: 59,
+      price: Math.round(45 * USD_TO_INR_RATE),
+      original_price: Math.round(59 * USD_TO_INR_RATE),
       currency: 'INR',
       rating: 4.8,
       review_count: 190,
@@ -694,12 +697,11 @@ export async function seedNormalizedDatabase() {
       })
     },
     {
-      id: 'prod-24',
       merchant_id: 'merch_razorflow_01',
       name: 'CarbonFiber Laptop Elevator Riser',
       category: 'Accessories',
-      price: 55,
-      original_price: 69,
+      price: Math.round(55 * USD_TO_INR_RATE),
+      original_price: Math.round(69 * USD_TO_INR_RATE),
       currency: 'INR',
       rating: 4.7,
       review_count: 145,
@@ -722,12 +724,11 @@ export async function seedNormalizedDatabase() {
       })
     },
     {
-      id: 'prod-25',
       merchant_id: 'merch_razorflow_01',
       name: 'Microfiber Optical Screen & Lens Cleaning Kit',
       category: 'Accessories',
-      price: 19,
-      original_price: 25,
+      price: Math.round(19 * USD_TO_INR_RATE),
+      original_price: Math.round(25 * USD_TO_INR_RATE),
       currency: 'INR',
       rating: 4.9,
       review_count: 380,
@@ -750,12 +751,11 @@ export async function seedNormalizedDatabase() {
       })
     },
     {
-      id: 'prod-26',
       merchant_id: 'merch_razorflow_01',
       name: 'Signature Collection Leather Jacket',
       category: 'Fashion & Apparel',
-      price: 24999,
-      original_price: 29999,
+      price: Math.round(24999 * USD_TO_INR_RATE),
+      original_price: Math.round(29999 * USD_TO_INR_RATE),
       currency: 'INR',
       rating: 4.8,
       review_count: 312,
@@ -774,12 +774,11 @@ export async function seedNormalizedDatabase() {
       specs: JSON.stringify({'Material': 'Full-grain Leather', 'Fit': 'Tailored', 'Care': 'Dry Clean Only'})
     },
     {
-      id: 'prod-27',
       merchant_id: 'merch_razorflow_01',
       name: 'Luxe Botanicals Hydrating Serum',
       category: 'Beauty & Personal Care',
-      price: 3499,
-      original_price: 4299,
+      price: Math.round(3499 * USD_TO_INR_RATE),
+      original_price: Math.round(4299 * USD_TO_INR_RATE),
       currency: 'INR',
       rating: 4.7,
       review_count: 856,
@@ -798,12 +797,11 @@ export async function seedNormalizedDatabase() {
       specs: JSON.stringify({'Volume': '30ml', 'Key Ingredients': 'Hyaluronic Acid, Vitamin C', 'Skin Type': 'All'})
     },
     {
-      id: 'prod-28',
       merchant_id: 'merch_razorflow_01',
       name: 'Apex Pro Smart Coffee Maker',
       category: 'Home & Kitchen',
-      price: 18999,
-      original_price: 21999,
+      price: Math.round(18999 * USD_TO_INR_RATE),
+      original_price: Math.round(21999 * USD_TO_INR_RATE),
       currency: 'INR',
       rating: 4.9,
       review_count: 421,
@@ -822,12 +820,11 @@ export async function seedNormalizedDatabase() {
       specs: JSON.stringify({'Connectivity': 'Wi-Fi, Bluetooth', 'Capacity': '1.5 Liters', 'Grinder': 'Ceramic Burr'})
     },
     {
-      id: 'prod-29',
       merchant_id: 'merch_razorflow_01',
       name: 'Velocity Ultra Running Shoes',
       category: 'Sports & Outdoors',
-      price: 11999,
-      original_price: 14999,
+      price: Math.round(11999 * USD_TO_INR_RATE),
+      original_price: Math.round(14999 * USD_TO_INR_RATE),
       currency: 'INR',
       rating: 4.6,
       review_count: 590,
@@ -846,12 +843,11 @@ export async function seedNormalizedDatabase() {
       specs: JSON.stringify({'Weight': '210g', 'Drop': '8mm', 'Cushioning': 'Responsive Foam'})
     },
     {
-      id: 'prod-30',
       merchant_id: 'merch_razorflow_01',
       name: '"The Innovator\'s Mindset" by Dr. E. Carter',
       category: 'Books',
-      price: 1299,
-      original_price: 1599,
+      price: Math.round(1299 * USD_TO_INR_RATE),
+      original_price: Math.round(1599 * USD_TO_INR_RATE),
       currency: 'INR',
       rating: 4.9,
       review_count: 1240,
@@ -870,12 +866,11 @@ export async function seedNormalizedDatabase() {
       specs: JSON.stringify({'Format': 'Hardcover', 'Pages': '342', 'Language': 'English'})
     },
     {
-      id: 'prod-31',
       merchant_id: 'merch_razorflow_01',
       name: 'OmniVision 65-inch 4K OLED Smart TV',
       category: 'Electronics',
-      price: 145999,
-      original_price: 169999,
+      price: Math.round(145999 * USD_TO_INR_RATE),
+      original_price: Math.round(169999 * USD_TO_INR_RATE),
       currency: 'INR',
       rating: 4.8,
       review_count: 310,
@@ -894,12 +889,11 @@ export async function seedNormalizedDatabase() {
       specs: JSON.stringify({'Resolution': '4K UHD (3840 x 2160)', 'Refresh Rate': '120Hz', 'HDR': 'Dolby Vision, HDR10+'})
     },
     {
-      id: 'prod-32',
       merchant_id: 'merch_razorflow_01',
       name: 'EcoFit Premium Yoga Mat',
       category: 'Sports & Outdoors',
-      price: 2499,
-      original_price: 3499,
+      price: Math.round(2499 * USD_TO_INR_RATE),
+      original_price: Math.round(3499 * USD_TO_INR_RATE),
       currency: 'INR',
       rating: 4.7,
       review_count: 842,
@@ -918,12 +912,11 @@ export async function seedNormalizedDatabase() {
       specs: JSON.stringify({'Material': 'Natural Rubber', 'Thickness': '6mm', 'Dimensions': '72" x 26"'})
     },
     {
-      id: 'prod-33',
       merchant_id: 'merch_razorflow_01',
       name: 'Aura Bloom Eau de Parfum',
       category: 'Beauty & Personal Care',
-      price: 8999,
-      original_price: 10499,
+      price: Math.round(8999 * USD_TO_INR_RATE),
+      original_price: Math.round(10499 * USD_TO_INR_RATE),
       currency: 'INR',
       rating: 4.6,
       review_count: 450,
@@ -942,12 +935,11 @@ export async function seedNormalizedDatabase() {
       specs: JSON.stringify({'Volume': '100ml', 'Fragrance Family': 'Floral Oriental', 'Longevity': '12+ Hours'})
     },
     {
-      id: 'prod-34',
       merchant_id: 'merch_razorflow_01',
       name: 'Chronos Classic Automatic Watch',
       category: 'Fashion & Apparel',
-      price: 35999,
-      original_price: 42000,
+      price: Math.round(35999 * USD_TO_INR_RATE),
+      original_price: Math.round(42000 * USD_TO_INR_RATE),
       currency: 'INR',
       rating: 4.8,
       review_count: 215,
@@ -966,12 +958,11 @@ export async function seedNormalizedDatabase() {
       specs: JSON.stringify({'Movement': 'Swiss Automatic', 'Glass': 'Sapphire Crystal', 'Water Resistance': '50m'})
     },
     {
-      id: 'prod-35',
       merchant_id: 'merch_razorflow_01',
       name: 'SleepWell Cloud Memory Foam Mattress',
       category: 'Home & Kitchen',
-      price: 45999,
-      original_price: 55000,
+      price: Math.round(45999 * USD_TO_INR_RATE),
+      original_price: Math.round(55000 * USD_TO_INR_RATE),
       currency: 'INR',
       rating: 4.9,
       review_count: 1890,
@@ -990,6 +981,10 @@ export async function seedNormalizedDatabase() {
       specs: JSON.stringify({'Size': 'Queen (60x80 inches)', 'Firmness': 'Medium Firm', 'Thickness': '12 inches'})
     }
   ];
+  
+  products.forEach(p => p.id = randomUUID());
+  const skuToId = Object.fromEntries(products.map(p => [p.sku, p.id]));
+
 
   // Clean tables for deterministic fresh seeding
   await pool.query(`
@@ -1020,18 +1015,18 @@ export async function seedNormalizedDatabase() {
 
   // 5. Product Relationships Graph (Upsell, Cross-sell, Accessory edges)
   const relationships = [
-    { id: 'rel-01', product_id: 'prod-01', related_product_id: 'prod-02', relationship_type: 'CROSS_SELL', score: 0.94, reason: 'Pair broadcast microphone with ANC headphones for full vocal clarity & monitoring stack.' },
-    { id: 'rel-02', product_id: 'prod-01', related_product_id: 'prod-04', relationship_type: 'UPSELL', score: 0.96, reason: 'Audiophile USB-C DAC amplifier drives lossless acoustic fidelity on Aether Pro headphones.' },
-    { id: 'rel-03', product_id: 'prod-01', related_product_id: 'prod-23', relationship_type: 'ACCESSORY', score: 0.91, reason: 'Solid walnut wooden stand displays and protects over-ear headphones on desk.' },
-    { id: 'rel-04', product_id: 'prod-06', related_product_id: 'prod-07', relationship_type: 'CROSS_SELL', score: 0.97, reason: 'Vertical ergonomic mouse neutralizes wrist strain when paired with 75% mechanical keyboard.' },
-    { id: 'rel-05', product_id: 'prod-06', related_product_id: 'prod-09', relationship_type: 'ACCESSORY', score: 0.92, reason: 'Memory foam cooling gel wrist rest relieves pressure during sustained coding sprints.' },
-    { id: 'rel-06', product_id: 'prod-06', related_product_id: 'prod-19', relationship_type: 'CROSS_SELL', score: 0.89, reason: 'Magnetic vegan leather desk mat provides cushioned tactile feedback and cable routing.' },
-    { id: 'rel-07', product_id: 'prod-11', related_product_id: 'prod-13', relationship_type: 'ACCESSORY', score: 0.95, reason: 'Gas-spring heavy duty monitor arm frees desk space and allows 360-degree rotation.' },
-    { id: 'rel-08', product_id: 'prod-11', related_product_id: 'prod-14', relationship_type: 'UPSELL', score: 0.98, reason: 'Thunderbolt 4 dual dock drives 4K monitors with single-cable 96W laptop charging.' },
-    { id: 'rel-09', product_id: 'prod-11', related_product_id: 'prod-16', relationship_type: 'CROSS_SELL', score: 0.93, reason: 'Asymmetric monitor lightbar illuminates workspace without screen reflections.' },
-    { id: 'rel-10', product_id: 'prod-08', related_product_id: 'prod-21', relationship_type: 'ACCESSORY', score: 0.96, reason: 'Under-desk cable raceway and GaN power hub keeps all standing desk wiring hidden.' },
-    { id: 'rel-11', product_id: 'prod-19', related_product_id: 'prod-20', relationship_type: 'ACCESSORY', score: 0.94, reason: 'CNC aluminum magnetic clamps snap directly into Nexus mat channels for cable retention.' },
-    { id: 'rel-12', product_id: 'prod-19', related_product_id: 'prod-22', relationship_type: 'CROSS_SELL', score: 0.91, reason: '3-in-1 MagSafe station organizes phone, watch, and earbuds charging in matching style.' }
+    { id: 'rel-01', product_sku: 'SKU-AETH-901', related_product_sku: 'SKU-MIC-VX1', relationship_type: 'CROSS_SELL', score: 0.94, reason: 'Pair broadcast microphone with ANC headphones for full vocal clarity & monitoring stack.' },
+    { id: 'rel-02', product_sku: 'SKU-AETH-901', related_product_sku: 'SKU-DAC-PRO', relationship_type: 'UPSELL', score: 0.96, reason: 'Audiophile USB-C DAC amplifier drives lossless acoustic fidelity on Aether Pro headphones.' },
+    { id: 'rel-03', product_sku: 'SKU-AETH-901', related_product_sku: 'SKU-STAND-WOOD', relationship_type: 'ACCESSORY', score: 0.91, reason: 'Solid walnut wooden stand displays and protects over-ear headphones on desk.' },
+    { id: 'rel-04', product_sku: 'SKU-KB-75X', related_product_sku: 'SKU-MOU-V57', relationship_type: 'CROSS_SELL', score: 0.97, reason: 'Vertical ergonomic mouse neutralizes wrist strain when paired with 75% mechanical keyboard.' },
+    { id: 'rel-05', product_sku: 'SKU-KB-75X', related_product_sku: 'SKU-WRIST-75', relationship_type: 'ACCESSORY', score: 0.92, reason: 'Memory foam cooling gel wrist rest relieves pressure during sustained coding sprints.' },
+    { id: 'rel-06', product_sku: 'SKU-KB-75X', related_product_sku: 'SKU-MAT-NX9', relationship_type: 'CROSS_SELL', score: 0.89, reason: 'Magnetic vegan leather desk mat provides cushioned tactile feedback and cable routing.' },
+    { id: 'rel-07', product_sku: 'SKU-MON-4K27', related_product_sku: 'SKU-ARM-OMNI', relationship_type: 'ACCESSORY', score: 0.95, reason: 'Gas-spring heavy duty monitor arm frees desk space and allows 360-degree rotation.' },
+    { id: 'rel-08', product_sku: 'SKU-MON-4K27', related_product_sku: 'SKU-DOCK-TB4', relationship_type: 'UPSELL', score: 0.98, reason: 'Thunderbolt 4 dual dock drives 4K monitors with single-cable 96W laptop charging.' },
+    { id: 'rel-09', product_sku: 'SKU-MON-4K27', related_product_sku: 'SKU-LGT-BAR', relationship_type: 'CROSS_SELL', score: 0.93, reason: 'Asymmetric monitor lightbar illuminates workspace without screen reflections.' },
+    { id: 'rel-10', product_sku: 'SKU-DSK-AERO', related_product_sku: 'SKU-CABLE-RACE', relationship_type: 'ACCESSORY', score: 0.96, reason: 'Under-desk cable raceway and GaN power hub keeps all standing desk wiring hidden.' },
+    { id: 'rel-11', product_sku: 'SKU-MAT-NX9', related_product_sku: 'SKU-MAG-CLAMP', relationship_type: 'ACCESSORY', score: 0.94, reason: 'CNC aluminum magnetic clamps snap directly into Nexus mat channels for cable retention.' },
+    { id: 'rel-12', product_sku: 'SKU-MAT-NX9', related_product_sku: 'SKU-MAG-3IN1', relationship_type: 'CROSS_SELL', score: 0.91, reason: '3-in-1 MagSafe station organizes phone, watch, and earbuds charging in matching style.' }
   ];
 
   for (const r of relationships) {
@@ -1039,7 +1034,7 @@ export async function seedNormalizedDatabase() {
       `INSERT INTO product_relationships (id, product_id, related_product_id, relationship_type, score, reason)
        VALUES ($1, $2, $3, $4, $5, $6)
        ON CONFLICT (id) DO UPDATE SET score = EXCLUDED.score, reason = EXCLUDED.reason;`,
-      [r.id, r.product_id, r.related_product_id, r.relationship_type, r.score, r.reason]
+      [r.id, skuToId[r.product_sku], skuToId[r.related_product_sku], r.relationship_type, r.score, r.reason]
     );
   }
 
@@ -1084,11 +1079,11 @@ export async function seedNormalizedDatabase() {
       tagline: 'Precision 4K Visuals + Studio Grade Acoustics',
       description: 'Curated by RazorFlow AI for content developers and creative directors wanting pristine fidelity without configuration friction.',
       match_score: 99,
-      original_total: 1207,
-      bundle_price: 999,
+      original_total: Math.round(1207 * USD_TO_INR_RATE),
+      bundle_price: Math.round(999 * USD_TO_INR_RATE),
       savings_percentage: 17,
       category: 'Workstation Stack',
-      product_ids: JSON.stringify(['prod-01', 'prod-11', 'prod-02']),
+      product_skus: ['SKU-AETH-901', 'SKU-MON-4K27', 'SKU-MIC-VX1'],
       curated_reason: 'Complete audiovisual synthesis with unified USB-C single cable topology and active voice isolation.'
     },
     {
@@ -1097,11 +1092,11 @@ export async function seedNormalizedDatabase() {
       tagline: 'End-to-End Ergonomics for 10+ Hour Coding Sprints',
       description: 'Engineered pairing of 75% mechanical tactile keyboard, 57° vertical mouse, memory wrist pillow, and circadian task lighting.',
       match_score: 97,
-      original_total: 446,
-      bundle_price: 369,
+      original_total: Math.round(446 * USD_TO_INR_RATE),
+      bundle_price: Math.round(369 * USD_TO_INR_RATE),
       savings_percentage: 17,
       category: 'Ergonomics',
-      product_ids: JSON.stringify(['prod-06', 'prod-07', 'prod-09', 'prod-15']),
+      product_skus: ['SKU-KB-75X', 'SKU-MOU-V57', 'SKU-WRIST-75', 'SKU-LUM-204'],
       curated_reason: 'Eliminates wrist fatigue and eye strain via synchronized tactile and optical comfort.'
     },
     {
@@ -1110,11 +1105,11 @@ export async function seedNormalizedDatabase() {
       tagline: 'Quiet Luxury Desk Essential Kit',
       description: 'Sleek anodized keyboard paired with modular magnetic vegan leather mat, cable clamps, and ANC studio headphones.',
       match_score: 94,
-      original_total: 611,
-      bundle_price: 499,
+      original_total: Math.round(611 * USD_TO_INR_RATE),
+      bundle_price: Math.round(499 * USD_TO_INR_RATE),
       savings_percentage: 18,
       category: 'Minimalism',
-      product_ids: JSON.stringify(['prod-01', 'prod-06', 'prod-19', 'prod-20']),
+      product_skus: ['SKU-AETH-901', 'SKU-KB-75X', 'SKU-MAT-NX9', 'SKU-MAG-CLAMP'],
       curated_reason: 'Reduces visual clutter and increases deep-work focus scores by 3.2x.'
     }
   ];
@@ -1128,7 +1123,7 @@ export async function seedNormalizedDatabase() {
          bundle_price = EXCLUDED.bundle_price, 
          original_total = EXCLUDED.original_total, 
          product_ids = EXCLUDED.product_ids;`,
-      [b.id, b.title, b.tagline, b.description, b.match_score, b.original_total, b.bundle_price, b.savings_percentage, b.category, b.product_ids, b.curated_reason]
+      [b.id, b.title, b.tagline, b.description, b.match_score, b.original_total, b.bundle_price, b.savings_percentage, b.category, JSON.stringify(b.product_skus.map(sku => skuToId[sku])), b.curated_reason]
     );
   }
 

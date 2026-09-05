@@ -273,8 +273,8 @@ export async function runShoppingAgentTestSuite() {
       message: 'Compare the best laptops under ₹80,000 for AI/ML with 16GB RAM'
     });
 
-    if (res.comparison && res.comparison.products.length >= 2 && res.comparison.features.length > 0) {
-      console.log(`  ✅ PASSED: Generated comparison matrix with ${res.comparison.products.length} products across ${res.comparison.features.length} extracted features.`);
+    if (res.comparison && res.comparison.products.length >= 2 && Object.keys(res.comparison.products[0].features || {}).length > 0) {
+      console.log(`  ✅ PASSED: Generated comparison matrix with ${res.comparison.products.length} products across ${Object.keys(res.comparison.products[0].features).length} extracted features.`);
       console.log(`  ✅ PASSED: Comparison Verdict: "${res.comparison.verdict.slice(0, 80)}..."`);
       passed++;
     } else {

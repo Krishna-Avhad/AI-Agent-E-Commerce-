@@ -18,6 +18,7 @@ import {
   Zap,
   Tag
 } from 'lucide-react';
+import { apiUrl } from '../../lib/apiUrl';
 
 interface OverviewData {
   merchantId: string;
@@ -93,11 +94,11 @@ export const MerchantOverviewPage: React.FC = () => {
     setIsLoading(true);
     try {
       const [ovRes, fnRes, prRes, inRes, gsRes] = await Promise.all([
-        fetch(`/api/merchant/ai-commerce/overview?days=${days}`),
-        fetch(`/api/merchant/ai-commerce/funnel?days=${days}`),
-        fetch(`/api/merchant/ai-commerce/products?days=${days}`),
-        fetch(`/api/merchant/ai-commerce/intents?days=${days}`),
-        fetch(`/api/merchant/ai-commerce/insights?days=${days}`)
+        fetch(apiUrl(`/api/merchant/ai-commerce/overview?days=${days}`)),
+        fetch(apiUrl(`/api/merchant/ai-commerce/funnel?days=${days}`)),
+        fetch(apiUrl(`/api/merchant/ai-commerce/products?days=${days}`)),
+        fetch(apiUrl(`/api/merchant/ai-commerce/intents?days=${days}`)),
+        fetch(apiUrl(`/api/merchant/ai-commerce/insights?days=${days}`))
       ]);
 
       if (ovRes.ok) setOverview(await ovRes.json());

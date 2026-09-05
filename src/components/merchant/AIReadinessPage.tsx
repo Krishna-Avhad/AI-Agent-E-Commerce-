@@ -11,6 +11,7 @@ import {
   Cpu,
   ArrowRight
 } from 'lucide-react';
+import { apiUrl } from '../../lib/apiUrl';
 
 export const AIReadinessPage: React.FC = () => {
   const { products, addToast, setMerchantRoute } = useApp();
@@ -18,7 +19,7 @@ export const AIReadinessPage: React.FC = () => {
   const [realReadiness, setRealReadiness] = useState<any>(null);
 
   useEffect(() => {
-    fetch('/api/merchant/ai/readiness')
+    fetch(apiUrl('/api/merchant/ai/readiness'))
       .then((res) => (res.ok ? res.json() : null))
       .then((data) => {
         if (data) setRealReadiness(data);

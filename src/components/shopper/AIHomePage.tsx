@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { Product } from '../../types';
+import { apiUrl } from '../../lib/apiUrl';
 
 interface ChatMessage {
   id: string;
@@ -89,7 +90,7 @@ export const AIHomePage: React.FC = () => {
       const previousRecommendations = lastAssistantMsg?.data?.recommendations || [];
       const effectiveCartId = cartId || localStorage.getItem('razorflow_cart_id') || undefined;
 
-      const res = await fetch('/api/ai/shop', {
+      const res = await fetch(apiUrl('/api/ai/shop'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
@@ -142,7 +143,7 @@ export const AIHomePage: React.FC = () => {
         const targetCartId = effectiveCartId || localStorage.getItem('razorflow_cart_id');
         if (targetCartId) {
           try {
-            const revRes = await fetch('/api/checkout/review', {
+            const revRes = await fetch(apiUrl('/api/checkout/review'), {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ cartId: targetCartId, customerId: 'cust-01' })
@@ -199,7 +200,7 @@ export const AIHomePage: React.FC = () => {
         checkoutToken
       };
 
-      const res = await fetch('/api/orders', {
+      const res = await fetch(apiUrl('/api/orders'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -236,7 +237,7 @@ export const AIHomePage: React.FC = () => {
           },
           handler: async (response: any) => {
             try {
-              const verifyRes = await fetch('/api/payments/verify', {
+              const verifyRes = await fetch(apiUrl('/api/payments/verify'), {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({

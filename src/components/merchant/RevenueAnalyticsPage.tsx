@@ -11,6 +11,7 @@ import {
   Download,
   Calendar
 } from 'lucide-react';
+import { apiUrl } from '../../lib/apiUrl';
 
 interface OverviewData {
   merchantId: string;
@@ -31,7 +32,7 @@ export const RevenueAnalyticsPage: React.FC = () => {
   const [overview, setOverview] = useState<OverviewData | null>(null);
 
   useEffect(() => {
-    fetch(`/api/merchant/ai-commerce/overview?days=${timeWindow}`)
+    fetch(apiUrl(`/api/merchant/ai-commerce/overview?days=${timeWindow}`))
       .then(res => res.ok ? res.json() : null)
       .then(data => { if (data) setOverview(data); })
       .catch(err => console.warn('Failed to fetch revenue overview:', err));

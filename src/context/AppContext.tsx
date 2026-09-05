@@ -438,7 +438,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           sender: 'ai',
           text: data.content,
           timestamp: data.timestamp || new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-          actions: data.actions
+          actions: data.actions,
+          comparison: data.comparison
         };
         setChatMessages((prev) => [...prev, aiMsg]);
         return;

@@ -179,4 +179,5 @@ export interface ChatMessage {
     payload?: any;
   }[];
   productSuggestions?: Product[];
+  comparison?: any;
 }

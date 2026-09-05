@@ -153,6 +153,45 @@ export const AIChatDrawer: React.FC = () => {
                     ))}
                   </div>
                 )}
+                
+                {/* Comparison Matrix */}
+                {msg.comparison && (
+                  <div className="mt-3 w-full border border-indigo-100 rounded-xl overflow-hidden bg-white shadow-sm max-w-[280px]">
+                    <div className="bg-indigo-50 px-3 py-2 border-b border-indigo-100 flex items-center justify-between">
+                      <div className="flex items-center space-x-1.5 text-indigo-700 font-semibold text-[10px]">
+                        <span>AI Feature Comparison</span>
+                      </div>
+                    </div>
+                    <div className="p-2 overflow-x-auto">
+                      <table className="w-full text-left border-collapse min-w-[300px]">
+                        <thead>
+                          <tr>
+                            <th className="p-1.5 border-b border-slate-100 text-[10px] text-slate-400 font-semibold w-1/4">Feature</th>
+                            {msg.comparison.products.map((p: any) => (
+                              <th key={p.id} className="p-1.5 border-b border-slate-100 text-[10px] text-slate-800 font-bold w-1/4">
+                                {p.title}
+                              </th>
+                            ))}
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {Object.keys(msg.comparison.products[0]?.features || {}).map((featureKey) => (
+                            <tr key={featureKey} className="hover:bg-slate-50 transition border-b border-slate-50 last:border-0">
+                              <td className="p-1.5 text-[10px] font-semibold text-slate-600 capitalize">
+                                {featureKey}
+                              </td>
+                              {msg.comparison.products.map((p: any) => (
+                                <td key={p.id} className="p-1.5 text-[10px] text-slate-600">
+                                  {p.features[featureKey] !== null ? p.features[featureKey] : <span className="text-slate-300">-</span>}
+                                </td>
+                              ))}
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                )}
 
                 {/* Interactive Action Buttons */}
                 {msg.actions && msg.actions.length > 0 && (

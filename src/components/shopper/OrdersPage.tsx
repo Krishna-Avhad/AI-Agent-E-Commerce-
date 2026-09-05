@@ -13,6 +13,7 @@ import {
   MapPin,
   CreditCard
 } from 'lucide-react';
+import { apiUrl } from '../../lib/apiUrl';
 
 export const OrdersPage: React.FC = () => {
   const { setShopperRoute, setSelectedOrder } = useApp();
@@ -24,7 +25,7 @@ export const OrdersPage: React.FC = () => {
     setIsLoading(true);
     setError(null);
     try {
-      const res = await fetch('/api/orders', {
+      const res = await fetch(apiUrl('/api/orders'), {
         headers: {
           'x-customer-id': 'cust-01',
           'x-merchant-id': 'merch_razorflow_01'

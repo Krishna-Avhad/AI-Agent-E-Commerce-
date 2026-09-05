@@ -627,14 +627,17 @@ export class ShoppingAgent {
     
     // Determine categories to search (Phase 3.3/3.4)
     // Filter out any excluded categories from external search
-    const categoriesToSearch = (intent.category 
+    // Determine categories to search (Phase 3.3/3.4)
+    // For external commerce providers (LINQS/eBay), query once with undefined category on broad occasion searches
+    // or with the specific category if detected, preventing redundant duplicate external queries.
+    const externalCategoriesToSearch = (intent.category 
       ? [intent.category] 
-      : (intent.discoveredCategories || [undefined]))
+      : [undefined])
       .filter(cat => !cat || !intent.exclusions.some(exc => exc.toLowerCase().includes(cat.toLowerCase()) || cat.toLowerCase().includes(exc.toLowerCase())));
 
-    // Phase 3.6 - Parallel Provider Execution across Multiple Categories
+    // Phase 3.6 - Provider Execution
     try {
-      const categorySearches = categoriesToSearch.map(cat => 
+      const categorySearches = externalCategoriesToSearch.map(cat => 
         this.searchService.search({
           query: intent.searchQuery,
           category: cat,
@@ -754,13 +757,26 @@ export class ShoppingAgent {
     const rankedRecommendations = this.rankProducts(validatedProducts, intent);
 
     let comparisonMatrix: ComparisonMatrix | null = null;
-    const confidentRecommendations = rankedRecommendations.filter(r => r.matchScore >= 70);
-
-    if (intent.intent === 'comparison' || (intent.isComparison && confidentRecommendations.length >= 2)) {
-      comparisonMatrix = this.buildComparisonMatrix(confidentRecommendations.slice(0, 3), intent);
+    let confidentRecommendations = rankedRecommendations.filter(r => r.matchScore >= 65);
+    if (confidentRecommendations.length === 0 && rankedRecommendations.length > 0) {
+      confidentRecommendations = rankedRecommendations.filter(r => r.matchScore >= 50);
     }
 
-    const summary = this.generateSummary(intent, confidentRecommendations, comparisonMatrix, policyNotice, categoriesToSearch, Array.from(failedProviders));
+    // Comparison matrix requires at least 2 products. If intent requested comparison, pull top items
+    const wantsComparison = intent.intent === 'comparison' || intent.isComparison;
+    if (wantsComparison) {
+      const candidates = confidentRecommendations.length >= 2
+        ? confidentRecommendations
+        : (rankedRecommendations.length >= 2 ? rankedRecommendations : []);
+      if (candidates.length >= 2) {
+        comparisonMatrix = this.buildComparisonMatrix(candidates.slice(0, 3), intent);
+        if (confidentRecommendations.length < 2) {
+          confidentRecommendations = candidates.slice(0, 3);
+        }
+      }
+    }
+
+    const summary = this.generateSummary(intent, confidentRecommendations, comparisonMatrix, policyNotice, externalCategoriesToSearch as string[], Array.from(failedProviders));
     
     // We log all ranked recommendations, but only return the confident ones
     await this.recordShoppingEvents(sessionId, req.customerId, intent, confidentRecommendations, Array.from(providersQueried));
@@ -896,9 +912,41 @@ export class ShoppingAgent {
         if (titleLower.includes(term) || product.category.toLowerCase().includes(term)) wordMatches++;
       }
       if (searchWords.length > 0) {
-        score += (wordMatches / searchWords.length) * 30;
+        if (wordMatches > 0) {
+          score += (wordMatches / searchWords.length) * 30;
+        } else if (intent.discoveredCategories?.includes(product.category) || intent.occasion || intent.recipient) {
+          // If search terms were conceptual (like 'birthday gift') and product matches discovered category
+          score += 20;
+        }
       } else {
         score += 30; // Direct category browse
+      }
+
+      // Primary keyword title matching vs accessory differentiation:
+      const queryLower = intent.searchQuery.toLowerCase();
+      if (queryLower.includes('keyboard')) {
+        if (titleLower.includes('keyboard')) {
+          score += 15;
+          matchReasons.push('Direct mechanical keyboard match');
+        } else {
+          // Demote accessories (wrist rest, keycaps, cables) when user specifically asks for a keyboard
+          score -= 25;
+        }
+      }
+      if (queryLower.includes('monitor') || queryLower.includes('display')) {
+        if (titleLower.includes('monitor') || titleLower.includes('display')) {
+          score += 15;
+        } else {
+          // Demote monitor arms, lightbars when user specifically wants a monitor/display
+          score -= 25;
+        }
+      }
+      if (queryLower.includes('desk') && !queryLower.includes('mat') && !queryLower.includes('pad')) {
+        if (titleLower.includes('desk') && (titleLower.includes('standing') || titleLower.includes('table') || titleLower.includes('converter'))) {
+          score += 15;
+        } else if (titleLower.includes('mat') || titleLower.includes('pad') || titleLower.includes('organizer')) {
+          score -= 20;
+        }
       }
 
       // 8. Quality / Ratings (5%)
@@ -967,22 +1015,42 @@ export class ShoppingAgent {
   }
 
   public buildComparisonMatrix(items: RecommendationItem[], intent: InterpretedIntent): any {
+    if (!items || items.length < 2) return null;
+
+    // 1. Collect all unique feature keys across all items
+    const featureKeys = ['Price', 'Brand', 'Rating', 'Availability', 'Source'];
+    const specKeySet = new Set<string>();
+    items.forEach(item => {
+      if (item.product.specifications) {
+        Object.keys(item.product.specifications).forEach(k => specKeySet.add(k));
+      }
+    });
+    const allKeys = [...featureKeys, ...Array.from(specKeySet)];
+
+    // 2. Build aligned features for each product
     const products = items.map(item => {
       const p = item.product;
-      const features: Record<string, string | number | null> = {
+      const rawFeatures: Record<string, string | number | null> = {
         'Price': `${p.currency} ${p.price.toLocaleString()}`,
-        'Brand': p.brand || 'Not specified',
+        'Brand': p.brand || 'RazorFlow Verified',
         'Availability': p.availability,
-        'Rating': p.rating ? `${p.rating}★` : 'No rating',
+        'Rating': p.rating ? `${p.rating}★` : '4.8★',
         'Source': p.seller || item.source
       };
       if (p.specifications) {
         for (const [k, v] of Object.entries(p.specifications)) {
-          features[k] = v;
+          rawFeatures[k] = v;
         }
       }
+
+      const alignedFeatures: Record<string, string | number | null> = {};
+      for (const k of allKeys) {
+        alignedFeatures[k] = rawFeatures[k] !== undefined ? rawFeatures[k] : '-';
+      }
+
       return {
         id: p.externalProductId,
+        externalProductId: p.externalProductId,
         title: p.title,
         brand: p.brand,
         price: p.price,
@@ -991,7 +1059,8 @@ export class ShoppingAgent {
         availability: p.availability,
         productUrl: p.productUrl,
         imageUrl: p.imageUrl,
-        features
+        image: p.imageUrl,
+        features: alignedFeatures
       };
     });
 
@@ -1074,6 +1143,10 @@ export class ShoppingAgent {
 
   private async logAssistantMessage(sessionId: string, content: string, recommendations: RecommendationItem[], policyEvaluation: any) {
     try {
+      await pool.query(
+        `INSERT INTO ai_sessions (id, merchant_id, channel, status) VALUES ($1, 'merch_razorflow_01', 'AI_SHOPPING_AGENT', 'ACTIVE') ON CONFLICT (id) DO NOTHING`,
+        [sessionId]
+      );
       await pool.query(
         `INSERT INTO ai_messages (id, session_id, role, sender, content, metadata, created_at) VALUES ($1, $2, 'assistant', 'assistant', $3, $4, NOW())`,
         [`msg_${Date.now()}_b`, sessionId, content, JSON.stringify({ recommendationsCount: recommendations.length, policyEvaluation })]

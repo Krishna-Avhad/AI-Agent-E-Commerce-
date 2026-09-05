@@ -12,6 +12,7 @@ import {
   GitCommit,
   Clock
 } from 'lucide-react';
+import { apiUrl } from '../../lib/apiUrl';
 
 export const AgentCommercePage: React.FC = () => {
   const { auditLogs, evaluateProposal, addToast } = useApp();
@@ -22,7 +23,7 @@ export const AgentCommercePage: React.FC = () => {
   const [overview, setOverview] = React.useState<any>(null);
 
   React.useEffect(() => {
-    fetch('/api/merchant/ai-commerce/overview?days=30')
+    fetch(apiUrl('/api/merchant/ai-commerce/overview?days=30'))
       .then(res => res.ok ? res.json() : null)
       .then(data => { if (data) setOverview(data); })
       .catch(() => {});

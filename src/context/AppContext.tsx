@@ -12,6 +12,7 @@ import type {
   ToastMessage,
   ChatMessage
 } from '../types';
+import { apiUrl } from '../lib/apiUrl';
 
 
 export interface MerchantAnalyticsData {
@@ -193,18 +194,18 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   // Fetch initial data from Supabase backend API
   const refreshBackendData = async () => {
     try {
-      const healthRes = await fetch('/api/health');
+      const healthRes = await fetch(apiUrl('/api/health'));
       if (healthRes.ok) {
         setBackendConnected(true);
       }
 
       const [prodsRes, bundlesRes, ordersRes, logsRes, toolsRes, analyticsRes] = await Promise.all([
-        fetch('/api/products').catch(() => null),
-        fetch('/api/bundles').catch(() => null),
-        fetch('/api/orders').catch(() => null),
-        fetch('/api/audit-logs').catch(() => null),
-        fetch('/api/mcp-tools').catch(() => null),
-        fetch('/api/analytics/realtime').catch(() => null)
+        fetch(apiUrl('/api/products')).catch(() => null),
+        fetch(apiUrl('/api/bundles')).catch(() => null),
+        fetch(apiUrl('/api/orders')).catch(() => null),
+        fetch(apiUrl('/api/audit-logs')).catch(() => null),
+        fetch(apiUrl('/api/mcp-tools')).catch(() => null),
+        fetch(apiUrl('/api/analytics/realtime')).catch(() => null)
       ]);
 
       if (prodsRes && prodsRes.ok) {
@@ -256,7 +257,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       let currentCartId = localStorage.getItem('razorflow_cart_id');
       if (!currentCartId) {
         try {
-          const res = await fetch('/api/cart', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ currency: 'INR' }) });
+          const res = await fetch(apiUrl('/api/cart'), { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ currency: 'INR' }) });
           if (res.ok) {
             const data = await res.json();
             currentCartId = data.id;
@@ -270,7 +271,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       if (currentCartId) {
         setCartId(currentCartId);
         try {
-          const res = await fetch(`/api/cart/${currentCartId}`);
+          const res = await fetch(apiUrl(`/api/cart/${currentCartId}`));
           if (res.ok) {
             const data = await res.json();
             updateLocalCartState(data);
@@ -298,7 +299,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const addToCart = async (product: Product, quantity = 1) => {
     if (!cartId) return;
     try {
-      const res = await fetch(`/api/cart/${cartId}/items`, {
+      const res = await fetch(apiUrl(`/api/cart/${cartId}/items`), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ productId: product.id, quantity })
@@ -324,7 +325,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const removeFromCart = async (productId: string) => {
     if (!cartId) return;
     try {
-      const res = await fetch(`/api/cart/${cartId}/items/${productId}`, { method: 'DELETE' });
+      const res = await fetch(apiUrl(`/api/cart/${cartId}/items/${productId}`), { method: 'DELETE' });
       if (res.ok) {
         const data = await res.json();
         updateLocalCartState(data);
@@ -342,7 +343,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       return;
     }
     try {
-      const res = await fetch(`/api/cart/${cartId}/items/${productId}`, {
+      const res = await fetch(apiUrl(`/api/cart/${cartId}/items/${productId}`), {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ quantity })
@@ -361,7 +362,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const clearCart = async () => {
     if (!cartId) return;
     try {
-      const res = await fetch(`/api/cart/${cartId}`, { method: 'DELETE' });
+      const res = await fetch(apiUrl(`/api/cart/${cartId}`), { method: 'DELETE' });
       if (res.ok) {
         const data = await res.json();
         updateLocalCartState(data);
@@ -392,7 +393,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const evaluateProposal = async (discountPercent: number, cartTotalValue?: number): Promise<PolicyEvaluationResponse> => {
     try {
-      const res = await fetch('/api/policy/evaluate', {
+      const res = await fetch(apiUrl('/api/policy/evaluate'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -425,7 +426,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setChatMessages((prev) => [...prev, userMsg]);
 
     try {
-      const res = await fetch('/api/ai/chat', {
+      const res = await fetch(apiUrl('/api/ai/chat'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message: text })
@@ -438,8 +439,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           sender: 'ai',
           text: data.content,
           timestamp: data.timestamp || new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-          actions: data.actions,
-          comparison: data.comparison
+          actions: data.actions
         };
         setChatMessages((prev) => [...prev, aiMsg]);
         return;
@@ -481,7 +481,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           discountCode: cartDiscount > 0 ? 'RAZORFLOW10' : undefined
         };
 
-        const res = await fetch('/api/payments/create-order', {
+        const res = await fetch(apiUrl('/api/payments/create-order'), {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(orderPayload)

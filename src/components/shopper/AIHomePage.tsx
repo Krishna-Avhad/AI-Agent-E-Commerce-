@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { Product } from '../../types';
+import { apiUrl } from '../../lib/apiUrl';
 
 interface ChatMessage {
   id: string;
@@ -89,7 +90,7 @@ export const AIHomePage: React.FC = () => {
       const previousRecommendations = lastAssistantMsg?.data?.recommendations || [];
       const effectiveCartId = cartId || localStorage.getItem('razorflow_cart_id') || undefined;
 
-      const res = await fetch('/api/ai/shop', {
+      const res = await fetch(apiUrl('/api/ai/shop'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
@@ -99,10 +100,16 @@ export const AIHomePage: React.FC = () => {
         })
       });
       
-      const data = await res.json();
+      const rawText = await res.text();
+      let data: any = {};
+      try {
+        data = rawText ? JSON.parse(rawText) : {};
+      } catch {
+        throw new Error(res.ok ? 'Received invalid response format from server.' : `Server temporarily unavailable (${res.status}). Please retry.`);
+      }
       
       if (!res.ok) {
-        throw new Error(data.error || 'Failed to get response');
+        throw new Error(data.error || `Server returned error (${res.status}).`);
       }
 
       if (data.interpretedIntent) {
@@ -142,13 +149,14 @@ export const AIHomePage: React.FC = () => {
         const targetCartId = effectiveCartId || localStorage.getItem('razorflow_cart_id');
         if (targetCartId) {
           try {
-            const revRes = await fetch('/api/checkout/review', {
+            const revRes = await fetch(apiUrl('/api/checkout/review'), {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ cartId: targetCartId, customerId: 'cust-01' })
             });
             if (revRes.ok) {
-              const revData = await revRes.json();
+              const revText = await revRes.text();
+              const revData = revText ? JSON.parse(revText) : {};
               data.checkoutReview = revData;
               setCheckoutReviewState(revData);
             }
@@ -199,7 +207,7 @@ export const AIHomePage: React.FC = () => {
         checkoutToken
       };
 
-      const res = await fetch('/api/orders', {
+      const res = await fetch(apiUrl('/api/orders'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -208,7 +216,13 @@ export const AIHomePage: React.FC = () => {
         body: JSON.stringify(orderPayload)
       });
 
-      const orderData = await res.json();
+      const orderText = await res.text();
+      let orderData: any = {};
+      try {
+        orderData = orderText ? JSON.parse(orderText) : {};
+      } catch {
+        throw new Error(`Order creation returned unexpected response (${res.status})`);
+      }
       if (!res.ok) {
         throw new Error(orderData.error || 'Failed to initialize order');
       }
@@ -236,7 +250,7 @@ export const AIHomePage: React.FC = () => {
           },
           handler: async (response: any) => {
             try {
-              const verifyRes = await fetch('/api/payments/verify', {
+              const verifyRes = await fetch(apiUrl('/api/payments/verify'), {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({

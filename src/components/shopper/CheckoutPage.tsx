@@ -16,6 +16,7 @@ import {
   MapPin
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
+import { apiUrl } from '../../lib/apiUrl';
 
 export const CheckoutPage: React.FC = () => {
   const {
@@ -43,7 +44,7 @@ export const CheckoutPage: React.FC = () => {
   const [paymentFailureNotice, setPaymentFailureNotice] = useState<string | null>(null);
 
   React.useEffect(() => {
-    fetch('/api/customers/cust-01/addresses')
+    fetch(apiUrl('/api/customers/cust-01/addresses'))
       .then((res) => res.json())
       .then((data) => {
         if (Array.isArray(data) && data.length > 0) {
@@ -96,7 +97,7 @@ export const CheckoutPage: React.FC = () => {
       
       let checkoutToken: string | undefined;
       if (cartId) {
-        const reviewRes = await fetch('/api/checkout/review', {
+        const reviewRes = await fetch(apiUrl('/api/checkout/review'), {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ cartId })
@@ -132,7 +133,7 @@ export const CheckoutPage: React.FC = () => {
         orderPayload.checkoutToken = checkoutToken;
       }
 
-      const res = await fetch('/api/orders', {
+      const res = await fetch(apiUrl('/api/orders'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -177,7 +178,7 @@ export const CheckoutPage: React.FC = () => {
             // ──────────────────────────────────────────────────────────────
             setIsProcessing(true);
             try {
-              const verifyRes = await fetch('/api/payments/verify', {
+              const verifyRes = await fetch(apiUrl('/api/payments/verify'), {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({

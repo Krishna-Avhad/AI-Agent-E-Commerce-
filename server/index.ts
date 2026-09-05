@@ -39,10 +39,26 @@ import { merchantAiRouter } from './merchant/merchantAiRouter.js';
 
 dotenv.config();
 
+process.on('unhandledRejection', (reason, promise) => {
+  console.warn('⚠️ Unhandled Rejection at:', promise, 'reason:', reason);
+});
+
+process.on('uncaughtException', (err) => {
+  console.error('⚠️ Uncaught Exception:', err);
+});
+
 export const app = express();
 const PORT = process.env.PORT || 3001;
 
-app.use(cors());
+// FRONTEND_URL should be set in production (e.g. https://your-app.vercel.app).
+// Supports a comma-separated list if you have multiple frontend origins
+// (e.g. a preview URL and a production URL). Falls back to allowing all
+// origins when unset, which is fine for local dev but should be set explicitly
+// once deployed.
+const allowedOrigins = process.env.FRONTEND_URL
+  ? process.env.FRONTEND_URL.split(',').map((o) => o.trim())
+  : true;
+app.use(cors({ origin: allowedOrigins }));
 app.use(express.json());
 
 // ---------------- HEALTH CHECK ----------------

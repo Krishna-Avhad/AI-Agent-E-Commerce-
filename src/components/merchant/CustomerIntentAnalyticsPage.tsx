@@ -12,11 +12,12 @@ import {
   Layers,
   Bot
 } from 'lucide-react';
+import { apiUrl } from '../../lib/apiUrl';
 export const CustomerIntentAnalyticsPage: React.FC = () => {
   const [intents, setIntents] = React.useState<any>(null);
 
   React.useEffect(() => {
-    fetch('/api/merchant/ai-commerce/intents?days=30')
+    fetch(apiUrl('/api/merchant/ai-commerce/intents?days=30'))
       .then(res => res.ok ? res.json() : null)
       .then(data => { if (data) setIntents(data); })
       .catch(() => {});

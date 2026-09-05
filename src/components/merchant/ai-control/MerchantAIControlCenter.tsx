@@ -17,6 +17,7 @@ import {
   GitCommit,
   Check
 } from 'lucide-react';
+import { apiUrl } from '../../../lib/apiUrl';
 
 type ControlTab =
   | 'overview'
@@ -81,20 +82,20 @@ export const MerchantAIControlCenter: React.FC = () => {
         autonomyRes,
         attributionRes
       ] = await Promise.all([
-        fetch('/api/merchant/ai/overview').catch(() => null),
-        fetch('/api/merchant/ai/readiness').catch(() => null),
-        fetch('/api/merchant/ai/capabilities').catch(() => null),
-        fetch('/api/merchant/ai/agents').catch(() => null),
-        fetch('/api/merchant/ai/transactions').catch(() => null),
-        fetch('/api/merchant/ai/traces').catch(() => null),
-        fetch('/api/merchant/ai/policies').catch(() => null),
-        fetch('/api/merchant/ai/audit').catch(() => null),
-        fetch('/api/merchant/ai/manifest').catch(() => null),
-        fetch('/api/merchant/ai/growth/overview').catch(() => null),
-        fetch('/api/merchant/ai/growth/opportunities').catch(() => null),
-        fetch('/api/merchant/ai/growth/actions').catch(() => null),
-        fetch('/api/merchant/ai/growth/automation').catch(() => null),
-        fetch('/api/merchant/ai/growth/measurements').catch(() => null)
+        fetch(apiUrl('/api/merchant/ai/overview')).catch(() => null),
+        fetch(apiUrl('/api/merchant/ai/readiness')).catch(() => null),
+        fetch(apiUrl('/api/merchant/ai/capabilities')).catch(() => null),
+        fetch(apiUrl('/api/merchant/ai/agents')).catch(() => null),
+        fetch(apiUrl('/api/merchant/ai/transactions')).catch(() => null),
+        fetch(apiUrl('/api/merchant/ai/traces')).catch(() => null),
+        fetch(apiUrl('/api/merchant/ai/policies')).catch(() => null),
+        fetch(apiUrl('/api/merchant/ai/audit')).catch(() => null),
+        fetch(apiUrl('/api/merchant/ai/manifest')).catch(() => null),
+        fetch(apiUrl('/api/merchant/ai/growth/overview')).catch(() => null),
+        fetch(apiUrl('/api/merchant/ai/growth/opportunities')).catch(() => null),
+        fetch(apiUrl('/api/merchant/ai/growth/actions')).catch(() => null),
+        fetch(apiUrl('/api/merchant/ai/growth/automation')).catch(() => null),
+        fetch(apiUrl('/api/merchant/ai/growth/measurements')).catch(() => null)
       ]);
 
       if (overviewRes?.ok) setOverviewData(await overviewRes.json());
@@ -137,7 +138,7 @@ export const MerchantAIControlCenter: React.FC = () => {
 
   const handleApproveAction = async (actionId: string) => {
     try {
-      const res = await fetch(`/api/merchant/ai/growth/actions/${actionId}/approve`, {
+      const res = await fetch(apiUrl(`/api/merchant/ai/growth/actions/${actionId}/approve`), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ approver: 'Merchant Admin' })
@@ -156,7 +157,7 @@ export const MerchantAIControlCenter: React.FC = () => {
 
   const handleRejectAction = async (actionId: string) => {
     try {
-      const res = await fetch(`/api/merchant/ai/growth/actions/${actionId}/reject`, {
+      const res = await fetch(apiUrl(`/api/merchant/ai/growth/actions/${actionId}/reject`), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ rejector: 'Merchant Admin', reason: 'Merchant dismissed proposal' })
@@ -172,7 +173,7 @@ export const MerchantAIControlCenter: React.FC = () => {
 
   const handleExecuteAction = async (actionId: string) => {
     try {
-      const res = await fetch(`/api/merchant/ai/growth/actions/${actionId}/execute`, {
+      const res = await fetch(apiUrl(`/api/merchant/ai/growth/actions/${actionId}/execute`), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -198,7 +199,7 @@ export const MerchantAIControlCenter: React.FC = () => {
 
   const handleRollbackAction = async (actionId: string) => {
     try {
-      const res = await fetch(`/api/merchant/ai/growth/actions/${actionId}/rollback`, {
+      const res = await fetch(apiUrl(`/api/merchant/ai/growth/actions/${actionId}/rollback`), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ requestor: 'Merchant Admin' })
@@ -218,7 +219,7 @@ export const MerchantAIControlCenter: React.FC = () => {
   const handleSaveAutonomy = async (mode: string, maxDiscount: number) => {
     setIsUpdatingAutonomy(true);
     try {
-      const res = await fetch('/api/merchant/ai/growth/automation', {
+      const res = await fetch(apiUrl('/api/merchant/ai/growth/automation'), {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

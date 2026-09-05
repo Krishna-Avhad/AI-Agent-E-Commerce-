@@ -962,60 +962,41 @@ export class ShoppingAgent {
     return sorted;
   }
 
-  public buildComparisonMatrix(items: RecommendationItem[], intent: InterpretedIntent): ComparisonMatrix {
-    const products = items.map(item => ({
-      id: item.product.externalProductId,
-      title: item.product.title,
-      brand: item.product.brand,
-      price: item.product.price,
-      currency: item.product.currency,
-      rating: item.product.rating,
-      availability: item.product.availability,
-      productUrl: item.product.productUrl
-    }));
-
-    const specKeysSet = new Set<string>(['Price', 'Brand', 'Availability', 'Rating', 'Seller']);
-    for (const item of items) {
-      for (const k of Object.keys(item.product.specifications || {})) { specKeysSet.add(k); }
-    }
-
-    const features: ComparisonFeature[] = [];
-    const priceValues: Record<string, string | number | null> = {};
-    const brandValues: Record<string, string | number | null> = {};
-    const availValues: Record<string, string | number | null> = {};
-    const ratingValues: Record<string, string | number | null> = {};
-    const sellerValues: Record<string, string | number | null> = {};
-
-    for (const item of items) {
-      const pid = item.product.externalProductId;
-      priceValues[pid] = `${item.product.currency} ${item.product.price.toLocaleString()}`;
-      brandValues[pid] = item.product.brand || 'Not specified';
-      availValues[pid] = item.product.availability;
-      ratingValues[pid] = item.product.rating ? `${item.product.rating}★` : 'No rating';
-      sellerValues[pid] = item.product.seller || item.source;
-    }
-
-    features.push({ featureName: 'Observed Price', values: priceValues }, { featureName: 'Brand', values: brandValues }, { featureName: 'Availability', values: availValues }, { featureName: 'Rating', values: ratingValues }, { featureName: 'Source / Seller', values: sellerValues });
-
-    for (const specKey of specKeysSet) {
-      if (['Price', 'Brand', 'Availability', 'Rating', 'Seller'].includes(specKey)) continue;
-      const specValues: Record<string, string | number | null> = {};
-      let hasAnyValue = false;
-      for (const item of items) {
-        const val = item.product.specifications?.[specKey] || null;
-        specValues[item.product.externalProductId] = val;
-        if (val !== null) hasAnyValue = true;
+  public buildComparisonMatrix(items: RecommendationItem[], intent: InterpretedIntent): any {
+    const products = items.map(item => {
+      const p = item.product;
+      const features: Record<string, string | number | null> = {
+        'Price': `${p.currency} ${p.price.toLocaleString()}`,
+        'Brand': p.brand || 'Not specified',
+        'Availability': p.availability,
+        'Rating': p.rating ? `${p.rating}★` : 'No rating',
+        'Source': p.seller || item.source
+      };
+      if (p.specifications) {
+        for (const [k, v] of Object.entries(p.specifications)) {
+          features[k] = v;
+        }
       }
-      if (hasAnyValue) features.push({ featureName: specKey, values: specValues });
-    }
+      return {
+        id: p.externalProductId,
+        title: p.title,
+        brand: p.brand,
+        price: p.price,
+        currency: p.currency,
+        rating: p.rating,
+        availability: p.availability,
+        productUrl: p.productUrl,
+        imageUrl: p.imageUrl,
+        features
+      };
+    });
 
     const winner = items[0];
-    const winnerId = winner ? winner.product.externalProductId : null;
     const verdict = winner 
       ? `**${winner.product.title}** is recommended with highest match score (${winner.matchScore}%) for ${intent.searchQuery} at ${winner.product.currency} ${winner.product.price.toLocaleString()}.` 
       : 'No clear winner could be determined from the available products.';
 
-    return { products, features, winnerId, verdict };
+    return { products, verdict };
   }
 
   private generateSummary(

@@ -132,9 +132,9 @@ npm run dev
 ---
 
 ## 📖 Comprehensive Documentation
-- [Merchant AI Control Center (Phase 10)](file:///Users/krish/Razorpay/docs/merchant-ai-control-center.md)
-- [MCP & Agent Commerce Specification](file:///Users/krish/Razorpay/docs/mcp-agent-commerce.md)
-- [Deterministic AI Readiness Engine](file:///Users/krish/Razorpay/docs/ai-readiness.md)
-- [Agent Transaction Tracing Engine](file:///Users/krish/Razorpay/docs/agent-tracing.md)
-- [Agentic Commerce Protocol (Phase 8)](file:///Users/krish/Razorpay/docs/agent-commerce.md)
-- [Architecture & Domain Models](file:///Users/krish/Razorpay/docs/architecture.md)
+- [Merchant AI Control Center (Phase 10)](docs/merchant-ai-control-center.md)
+- [MCP & Agent Commerce Specification](docs/mcp-agent-commerce.md)
+- [Deterministic AI Readiness Engine](docs/ai-readiness.md)
+- [Agent Transaction Tracing Engine](docs/agent-tracing.md)
+- [Agentic Commerce Protocol (Phase 8)](docs/agent-commerce.md)
+- [Architecture & Domain Models](docs/architecture.md)

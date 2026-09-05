@@ -164,6 +164,7 @@ export async function getAgentCatalog(
     currency: row.currency || 'INR',
     inStock: Boolean(row.in_stock && row.stock_quantity > 0),
     availableStock: parseInt(row.stock_quantity || '0', 10),
+    imageUrl: row.image_url || 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&auto=format&fit=crop&q=80',
     specs: typeof row.specs === 'object' ? row.specs : {},
     tags: Array.isArray(row.tags) ? row.tags : [],
     semanticMatchScore: parseInt(row.ai_match_score || '85', 10)
@@ -210,6 +211,7 @@ export async function getAgentProductById(
     currency: row.currency || 'INR',
     inStock: Boolean(row.in_stock && row.stock_quantity > 0),
     availableStock: parseInt(row.stock_quantity || '0', 10),
+    imageUrl: row.image_url || 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&auto=format&fit=crop&q=80',
     specs: typeof row.specs === 'object' ? row.specs : {},
     tags: Array.isArray(row.tags) ? row.tags : [],
     semanticMatchScore: parseInt(row.ai_match_score || '90', 10)
@@ -251,15 +253,24 @@ export async function searchAgentProducts(
   }
 
   const res = await pool.query(query, params);
-  const queryTokens = request.query.toLowerCase().split(/\s+/).filter(Boolean);
+  const queryTokens = (request.query || '').toLowerCase().split(/\s+/).filter(Boolean);
 
   let matched = res.rows.map((row) => {
     let matchScore = parseInt(row.ai_match_score || '70', 10);
     const textCorpus = `${row.name} ${row.description} ${row.category} ${row.brand} ${JSON.stringify(row.tags)} ${JSON.stringify(row.specs)}`.toLowerCase();
 
-    for (const token of queryTokens) {
-      if (textCorpus.includes(token)) {
-        matchScore += 8;
+    if (queryTokens.length > 0) {
+      let tokensMatched = 0;
+      matchScore = 0; // Reset base score for keyword searches to ensure relevance
+      for (const token of queryTokens) {
+        if (textCorpus.includes(token)) {
+          matchScore += 40;
+          tokensMatched++;
+        }
+      }
+      if (tokensMatched > 0) {
+        // Add a fraction of the AI match score as a bonus
+        matchScore += parseInt(row.ai_match_score || '70', 10) * 0.2;
       }
     }
 
@@ -291,6 +302,7 @@ export async function searchAgentProducts(
         currency: row.currency || 'INR',
         inStock: Boolean(row.in_stock && row.stock_quantity > 0),
         availableStock: parseInt(row.stock_quantity || '0', 10),
+        imageUrl: row.image_url || 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&auto=format&fit=crop&q=80',
         specs: typeof row.specs === 'object' ? row.specs : {},
         tags: Array.isArray(row.tags) ? row.tags : [],
         semanticMatchScore: matchScore

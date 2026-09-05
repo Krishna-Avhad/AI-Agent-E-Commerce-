@@ -1,3 +1,4 @@
+import { USD_TO_INR_RATE } from '../constants.js';
 import { ExternalProduct, ProductAvailability, ProviderName, ShippingInfo, ProductIdentifiers } from './types.js';
 
 /**
@@ -5,6 +6,17 @@ import { ExternalProduct, ProductAvailability, ProviderName, ShippingInfo, Produ
  * Never fabricates values; strictly maps provided fields or defaults safely to null.
  */
 export class ProductNormalizer {
+  private static applyCurrencyConversion(product: ExternalProduct): ExternalProduct {
+    if (product.currency === 'USD') {
+      product.price = Math.round(product.price * USD_TO_INR_RATE);
+      if (product.originalPrice !== null && product.originalPrice !== undefined) {
+        product.originalPrice = Math.round(product.originalPrice * USD_TO_INR_RATE);
+      }
+      product.currency = 'INR';
+    }
+    return product;
+  }
+
   public static normalizeDummyJSON(raw: Record<string, unknown>): ExternalProduct | null {
     if (!raw || typeof raw !== 'object' || !raw.id || !raw.title) {
       return null;
@@ -55,7 +67,7 @@ export class ProductNormalizer {
       specifications['Warranty'] = raw.warrantyInformation;
     }
 
-    return {
+    return ProductNormalizer.applyCurrencyConversion({
       provider: 'dummyjson',
       externalProductId: String(raw.id),
       title: String(raw.title).trim(),
@@ -78,7 +90,7 @@ export class ProductNormalizer {
       specifications,
       fetchedAt: new Date().toISOString(),
       isDiscoveryOnly: true
-    };
+    });
   }
 
   public static normalizeShopify(raw: Record<string, unknown>): ExternalProduct | null {
@@ -99,7 +111,7 @@ export class ProductNormalizer {
 
     const availableForSale = Boolean(raw.availableForSale);
 
-    return {
+    return ProductNormalizer.applyCurrencyConversion({
       provider: 'shopify',
       externalProductId: String(raw.id),
       title: String(raw.title).trim(),
@@ -128,7 +140,7 @@ export class ProductNormalizer {
       specifications: {},
       fetchedAt: new Date().toISOString(),
       isDiscoveryOnly: true
-    };
+    });
   }
 
   public static normalizeEbay(raw: Record<string, unknown>): ExternalProduct | null {
@@ -146,7 +158,7 @@ export class ProductNormalizer {
     const sellerObj = raw.seller as Record<string, unknown> | undefined;
     const seller = typeof sellerObj?.username === 'string' ? sellerObj.username : null;
 
-    return {
+    return ProductNormalizer.applyCurrencyConversion({
       provider: 'ebay',
       externalProductId: String(raw.itemId),
       title: String(raw.title).trim(),
@@ -175,7 +187,7 @@ export class ProductNormalizer {
       specifications: {},
       fetchedAt: new Date().toISOString(),
       isDiscoveryOnly: true
-    };
+    });
   }
 
   public static normalizeLinqs(raw: Record<string, unknown>): ExternalProduct | null {
@@ -246,7 +258,7 @@ export class ProductNormalizer {
       ? raw.description
       : (Array.isArray(raw.best_for) ? `Best for: ${raw.best_for.join(', ')}` : null);
 
-    return {
+    return ProductNormalizer.applyCurrencyConversion({
       provider: 'linqs',
       externalProductId: id,
       title: title.trim(),
@@ -275,7 +287,7 @@ export class ProductNormalizer {
       specifications,
       fetchedAt: new Date().toISOString(),
       isDiscoveryOnly: true
-    };
+    });
   }
 }
 

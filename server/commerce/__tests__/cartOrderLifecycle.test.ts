@@ -33,6 +33,12 @@ export async function runCartOrderLifecycleTests(): Promise<boolean> {
   });
 
   try {
+    await pool.query(`
+      INSERT INTO merchants (id, name, business_category, created_at)
+      VALUES ($1, 'Test Merchant', 'Retail', NOW())
+      ON CONFLICT (id) DO NOTHING
+    `, [merchantId]);
+
     await Promise.race([
       pool.query(
         `INSERT INTO products (id, merchant_id, name, description, category, price, image, image_url, sku, brand, stock_quantity, in_stock, status, created_at)

@@ -29,7 +29,18 @@ export const ProductCatalogPage: React.FC = () => {
 
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [minMatchScore, setMinMatchScore] = useState<number>(80);
-  const [maxPrice, setMaxPrice] = useState<number>(1000);
+  const [maxPrice, setMaxPrice] = useState<number>(500000);
+  const absoluteMaxPrice = React.useMemo(() => {
+    if (!products || products.length === 0) return 500000;
+    return Math.max(...products.map(p => p.price));
+  }, [products]);
+
+  React.useEffect(() => {
+    if (absoluteMaxPrice > 0) {
+      setMaxPrice(absoluteMaxPrice);
+    }
+  }, [absoluteMaxPrice]);
+
   const [onlyInStock, setOnlyInStock] = useState<boolean>(false);
   const [sortBy, setSortBy] = useState<'match' | 'price-low' | 'price-high' | 'rating'>('match');
 
@@ -114,7 +125,7 @@ export const ProductCatalogPage: React.FC = () => {
               onClick={() => {
                 setSelectedCategory('All');
                 setMinMatchScore(80);
-                setMaxPrice(1000);
+                setMaxPrice(500000);
                 setOnlyInStock(false);
                 setSearchIntentQuery('');
               }}
@@ -176,16 +187,16 @@ export const ProductCatalogPage: React.FC = () => {
             </div>
             <input
               type="range"
-              min="50"
-              max="1000"
-              step="25"
+              min="500"
+              max={absoluteMaxPrice}
+              step="5000"
               value={maxPrice}
               onChange={(e) => setMaxPrice(Number(e.target.value))}
               className="w-full accent-slate-900 cursor-pointer"
             />
             <div className="flex justify-between text-[10px] text-slate-400 mt-1">
-              <span>₹50</span>
-              <span>₹1,000+</span>
+              <span>₹500</span>
+              <span>₹{absoluteMaxPrice.toLocaleString()}+</span>
             </div>
           </div>
 

@@ -72,10 +72,10 @@ export class ProductRepository {
         const term = (word.length > 3 && word.endsWith('s')) ? word.slice(0, -1) : word;
         values.push(`%${term}%`);
         const searchParam = `$${values.length}`;
-        return `(name ILIKE ${searchParam} OR description ILIKE ${searchParam} OR brand ILIKE ${searchParam} OR category ILIKE ${searchParam})`;
+        return `(name ILIKE ${searchParam} OR description ILIKE ${searchParam} OR brand ILIKE ${searchParam} OR category ILIKE ${searchParam} OR tags::text ILIKE ${searchParam})`;
       });
       if (searchConditions.length > 0) {
-        conditions.push(`(${searchConditions.join(' AND ')})`);
+        conditions.push(`(${searchConditions.join(' OR ')})`);
       }
     }
 

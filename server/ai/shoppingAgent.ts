@@ -684,7 +684,7 @@ export class ShoppingAgent {
     }
 
     // Phase 3.4 & 3.5 - Multi-Provider Internal Catalog Search (Ensure internal orderable products)
-    const isBroadOccasionSearch = Boolean(intent.occasion || intent.recipient || !intent.category);
+    const isBroadOccasionSearch = Boolean(intent.occasion || intent.recipient);
     
     // Internal categories to search, filtering out any excluded categories
     const activeDiscoveredCats = (intent.discoveredCategories || ['Audio', 'Workstation', 'Accessories', 'Displays', 'Lighting'])

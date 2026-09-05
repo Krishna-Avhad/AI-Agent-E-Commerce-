@@ -115,6 +115,17 @@ export async function processAIChatMessage(req: ChatMessageRequest): Promise<Cha
       actionType: 'view_bundle',
       payload: b
     }));
+  } else if (text.includes('compare')) {
+    // Import shoppingAgent dynamically or statically to process comparison
+    const { shoppingAgent } = await import('./ai/index.js');
+    const response = await shoppingAgent.processShoppingRequest({
+      message: text,
+      sessionId,
+      customerId: req.customerId,
+    });
+    assistantReply = response.summary || 'I compared the products for you.';
+    policyResult = { comparison: response.comparison };
+    actions = [];
   } else {
     assistantReply = `Hello! I'm your RazorFlow AI Commerce Assistant. I can recommend developer workstations, compare acoustic hardware specs, check stock, or apply verified promotional discounts within merchant boundaries. What are you looking to build today?`;
     actions = [
@@ -143,6 +154,7 @@ export async function processAIChatMessage(req: ChatMessageRequest): Promise<Cha
     content: assistantReply,
     timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
     actions,
-    policyEvaluation: policyResult
+    policyEvaluation: policyResult,
+    comparison: policyResult?.comparison
   };
 }

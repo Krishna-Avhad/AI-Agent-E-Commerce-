@@ -1,0 +1,61 @@
+◇ injected env (14) from .env // tip: ⌘ override existing { override: true }
+=== a) The request that proposes the 25% discount ===
+POST /api/agent/v1/purchase-intent
+Body: {
+  "cartId": "cart_1788586915865_8024",
+  "requestedDiscountPercent": 25
+}
+
+=== b) The DENY response with reasonCode and explanation ===
+Status: 201
+Response: {
+  "intentId": "intent_1788586916873_w0s9df7",
+  "merchantId": "merch_razorflow_01",
+  "agentId": "agent_test_full_access",
+  "cartId": "cart_1788586915865_8024",
+  "items": [
+    {
+      "productId": "prod-02",
+      "productName": "Vortex Studio Podcaster Microphone",
+      "sku": "SKU-MIC-VX1",
+      "quantity": 1,
+      "unitPrice": 159,
+      "totalPrice": 159
+    }
+  ],
+  "authoritativePricing": {
+    "subtotal": 159,
+    "approvedDiscount": 0,
+    "tax": 12.72,
+    "shipping": 15,
+    "total": 186.72,
+    "currency": "INR"
+  },
+  "policyStatus": {
+    "decision": "DENY",
+    "appliedDiscountPercent": 0,
+    "explanation": "Proposed discount of 25% exceeds the merchant maximum allowable discount cap of 15%.",
+    "reasonCode": "DISCOUNT_PERCENT_EXCEEDED"
+  },
+  "stockStatus": "ALL_AVAILABLE",
+  "expiresAt": "2026-09-05T05:56:56.873Z",
+  "ttlSeconds": 900,
+  "nextAction": "RESOLVE_POLICY_VIOLATION"
+}
+
+=== c) The resulting row in audit_logs ===
+{
+  "id": "AUD-1788586916827-3327",
+  "merchant_id": "merch_razorflow_01",
+  "entity_id": "MAX_DISCOUNT_PERCENT",
+  "action": "agent.policy.deny.discount_percent_exceeded",
+  "decision": "DENY",
+  "details": "Policy violation: Proposed discount of 25% exceeds allowable ceiling of 15%.",
+  "created_at": "2026-09-05T05:41:56.923Z"
+}
+
+=== d) The correlationId trace via GET /api/merchant/ai/transactions?correlationId=... ===
+{
+  "error": "TRACE_NOT_FOUND",
+  "message": "Transaction trace \"corr_test_123\" not found for this merchant."
+}

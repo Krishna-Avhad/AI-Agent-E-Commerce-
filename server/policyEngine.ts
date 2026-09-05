@@ -43,8 +43,8 @@ export async function evaluateAgentAction(
   // 1. Fetch Merchant Settings & Active Policies from Supabase
   let settings = {
     agent_enabled: true,
-    agent_max_order_value: '500000.00',
-    agent_daily_limit: '2500000.00',
+    agent_max_order_value: '50000.00',
+    agent_daily_limit: '500000.00',
     require_payment_confirmation: true,
     max_discount_percent: '15.00',
     max_discount_amount: '25000.00'

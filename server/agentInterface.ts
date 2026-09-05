@@ -85,10 +85,19 @@ export async function searchCatalogByAgentIntent(intentQuery: string, maxBudget?
       let score = parseInt(p.ai_match_score) || 75;
       const text = `${p.name} ${p.description} ${p.category} ${JSON.stringify(p.tags)} ${JSON.stringify(p.specs)}`.toLowerCase();
       
+      let matchedAnyWord = false;
       for (const word of queryWords) {
-        if (text.includes(word)) score += 5;
+        if (text.includes(word)) {
+          score += 15;
+          matchedAnyWord = true;
+        }
       }
       score = Math.min(99, score);
+      
+      // If intent query exists, only return products that matched at least one keyword
+      if (queryWords.length > 0 && queryWords[0] !== '' && !matchedAnyWord) {
+        return null;
+      }
 
       return {
         id: p.id,
@@ -102,8 +111,9 @@ export async function searchCatalogByAgentIntent(intentQuery: string, maxBudget?
         inStock: p.in_stock && p.stock_quantity > 0
       };
     })
-    .filter((p) => (maxBudget ? p.price <= maxBudget : true))
-    .sort((a, b) => b.aiMatchScore - a.aiMatchScore);
+    .filter((p) => p !== null)
+    .filter((p) => (maxBudget ? p!.price <= maxBudget : true))
+    .sort((a, b) => b!.aiMatchScore - a!.aiMatchScore);
 
   return {
     query: intentQuery,

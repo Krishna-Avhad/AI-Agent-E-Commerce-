@@ -100,10 +100,16 @@ export const AIHomePage: React.FC = () => {
         })
       });
       
-      const data = await res.json();
+      const rawText = await res.text();
+      let data: any = {};
+      try {
+        data = rawText ? JSON.parse(rawText) : {};
+      } catch {
+        throw new Error(res.ok ? 'Received invalid response format from server.' : `Server temporarily unavailable (${res.status}). Please retry.`);
+      }
       
       if (!res.ok) {
-        throw new Error(data.error || 'Failed to get response');
+        throw new Error(data.error || `Server returned error (${res.status}).`);
       }
 
       if (data.interpretedIntent) {
@@ -149,7 +155,8 @@ export const AIHomePage: React.FC = () => {
               body: JSON.stringify({ cartId: targetCartId, customerId: 'cust-01' })
             });
             if (revRes.ok) {
-              const revData = await revRes.json();
+              const revText = await revRes.text();
+              const revData = revText ? JSON.parse(revText) : {};
               data.checkoutReview = revData;
               setCheckoutReviewState(revData);
             }
@@ -209,7 +216,13 @@ export const AIHomePage: React.FC = () => {
         body: JSON.stringify(orderPayload)
       });
 
-      const orderData = await res.json();
+      const orderText = await res.text();
+      let orderData: any = {};
+      try {
+        orderData = orderText ? JSON.parse(orderText) : {};
+      } catch {
+        throw new Error(`Order creation returned unexpected response (${res.status})`);
+      }
       if (!res.ok) {
         throw new Error(orderData.error || 'Failed to initialize order');
       }

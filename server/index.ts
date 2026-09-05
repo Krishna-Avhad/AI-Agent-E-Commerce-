@@ -39,6 +39,14 @@ import { merchantAiRouter } from './merchant/merchantAiRouter.js';
 
 dotenv.config();
 
+process.on('unhandledRejection', (reason, promise) => {
+  console.warn('⚠️ Unhandled Rejection at:', promise, 'reason:', reason);
+});
+
+process.on('uncaughtException', (err) => {
+  console.error('⚠️ Uncaught Exception:', err);
+});
+
 export const app = express();
 const PORT = process.env.PORT || 3001;
 

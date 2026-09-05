@@ -95,6 +95,7 @@ export class ProductRepository {
 
     let total = 0;
     let items: any[] = [];
+    let dbQueryFailed = false;
 
     try {
       const queryValues = [...values, limit, offset];
@@ -113,20 +114,28 @@ export class ProductRepository {
         new Promise<any>((_, reject) => setTimeout(() => reject(new Error('timeout')), 8000))
       ]);
 
-      if (result && result.rows.length > 0) {
+      if (result && result.rows) {
         total = parseInt(result.rows[0]?.full_count || `${result.rows.length}`, 10);
         items = result.rows.map(this.mapRowToProduct);
       }
     } catch (err: any) {
+      dbQueryFailed = true;
       console.warn('⚠️ ProductRepository findCatalog note:', err.message);
     }
 
-    if (items.length === 0) {
+    // ONLY fall back to mock data if the database query genuinely threw an error/failed (e.g. offline unit test)
+    if (dbQueryFailed && items.length === 0) {
       try {
         const { INITIAL_PRODUCTS } = await import('../../src/data/mockData.js');
         let filtered = [...INITIAL_PRODUCTS];
         if (category && category !== 'All') {
           filtered = filtered.filter(p => p.category.toLowerCase() === category.toLowerCase());
+        }
+        if (minPrice !== undefined && !isNaN(minPrice)) {
+          filtered = filtered.filter(p => p.price >= minPrice);
+        }
+        if (maxPrice !== undefined && !isNaN(maxPrice)) {
+          filtered = filtered.filter(p => p.price <= maxPrice);
         }
         if (search) {
           filtered = filtered.filter(p => p.name.toLowerCase().includes(search.toLowerCase()) || p.description.toLowerCase().includes(search.toLowerCase()));

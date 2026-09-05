@@ -87,7 +87,7 @@ export const AIHomePage: React.FC = () => {
     if (!query.trim() || isProcessing) return;
 
     setInputValue('');
-    setMessages(prev => [...prev, { id: Date.now().toString(), role: 'user', content: query }]);
+    setMessages(prev => [...prev, { id: Date.now().toString() + Math.random().toString(36).substr(2, 5), role: 'user', content: query }]);
     setIsProcessing(true);
 
     try {
@@ -181,14 +181,14 @@ export const AIHomePage: React.FC = () => {
       }
 
       setMessages(prev => [...prev, {
-        id: Date.now().toString() + '1',
+        id: Date.now().toString() + Math.random().toString(36).substr(2, 5) + '1',
         role: 'assistant',
         content: data.summary || 'I found some matching products for you.',
         data: data
       }]);
     } catch (err: any) {
       setMessages(prev => [...prev, {
-        id: Date.now().toString() + '2',
+        id: Date.now().toString() + Math.random().toString(36).substr(2, 5) + '2',
         role: 'error',
         content: err.message || 'Something went wrong while processing your request.'
       }]);
@@ -291,7 +291,7 @@ export const AIHomePage: React.FC = () => {
                 const successMsg = `🎉 **Payment Verified & Order Confirmed!**\n\nYour order **#${orderId}** has been placed successfully.\n\n• **Payment ID**: \`${response.razorpay_payment_id}\`\n• **Method**: Razorpay Verified (HMAC-SHA256)\n• **Delivering to**: ${deliveryAddress?.street || '100 Innovation Boulevard'}, ${deliveryAddress?.city || 'Bengaluru'}\n\nYou can track this order anytime by asking me *"What is my order status?"* or visiting your Orders page.`;
                 
                 setMessages(prev => [...prev, {
-                  id: Date.now().toString(),
+                  id: Date.now().toString() + Math.random().toString(36).substr(2, 5),
                   role: 'assistant',
                   content: successMsg,
                   data: {
@@ -317,7 +317,7 @@ export const AIHomePage: React.FC = () => {
             ondismiss: () => {
               setIsPayingInline(false);
               setMessages(prev => [...prev, {
-                id: Date.now().toString(),
+                id: Date.now().toString() + Math.random().toString(36).substr(2, 5),
                 role: 'assistant',
                 content: `Payment wasn't completed, but your cart has been safely preserved. You can retry your payment below whenever you're ready.`,
                 data: {
@@ -333,7 +333,7 @@ export const AIHomePage: React.FC = () => {
         rzp.on('payment.failed', (failResp: any) => {
           setIsPayingInline(false);
           setMessages(prev => [...prev, {
-            id: Date.now().toString(),
+            id: Date.now().toString() + Math.random().toString(36).substr(2, 5),
             role: 'assistant',
             content: `Payment was not completed (${failResp.error?.description || 'Gateway error'}). Your cart is still safely saved. Would you like to try again?`,
             data: {
@@ -350,7 +350,7 @@ export const AIHomePage: React.FC = () => {
       clearCart();
       setCheckoutReviewState(null);
       setMessages(prev => [...prev, {
-        id: Date.now().toString(),
+        id: Date.now().toString() + Math.random().toString(36).substr(2, 5),
         role: 'assistant',
         content: `Order **#${orderId}** placed successfully in Test Mode. You can review it anytime in your Orders tab.`
       }]);
@@ -799,7 +799,7 @@ export const AIHomePage: React.FC = () => {
                                </div>
                                {(r.product?.imageUrl || r.product?.image) && (
                                  <div className="w-full md:w-1/3 aspect-square bg-white rounded-lg overflow-hidden border border-amber-200 shrink-0">
-                                   <img src={r.product.imageUrl || r.product.image} alt={r.product.title || r.product.name} className="w-full h-full object-cover" />
+                                   <img src={r.product.imageUrl || r.product.image || 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=400&q=80'} alt={r.product.title || r.product.name} className="w-full h-full object-cover" />
                                  </div>
                                )}
                              </div>

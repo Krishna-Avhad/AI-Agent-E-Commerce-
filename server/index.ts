@@ -78,7 +78,8 @@ app.use(cors({
       }
     }
   },
-  credentials: true
+  credentials: true,
+  allowedHeaders: ['Content-Type', 'Authorization', 'x-merchant-id', 'x-checkout-token', 'x-human-approval', 'x-merchant-override', 'idempotency-key', 'x-user-role', 'x-agent-signature']
 }));
 
 app.use(express.json());

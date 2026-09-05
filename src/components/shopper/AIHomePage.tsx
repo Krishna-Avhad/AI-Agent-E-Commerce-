@@ -15,11 +15,15 @@ import {
   MapPin,
   CreditCard,
   Lock,
-  Loader2
+  Loader2,
+  ShieldCheck,
+  ShieldAlert,
+  Eye
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { Product } from '../../types';
 import { apiUrl } from '../../lib/apiUrl';
+import { AgentAuditDrawer } from './AgentAuditDrawer';
 
 interface ChatMessage {
   id: string;
@@ -46,6 +50,7 @@ export const AIHomePage: React.FC = () => {
   const [previousIntent, setPreviousIntent] = useState<any>(null);
   const [checkoutReviewState, setCheckoutReviewState] = useState<any>(null);
   const [isPayingInline, setIsPayingInline] = useState(false);
+  const [isAuditDrawerOpen, setIsAuditDrawerOpen] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const loadingStates = [
@@ -204,14 +209,17 @@ export const AIHomePage: React.FC = () => {
           country: 'India'
         },
         discountCode: (cart?.discount || 0) > 0 ? 'RAZORFLOW10' : undefined,
-        checkoutToken
+        checkoutToken,
+        humanApproval: true,
+        humanApprovalReason: 'Explicit shopper approval granted in conversational checkout UI'
       };
 
       const res = await fetch(apiUrl('/api/orders'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'x-checkout-token': checkoutToken
+          'x-checkout-token': checkoutToken,
+          'x-human-approval': 'true'
         },
         body: JSON.stringify(orderPayload)
       });
@@ -395,7 +403,15 @@ export const AIHomePage: React.FC = () => {
             <p className="text-[10px] text-slate-500">Autonomous Shopping & Razorpay Checkout</p>
           </div>
         </div>
-        <div className="flex items-center space-x-3">
+        <div className="flex items-center space-x-2.5">
+          <button 
+            onClick={() => setIsAuditDrawerOpen(true)}
+            className="text-[11px] font-semibold text-emerald-800 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200/80 px-2.5 py-1 rounded-lg flex items-center transition shadow-xs"
+            title="Inspect autonomous spend bounding guardrails & explainability decision log"
+          >
+            <ShieldCheck className="w-3.5 h-3.5 mr-1 text-emerald-600" />
+            Guardrail Audit
+          </button>
           <button 
             onClick={() => setShopperRoute('orders')}
             className="text-[11px] font-medium text-slate-600 hover:text-teal-600 flex items-center transition"
@@ -564,16 +580,57 @@ export const AIHomePage: React.FC = () => {
                         </div>
                       </div>
 
+                      {/* Agentic Spend Bounding Guardrail Gate */}
+                      {msg.data.checkoutReview.requires_human_approval && (
+                        <div className="p-3 bg-amber-50 border border-amber-300 rounded-xl text-xs space-y-1.5 animate-fade-in">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center space-x-1.5 font-bold text-amber-900">
+                              <ShieldAlert className="w-4 h-4 text-amber-600 shrink-0" />
+                              <span>Spend Bounding Guardrail Gated</span>
+                            </div>
+                            <span className="text-[10px] font-bold uppercase tracking-wider bg-amber-200/80 text-amber-900 px-2 py-0.5 rounded-full">
+                              Cap: ₹5,000 INR
+                            </span>
+                          </div>
+                          <p className="text-[11px] text-amber-800 leading-relaxed">
+                            Cart total (₹{Number(msg.data.checkoutReview.cart?.total || 0).toLocaleString()}) exceeds the ₹5,000 autonomous spending cap. Machine execution paused; explicit human authorization is required.
+                          </p>
+                          <div className="pt-1 flex items-center justify-between">
+                            <button
+                              type="button"
+                              onClick={() => setIsAuditDrawerOpen(true)}
+                              className="text-[11px] font-bold text-amber-900 hover:text-amber-950 flex items-center space-x-1 underline"
+                            >
+                              <Eye className="w-3 h-3" />
+                              <span>Inspect Step-by-Step Decision Log</span>
+                            </button>
+                            <span className="text-[10px] text-amber-700 font-mono">
+                              requires_human_approval: true
+                            </span>
+                          </div>
+                        </div>
+                      )}
+
                       {/* Confirm Purchase Action */}
                       <button
                         onClick={() => executeInlinePurchase(msg.data.checkoutReview)}
                         disabled={isPayingInline}
-                        className="w-full py-3 bg-slate-900 hover:bg-teal-600 disabled:bg-slate-400 text-white rounded-xl text-xs font-bold transition flex items-center justify-center space-x-2 shadow-md group"
+                        className={`w-full py-3 rounded-xl text-xs font-bold transition flex items-center justify-center space-x-2 shadow-md group ${
+                          msg.data.checkoutReview.requires_human_approval
+                            ? 'bg-amber-600 hover:bg-amber-700 text-white'
+                            : 'bg-slate-900 hover:bg-teal-600 text-white'
+                        } disabled:bg-slate-400`}
                       >
                         {isPayingInline ? (
                           <>
                             <Loader2 className="w-4 h-4 animate-spin" />
                             <span>Opening Razorpay Gateway...</span>
+                          </>
+                        ) : msg.data.checkoutReview.requires_human_approval ? (
+                          <>
+                            <ShieldCheck className="w-4 h-4 text-amber-200" />
+                            <span>Approve & Confirm Purchase (₹{msg.data.checkoutReview.cart?.total})</span>
+                            <ArrowRight className="w-3.5 h-3.5 ml-1 group-hover:translate-x-0.5 transition" />
                           </>
                         ) : (
                           <>
@@ -870,6 +927,13 @@ export const AIHomePage: React.FC = () => {
           AI can make mistakes. Consider verifying specs before purchase.
         </div>
       </div>
+
+      {/* Agentic Commerce Guardrails & Audit Trail Drawer */}
+      <AgentAuditDrawer
+        isOpen={isAuditDrawerOpen}
+        onClose={() => setIsAuditDrawerOpen(false)}
+        cartId={checkoutReviewState?.cart?.id}
+      />
     </div>
   );
 };

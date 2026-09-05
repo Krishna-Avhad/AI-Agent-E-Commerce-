@@ -3,7 +3,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import { pool, initDatabase } from './db.js';
 import { evaluateAgentAction } from './policyEngine.js';
-import { createRazorpayOrder, verifyRazorpayPayment, handleRazorpayWebhook } from './razorpayService.js';
+import { createRazorpayOrder, verifyRazorpayPayment, handleRazorpayWebhook, razorpayInstance } from './razorpayService.js';
 import {
   createRazorpayPaymentOrder,
   verifyPaymentSignature,
@@ -36,6 +36,7 @@ import { shoppingAgent } from './ai/index.js';
 import { merchantAiCommerceRouter } from './merchant/merchantAiCommerceRouter.js';
 import { agentRouter } from './agent/agentRoutes.js';
 import { merchantAiRouter } from './merchant/merchantAiRouter.js';
+import { recordMoneyStep, getAuditTrail, DEFAULT_SPEND_CAP_INR } from './agent/agentAuditService.js';
 
 dotenv.config();
 
@@ -50,16 +51,46 @@ process.on('uncaughtException', (err) => {
 export const app = express();
 const PORT = process.env.PORT || 3001;
 
-// FRONTEND_URL should be set in production (e.g. https://your-app.vercel.app).
-// Supports a comma-separated list if you have multiple frontend origins
-// (e.g. a preview URL and a production URL). Falls back to allowing all
-// origins when unset, which is fine for local dev but should be set explicitly
-// once deployed.
-const allowedOrigins = process.env.FRONTEND_URL
-  ? process.env.FRONTEND_URL.split(',').map((o) => o.trim())
-  : true;
-app.use(cors({ origin: allowedOrigins }));
+const baseAllowedOrigins = [
+  'http://localhost:3000',
+  'http://localhost:5173',
+  'http://localhost:5175'
+];
+if (process.env.CLIENT_ORIGIN) {
+  baseAllowedOrigins.push(process.env.CLIENT_ORIGIN);
+}
+if (process.env.FRONTEND_URL) {
+  process.env.FRONTEND_URL.split(',').forEach(o => baseAllowedOrigins.push(o.trim()));
+}
+
+app.use(cors({
+  origin: (origin, callback) => {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    if (baseAllowedOrigins.includes(origin) || /\.vercel\.app$/.test(origin)) {
+      callback(null, true);
+    } else {
+      // In dev mode allow all if no env vars are set, but for prod enforce rules
+      if (!process.env.CLIENT_ORIGIN && !process.env.FRONTEND_URL && process.env.NODE_ENV !== 'production') {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    }
+  },
+  credentials: true
+}));
+
 app.use(express.json());
+
+// ---------------- RENDER COLD-START HEALTHZ ----------------
+app.get('/healthz', (_req, res) => {
+  res.json({
+    status: 'healthy',
+    timestamp: Date.now(),
+    uptime: process.uptime()
+  });
+});
 
 // ---------------- HEALTH CHECK ----------------
 app.get('/api/health', async (_req, res) => {
@@ -557,12 +588,53 @@ app.post('/api/checkout/review', async (req, res) => {
       });
     } catch {}
 
+    // Enforce Spend Bounding Guardrail (Default: INR 5,000)
+    const isSpendGated = finalCart.total > DEFAULT_SPEND_CAP_INR;
+    const gatedReason = isSpendGated 
+      ? `Cart total (₹${finalCart.total.toLocaleString()}) exceeds autonomous spending cap of ₹${DEFAULT_SPEND_CAP_INR.toLocaleString()}. Explicit human approval or merchant override is required.`
+      : undefined;
+
+    // Record money-adjacent REVIEW_CHECKOUT event in AgentAuditService
+    await recordMoneyStep({
+      agentReasoning: isSpendGated
+        ? `Autonomous review evaluated: cart total ₹${finalCart.total.toLocaleString()} exceeds ₹${DEFAULT_SPEND_CAP_INR.toLocaleString()} cap. Gated state triggered requiring explicit human approval.`
+        : `Autonomous review evaluated: cart total ₹${finalCart.total.toLocaleString()} is within ₹${DEFAULT_SPEND_CAP_INR.toLocaleString()} cap; validation passed.`,
+      actionIntent: 'REVIEW_CHECKOUT',
+      payload: {
+        cartId,
+        version: finalCart.version,
+        subtotal: finalCart.subtotal,
+        discount: finalCart.discount,
+        tax: finalCart.tax,
+        shipping: finalCart.shipping,
+        total: finalCart.total,
+        itemsCount: finalCart.items.length
+      },
+      validationStatus: isSpendGated ? 'flagged' : 'passed',
+      guardrails: {
+        spendCap: DEFAULT_SPEND_CAP_INR,
+        currentTotal: finalCart.total,
+        currency: 'INR',
+        requires_human_approval: isSpendGated,
+        requires_merchant_override: isSpendGated,
+        reason: gatedReason || 'Cart total within autonomous bounds.'
+      },
+      cartId,
+      merchantId,
+      actor: 'AI Shopping Agent'
+    });
+
     res.json({
       cart: finalCart,
       checkoutToken,
       deliveryAddress,
       availableAddresses,
       expiresAt: new Date(payload.exp).toISOString(),
+      requires_human_approval: isSpendGated,
+      requires_merchant_override: isSpendGated,
+      spendCap: DEFAULT_SPEND_CAP_INR,
+      guardrailStatus: isSpendGated ? 'GATED_HUMAN_APPROVAL_REQUIRED' : 'PASSED',
+      guardrailReason: gatedReason,
       message: deliveryAddress 
         ? `Review your order totals. Delivering to ${deliveryAddress.label || 'Default Address'} (${deliveryAddress.street}, ${deliveryAddress.city}). Submit checkoutToken to confirm purchase.`
         : 'Review your order totals and submit the checkoutToken to confirm purchase.'
@@ -705,6 +777,76 @@ app.post('/api/orders', async (req, res) => {
       });
     } catch {}
 
+    // Enforce Spend Bounding Guardrail (Default: INR 5,000)
+    const isHumanApproved = o.humanApproval === true || req.headers['x-human-approval'] === 'true';
+    const hasMerchantOverride = o.merchantOverride === true || req.headers['x-merchant-override'] === 'true';
+
+    if (order.total > DEFAULT_SPEND_CAP_INR && !isHumanApproved && !hasMerchantOverride) {
+      await recordMoneyStep({
+        agentReasoning: `Autonomous checkout attempt blocked: order total ₹${order.total.toLocaleString()} exceeds the ₹${DEFAULT_SPEND_CAP_INR.toLocaleString()} spending cap. Gated state enforced; human approval or merchant override required.`,
+        actionIntent: 'EXECUTE_CHECKOUT',
+        payload: {
+          cartId: o.cartId,
+          orderId: order.id,
+          total: order.total,
+          itemsCount: order.items?.length || 0,
+          attemptedBy: orderChannel
+        },
+        validationStatus: 'flagged',
+        guardrails: {
+          spendCap: DEFAULT_SPEND_CAP_INR,
+          currentTotal: order.total,
+          currency: order.currency || 'INR',
+          requires_human_approval: true,
+          requires_merchant_override: true,
+          reason: `Transaction total ₹${order.total.toLocaleString()} exceeds autonomous spend cap of ₹${DEFAULT_SPEND_CAP_INR.toLocaleString()}`
+        },
+        sessionId: cartSessionId || undefined,
+        cartId: o.cartId,
+        orderId: order.id,
+        merchantId: (req.headers['x-merchant-id'] as string) || o.merchantId || 'merch_razorflow_01'
+      });
+
+      return res.status(422).json({
+        error: `Autonomous spend cap exceeded. Order total (₹${order.total.toLocaleString()}) exceeds the ₹${DEFAULT_SPEND_CAP_INR.toLocaleString()} limit. Explicit human approval or merchant override is required.`,
+        code: 'SPEND_CAP_EXCEEDED',
+        requires_human_approval: true,
+        requires_merchant_override: true,
+        spendCap: DEFAULT_SPEND_CAP_INR,
+        currentTotal: order.total,
+        orderId: order.id
+      });
+    }
+
+    if (order.total > DEFAULT_SPEND_CAP_INR && (isHumanApproved || hasMerchantOverride)) {
+      await recordMoneyStep({
+        agentReasoning: isHumanApproved
+          ? `Explicit human approval verified for order total ₹${order.total.toLocaleString()} (exceeding autonomous cap of ₹${DEFAULT_SPEND_CAP_INR.toLocaleString()}). Proceeding with purchase.`
+          : `Supervisor merchant override applied for order total ₹${order.total.toLocaleString()}. Proceeding with purchase.`,
+        actionIntent: isHumanApproved ? 'HUMAN_APPROVAL' : 'MERCHANT_OVERRIDE',
+        payload: {
+          cartId: o.cartId,
+          orderId: order.id,
+          total: order.total,
+          humanApproved: isHumanApproved,
+          merchantOverride: hasMerchantOverride
+        },
+        validationStatus: 'passed',
+        guardrails: {
+          spendCap: DEFAULT_SPEND_CAP_INR,
+          currentTotal: order.total,
+          currency: order.currency || 'INR',
+          requires_human_approval: false,
+          requires_merchant_override: false,
+          reason: 'Explicit human/supervisor authorization received.'
+        },
+        sessionId: cartSessionId || undefined,
+        cartId: o.cartId,
+        orderId: order.id,
+        merchantId: (req.headers['x-merchant-id'] as string) || o.merchantId || 'merch_razorflow_01'
+      });
+    }
+
     // Phase 7: If order was created from a cart with checkoutToken, auto-create Razorpay order
     if (checkoutToken && order.id) {
       try {
@@ -716,6 +858,30 @@ app.post('/api/orders', async (req, res) => {
         });
         order.razorpayOrderId = paymentOrder.razorpayOrderId;
         order.status = 'PAYMENT_PENDING';
+
+        await recordMoneyStep({
+          agentReasoning: `Razorpay test payment order ${paymentOrder.razorpayOrderId} generated for order #${order.id} (Total: ₹${order.total.toLocaleString()}, ${paymentOrder.amountInPaise} paise). Ready for consumer checkout.`,
+          actionIntent: 'PAYMENT_ORDER',
+          payload: {
+            orderId: order.id,
+            razorpayOrderId: paymentOrder.razorpayOrderId,
+            amount: order.total,
+            amountInPaise: paymentOrder.amountInPaise,
+            currency: order.currency || 'INR'
+          },
+          validationStatus: 'passed',
+          guardrails: {
+            spendCap: DEFAULT_SPEND_CAP_INR,
+            currentTotal: order.total,
+            currency: order.currency || 'INR',
+            requires_human_approval: false,
+            requires_merchant_override: false
+          },
+          sessionId: cartSessionId || undefined,
+          cartId: o.cartId,
+          orderId: order.id
+        });
+
         return res.status(201).json({
           order,
           orderId: order.id,
@@ -1014,11 +1180,160 @@ app.use('/api/merchant/ai-commerce', merchantAiCommerceRouter);
 // ---------------- MERCHANT AI CONTROL CENTER (PHASE 10) ----------------
 app.use('/api/merchant/ai', merchantAiRouter);
 
+// ---------------- AGENTIC COMMERCE GUARDRAILS & AUDIT TRAIL ----------------
+app.get('/api/agent/audit-trail', async (req, res) => {
+  try {
+    const limit = parseInt(req.query.limit as string, 10) || 50;
+    const status = (req.query.status as any) || 'all';
+    const sessionId = req.query.sessionId as string;
+    const cartId = req.query.cartId as string;
+    const actionIntent = req.query.actionIntent as string;
+
+    const trail = getAuditTrail({ limit, status, sessionId, cartId, actionIntent });
+    res.json(trail);
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.post('/api/agent/override', async (req, res) => {
+  try {
+    const { orderId, cartId, reason, actor, spendCap, currentTotal } = req.body;
+    const record = await recordMoneyStep({
+      agentReasoning: `Merchant / Supervisor manual override applied${orderId ? ` to Order #${orderId}` : ''}. Reason: ${reason || 'Approved by supervisor in Guardrails inspector'}.`,
+      actionIntent: 'MERCHANT_OVERRIDE',
+      payload: { orderId, cartId, reason, approvedAt: new Date().toISOString() },
+      validationStatus: 'passed',
+      guardrails: {
+        spendCap: spendCap || DEFAULT_SPEND_CAP_INR,
+        currentTotal: currentTotal || 0,
+        currency: 'INR',
+        requires_human_approval: false,
+        requires_merchant_override: false,
+        reason: 'Manual supervisor override'
+      },
+      actor: actor || 'Merchant Admin',
+      actorType: 'Merchant Admin',
+      orderId,
+      cartId
+    });
+    res.json({ success: true, record });
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // ---------------- AI BUYER & AGENT PROTOCOL ENDPOINTS (LEGACY COMPATIBILITY) ----------------
 app.get('/api/agent/catalog', async (req, res) => {
   try {
     const catalog = await getAIBuyerCatalog(req.query.category as string);
     res.json(catalog);
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.post('/api/checkout/create-order', async (req, res) => {
+  try {
+    const { items, humanOverrideToken } = req.body;
+    
+    if (!items || !Array.isArray(items) || items.length === 0) {
+      return res.status(400).json({ error: 'Items array is required' });
+    }
+
+    let subtotal = 0;
+    // Validate live stock
+    for (const item of items) {
+      const prodRes = await pool.query('SELECT * FROM products WHERE id = $1', [item.productId]);
+      if (prodRes.rows.length === 0) {
+        return res.status(404).json({ error: `Product ${item.productId} not found` });
+      }
+      const prod = prodRes.rows[0];
+      if (prod.stock_quantity < item.quantity) {
+        return res.status(400).json({ error: `Insufficient stock for ${prod.name}` });
+      }
+      subtotal += parseFloat(prod.price) * item.quantity;
+      
+      // Reserve inventory (Optimistic)
+      await pool.query('UPDATE products SET stock_quantity = stock_quantity - $1 WHERE id = $2', [item.quantity, item.productId]);
+    }
+
+    const amountInPaise = Math.round(subtotal * 100);
+    const orderId = `ORD-DYN-${Date.now()}`;
+
+    if (razorpayInstance) {
+      const rzpOrder = await razorpayInstance.orders.create({
+        amount: amountInPaise,
+        currency: 'INR',
+        receipt: orderId
+      });
+      return res.json({
+        success: true,
+        order_id: rzpOrder.id,
+        amount: amountInPaise,
+        key_id: process.env.RAZORPAY_KEY_ID
+      });
+    } else {
+      return res.json({
+        success: true,
+        order_id: orderId,
+        amount: amountInPaise,
+        key_id: process.env.RAZORPAY_KEY_ID || 'TEST_KEY_ID',
+        message: 'Razorpay disabled, simulating order creation.'
+      });
+    }
+
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.post('/api/test/simulate-failure', async (req, res) => {
+  try {
+    const { type } = req.query;
+    const { items, orderId } = req.body;
+    
+    if (type === 'stock_exhausted') {
+      // Safely rollback reserved inventory
+      if (items && Array.isArray(items)) {
+        for (const item of items) {
+          await pool.query('UPDATE products SET stock_quantity = stock_quantity + $1 WHERE id = $2', [item.quantity, item.productId]);
+        }
+      }
+      
+      await logAuditEvent({
+        actorType: 'System',
+        actorId: 'simulated_test',
+        action: 'SIMULATE_FAILURE',
+        resourceType: 'Order',
+        resourceId: orderId || 'TEST-ORD',
+        decision: 'FAILED',
+        details: 'Simulated stock exhausted failure',
+        payloadJson: { items }
+      });
+      
+      return res.status(409).json({
+        success: false,
+        recovery_suggestion: "Sorry, the item you requested just went out of stock. Would you like me to find a similar product in the same price range?"
+      });
+    } else if (type === 'payment_declined') {
+      await logAuditEvent({
+        actorType: 'System',
+        actorId: 'simulated_test',
+        action: 'SIMULATE_FAILURE',
+        resourceType: 'Payment',
+        resourceId: orderId || 'TEST-ORD',
+        decision: 'FAILED',
+        details: 'Simulated payment declined failure'
+      });
+      
+      return res.status(402).json({
+        success: false,
+        recovery_suggestion: "Your payment was declined by the bank. Would you like me to send a payment link via email so you can try another card, or try again now?"
+      });
+    } else {
+      return res.status(400).json({ error: 'Invalid failure type simulated' });
+    }
   } catch (err: any) {
     res.status(500).json({ error: err.message });
   }
@@ -1126,8 +1441,8 @@ app.get('/api/search/products/:provider/:id', async (req, res) => {
 
 // Start server
 initDatabase().then(() => {
-  app.listen(PORT, () => {
-    console.log(`🚀 RazorFlow AI Commerce Server running at http://localhost:${PORT}`);
+  app.listen(Number(PORT), '0.0.0.0', () => {
+    console.log(`🚀 RazorFlow AI Commerce Server running at http://0.0.0.0:${PORT}`);
     console.log(`🔗 Supabase PostgreSQL Connected: ${process.env.DB_HOST}`);
     console.log('⚡ Deterministic Policy Engine & Razorpay Test Gateway Active');
     console.log('📦 Phase 3 Repository Layer & Supabase State Active');

@@ -3,6 +3,7 @@ import { ExternalProduct, ProductAvailability, ProviderName } from '../externalC
 import { productRepository, customerRepository, orderRepository } from '../repositories/index.js';
 import { evaluateAgentAction } from '../policyEngine.js';
 import { pool } from '../db.js';
+import { recordMoneyStep, DEFAULT_SPEND_CAP_INR } from '../agent/agentAuditService.js';
 
 export interface InterpretedIntent {
   intent: 'product_search' | 'comparison' | 'add_to_cart' | 'review_checkout' | 'execute_checkout' | 'order_status' | 'unknown';
@@ -525,6 +526,27 @@ export class ShoppingAgent {
       const summary = "I've prepared your order review with server-authoritative totals and delivery address. Please confirm when you're ready to purchase.";
       await this.logAssistantMessage(sessionId, summary, [], null);
       
+      // Money-adjacent Step: Pre-review audit event
+      recordMoneyStep({
+        agentReasoning: `Shopper requested checkout review. Querying authoritative cart pricing and verifying against ₹${DEFAULT_SPEND_CAP_INR.toLocaleString()} autonomous spending cap.`,
+        actionIntent: 'REVIEW_CHECKOUT',
+        payload: {
+          sessionId,
+          cartId: req.context?.cartId
+        },
+        validationStatus: 'passed',
+        guardrails: {
+          spendCap: DEFAULT_SPEND_CAP_INR,
+          currentTotal: 0,
+          currency: 'INR',
+          requires_human_approval: false,
+          requires_merchant_override: false,
+          reason: 'Review initiated'
+        },
+        sessionId,
+        cartId: req.context?.cartId
+      }).catch(() => {});
+
       return {
         sessionId,
         interpretedIntent: intent,

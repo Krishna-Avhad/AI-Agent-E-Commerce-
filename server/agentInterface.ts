@@ -23,18 +23,13 @@ export async function getAIBuyerCatalog(category?: string) {
 
     if (res && res.rows.length >= 20) {
       items = res.rows.map((row: any) => ({
-        sku: row.sku,
         id: row.id,
         name: row.name,
-        category: row.category,
-        unitPrice: parseFloat(row.price),
-        currency: row.currency || 'INR',
-        inStock: row.in_stock && row.stock_quantity > 0,
-        availableQuantity: row.stock_quantity,
-        compatibilitySpecs: row.specs || {},
-        semanticTags: row.tags || [],
-        aiReadinessIndex: parseInt(row.ai_readiness_score) || 95,
-        vectorStatus: row.vector_embedding_status || 'synced'
+        description: row.description || '',
+        price_paise: Math.round(parseFloat(row.price) * 100),
+        inventory: row.stock_quantity,
+        tags: row.tags || [],
+        upsell_compatibilities: row.specs || {}
       }));
     }
   } catch {}
@@ -45,18 +40,13 @@ export async function getAIBuyerCatalog(category?: string) {
       prods = prods.filter(p => p.category.toLowerCase() === category.toLowerCase());
     }
     items = prods.map(p => ({
-      sku: p.sku,
       id: p.id,
       name: p.name,
-      category: p.category,
-      unitPrice: p.price,
-      currency: 'INR',
-      inStock: p.inStock ?? true,
-      availableQuantity: p.stockCount || 50,
-      compatibilitySpecs: p.specs || {},
-      semanticTags: p.tags || [],
-      aiReadinessIndex: p.aiReadinessScore || 95,
-      vectorStatus: p.vectorEmbeddingStatus || 'synced'
+      description: p.description || p.name,
+      price_paise: Math.round(p.price * 100),
+      inventory: p.stockCount || 50,
+      tags: p.tags || [],
+      upsell_compatibilities: p.specs || {}
     }));
   }
 

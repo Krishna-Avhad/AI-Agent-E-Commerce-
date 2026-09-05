@@ -8,6 +8,7 @@ import { createOrder, getOrderById } from '../orderService.js';
 import { createRazorpayPaymentOrder } from '../paymentService.js';
 import { evaluateAgentAction } from '../policyEngine.js';
 import { auditRepository } from '../repositories/index.js';
+import { recordMoneyStep, DEFAULT_SPEND_CAP_INR } from './agentAuditService.js';
 import type {
   AgentContext,
   MerchantCapabilitiesResponse,
@@ -527,6 +528,55 @@ export async function executeAgentCheckout(
     channel: 'AGENTIC_COMMERCE_GATEWAY',
     idempotencyKey: request.idempotencyKey
   });
+
+  // Spend Bounding Guardrail: Enforce INR 5,000 Cap on Machine-to-Machine Checkouts
+  const isHumanApproved = (request as any).humanApproval === true;
+  const hasMerchantOverride = !!(request as any).merchantOverrideToken;
+
+  if (order.total > DEFAULT_SPEND_CAP_INR && !isHumanApproved && !hasMerchantOverride) {
+    await recordMoneyStep({
+      agentReasoning: `Autonomous machine-to-machine checkout gated: order total ₹${order.total.toLocaleString()} exceeds autonomous spending cap of ₹${DEFAULT_SPEND_CAP_INR.toLocaleString()}. Human approval or merchant override required.`,
+      actionIntent: 'EXECUTE_CHECKOUT',
+      payload: {
+        orderId: order.id,
+        cartId,
+        total: order.total,
+        agentId,
+        merchantId
+      },
+      validationStatus: 'flagged',
+      guardrails: {
+        spendCap: DEFAULT_SPEND_CAP_INR,
+        currentTotal: order.total,
+        currency: order.currency || 'INR',
+        requires_human_approval: true,
+        requires_merchant_override: true,
+        reason: `M2M Agent order exceeds ₹${DEFAULT_SPEND_CAP_INR.toLocaleString()} cap.`
+      },
+      actor: agentId,
+      actorType: 'AI Agent',
+      orderId: order.id,
+      cartId,
+      merchantId
+    });
+
+    return {
+      success: false,
+      orderId: order.id,
+      merchantId,
+      agentId,
+      cartId: order.cartId,
+      status: 'REQUIRE_APPROVAL' as any,
+      requires_human_approval: true,
+      requires_merchant_override: true,
+      spendLimit: DEFAULT_SPEND_CAP_INR,
+      authoritativeTotal: order.total,
+      currency: order.currency,
+      itemsCount: order.items.length,
+      createdAt: order.createdAt,
+      error: `Autonomous spend cap exceeded (Limit: ₹${DEFAULT_SPEND_CAP_INR.toLocaleString()}). Explicit human approval or merchant override required.`
+    } as any;
+  }
 
   // 3. Create Real Razorpay Payment Order via PaymentService (if not already bound)
   let paymentOrder: any = {

@@ -12,7 +12,7 @@ const KEY_SECRET = process.env.RAZORPAY_KEY_SECRET || '';
 const WEBHOOK_SECRET = process.env.RAZORPAY_WEBHOOK_SECRET || '';
 
 // Initialize Razorpay SDK instance safely if credentials exist
-let razorpayInstance: Razorpay | null = null;
+export let razorpayInstance: Razorpay | null = null;
 if (PAYMENTS_ENABLED && KEY_ID && KEY_SECRET) {
   try {
     razorpayInstance = new Razorpay({

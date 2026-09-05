@@ -754,20 +754,23 @@ export class ShoppingAgent {
     const rankedRecommendations = this.rankProducts(validatedProducts, intent);
 
     let comparisonMatrix: ComparisonMatrix | null = null;
-    if (intent.intent === 'comparison' || (intent.isComparison && rankedRecommendations.length >= 2)) {
-      comparisonMatrix = this.buildComparisonMatrix(rankedRecommendations.slice(0, 3), intent);
+    const confidentRecommendations = rankedRecommendations.filter(r => r.matchScore >= 70);
+
+    if (intent.intent === 'comparison' || (intent.isComparison && confidentRecommendations.length >= 2)) {
+      comparisonMatrix = this.buildComparisonMatrix(confidentRecommendations.slice(0, 3), intent);
     }
 
-    const summary = this.generateSummary(intent, rankedRecommendations, comparisonMatrix, policyNotice, categoriesToSearch, Array.from(failedProviders));
-
-    await this.recordShoppingEvents(sessionId, req.customerId, intent, rankedRecommendations, Array.from(providersQueried));
-    await this.logAssistantMessage(sessionId, summary, rankedRecommendations, policyResult);
+    const summary = this.generateSummary(intent, confidentRecommendations, comparisonMatrix, policyNotice, categoriesToSearch, Array.from(failedProviders));
+    
+    // We log all ranked recommendations, but only return the confident ones
+    await this.recordShoppingEvents(sessionId, req.customerId, intent, confidentRecommendations, Array.from(providersQueried));
+    await this.logAssistantMessage(sessionId, summary, confidentRecommendations, policyResult);
 
     return {
       sessionId,
       interpretedIntent: intent,
       matchingProducts: validatedProducts,
-      recommendations: rankedRecommendations,
+      recommendations: confidentRecommendations,
       comparison: comparisonMatrix,
       summary,
       sourceInfo: { 
@@ -889,7 +892,8 @@ export class ShoppingAgent {
       const searchWords = intent.searchQuery.toLowerCase().split(/\s+/).filter(w => w.length > 2);
       let wordMatches = 0;
       for (const w of searchWords) {
-        if (titleLower.includes(w) || product.category.toLowerCase().includes(w)) wordMatches++;
+        const term = (w.length > 3 && w.endsWith('s')) ? w.slice(0, -1) : w;
+        if (titleLower.includes(term) || product.category.toLowerCase().includes(term)) wordMatches++;
       }
       if (searchWords.length > 0) {
         score += (wordMatches / searchWords.length) * 30;
@@ -1011,7 +1015,10 @@ export class ShoppingAgent {
       if (failedProviders && failedProviders.length > 0) {
         return `I couldn't retrieve products right now because external marketplaces were temporarily unavailable. Please try again in a moment.`;
       }
-      return `I couldn't retrieve products right now or no in-stock matches were found. Please try again.`;
+      if (intent.budget && (intent.budget.max || intent.budget.min)) {
+        return `I couldn't find any perfect matches for "${intent.searchQuery}" within your specified budget. Try adjusting the price range.`;
+      }
+      return `I couldn't find any highly confident matches for "${intent.searchQuery}" currently in stock. Please try adjusting your search.`;
     }
 
     const topRec = recommendations[0];

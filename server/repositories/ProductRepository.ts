@@ -66,9 +66,17 @@ export class ProductRepository {
     }
 
     if (search && search.trim().length > 0) {
-      values.push(`%${search.trim()}%`);
-      const searchParam = `$${values.length}`;
-      conditions.push(`(name ILIKE ${searchParam} OR description ILIKE ${searchParam} OR brand ILIKE ${searchParam} OR category ILIKE ${searchParam})`);
+      const words = search.trim().toLowerCase().split(/\s+/).filter(w => w.length > 0);
+      const searchConditions = words.map(word => {
+        // Simple singularization for common plurals (e.g., keyboards -> keyboard)
+        const term = (word.length > 3 && word.endsWith('s')) ? word.slice(0, -1) : word;
+        values.push(`%${term}%`);
+        const searchParam = `$${values.length}`;
+        return `(name ILIKE ${searchParam} OR description ILIKE ${searchParam} OR brand ILIKE ${searchParam} OR category ILIKE ${searchParam})`;
+      });
+      if (searchConditions.length > 0) {
+        conditions.push(`(${searchConditions.join(' AND ')})`);
+      }
     }
 
     const whereClause = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';

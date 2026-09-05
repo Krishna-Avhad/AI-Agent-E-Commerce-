@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: razorflow-backend
+    env: node
+    plan: free
+    region: oregon
+    buildCommand: npm install && npm run build
+    startCommand: npm run start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3001
+      # Note: Set DATABASE_URL, RAZORPAY_KEY_ID, RAZORPAY_KEY_SECRET, LLM_API_KEY, CLIENT_ORIGIN via Render Dashboard

@@ -133,26 +133,59 @@ export async function calculateAndPersistCart(
       cartStatus = res.rows[0].status || cartStatus;
       resolvedCustomerId = res.rows[0].customer_id || resolvedCustomerId;
       const validRows = res.rows.filter(r => r.item_id != null);
-      validRows.forEach(row => {
-        const quantity = parseInt(row.quantity, 10);
-        const unitPrice = parseFloat(row.price || row.unit_price);
-        const totalPrice = Number((quantity * unitPrice).toFixed(2));
-        subtotal += totalPrice;
+      if (validRows.length > 0) {
+        validRows.forEach(row => {
+          const quantity = parseInt(row.quantity, 10);
+          const unitPrice = parseFloat(row.price || row.unit_price);
+          const totalPrice = Number((quantity * unitPrice).toFixed(2));
+          subtotal += totalPrice;
 
-        items.push({
-          id: row.item_id,
-          productId: row.product_id,
-          productName: row.name,
-          sku: row.sku,
-          imageUrl: row.image_url || row.image,
-          category: row.category,
-          quantity,
-          unitPrice,
-          totalPrice,
-          inStock: Boolean(row.in_stock && row.stock_quantity >= quantity),
-          availableStock: parseInt(row.stock_quantity, 10) || 0
+          items.push({
+            id: row.item_id,
+            productId: row.product_id,
+            productName: row.name,
+            sku: row.sku,
+            imageUrl: row.image_url || row.image,
+            category: row.category,
+            quantity,
+            unitPrice,
+            totalPrice,
+            inStock: Boolean(row.in_stock && row.stock_quantity >= quantity),
+            availableStock: parseInt(row.stock_quantity, 10) || 0
+          });
         });
-      });
+      } else {
+        const memCart = inMemoryCarts.get(cartId);
+        if (memCart && memCart.items.size > 0) {
+          for (const it of memCart.items.values()) {
+            const prod = productCatalogFallback.get(it.productId) || {
+              name: 'Precision Hardware Component',
+              sku: 'SKU-HW-01',
+              price: it.unitPrice || 2500,
+              category: 'Hardware',
+              stock_quantity: 10,
+              in_stock: true
+            };
+            const unitPrice = parseFloat(prod.price);
+            const totalPrice = Number((unitPrice * it.quantity).toFixed(2));
+            subtotal += totalPrice;
+
+            items.push({
+              id: it.id,
+              productId: it.productId,
+              productName: prod.name,
+              sku: prod.sku,
+              imageUrl: prod.image_url || prod.image || '',
+              category: prod.category || 'General',
+              quantity: it.quantity,
+              unitPrice,
+              totalPrice,
+              inStock: Boolean(prod.in_stock && (prod.stock_quantity >= it.quantity)),
+              availableStock: prod.stock_quantity || 10
+            });
+          }
+        }
+      }
     } else {
       const memCart = inMemoryCarts.get(cartId);
       if (memCart) {
@@ -418,11 +451,14 @@ export async function addItemToCart(
 
   // 1. Fetch Product
   let prod: any = null;
+  const fallbackProd = productCatalogFallback.get(item.productId);
+  const lookupSku = fallbackProd?.sku || item.productId;
+
   try {
     const prodRes = await Promise.race([
       pool.query(
-        'SELECT * FROM products WHERE id = $1 AND (merchant_id = $2 OR merchant_id IS NULL)',
-        [item.productId, merchantId]
+        'SELECT * FROM products WHERE (id::text = $1 OR sku = $1 OR sku = $2) AND (merchant_id = $3 OR merchant_id IS NULL)',
+        [item.productId, lookupSku, merchantId]
       ),
       new Promise<any>((_, reject) => setTimeout(() => reject(new Error('timeout')), 4000))
     ]);
@@ -480,6 +516,16 @@ export async function addItemToCart(
   const itemId = existingItemId || `ci_${Date.now()}_${Math.floor(100 + Math.random() * 900)}`;
 
   try {
+    await Promise.race([
+      pool.query(
+        `INSERT INTO carts (id, merchant_id, customer_id, status, currency, subtotal, discount, tax, shipping, total, created_at, updated_at)
+         VALUES ($1, $2, $3, 'ACTIVE', 'INR', 0, 0, 0, 0, 0, NOW(), NOW())
+         ON CONFLICT (id) DO NOTHING`,
+        [cartId, merchantId, null]
+      ),
+      new Promise<any>((_, reject) => setTimeout(() => reject(new Error('timeout')), 2000))
+    ]);
+
     if (existingItemId) {
       await Promise.race([
         pool.query(
@@ -493,7 +539,7 @@ export async function addItemToCart(
         pool.query(
           `INSERT INTO cart_items (id, cart_id, product_id, variant_id, quantity, unit_price, total_price, created_at)
            VALUES ($1, $2, $3, $4, $5, $6, $7, NOW())`,
-          [itemId, cartId, item.productId, item.variantId || null, quantity, unitPrice, unitPrice * quantity]
+          [itemId, cartId, prod.id, item.variantId || null, quantity, unitPrice, unitPrice * quantity]
         ),
         new Promise<any>((_, reject) => setTimeout(() => reject(new Error('timeout')), 4000))
       ]);

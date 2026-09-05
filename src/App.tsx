@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { AppProvider, useApp } from './context/AppContext';
+import { apiUrl } from './lib/apiUrl';
 import { Navbar } from './components/common/Navbar';
 import { Sidebar } from './components/common/Sidebar';
 import { AIChatDrawer } from './components/common/AIChatDrawer';
@@ -31,6 +32,7 @@ import { AuditTrailPage } from './components/merchant/AuditTrailPage';
 import { AuditTimelinePage } from './components/merchant/AuditTimelinePage';
 import { SystemStatusPage } from './components/merchant/SystemStatusPage';
 import { MerchantAIControlCenter } from './components/merchant/ai-control/MerchantAIControlCenter';
+import { Loader2 } from 'lucide-react';
 
 const AppContent: React.FC = () => {
   const {
@@ -40,6 +42,36 @@ const AppContent: React.FC = () => {
     isMobileSimulator,
     setIsMobileSimulator
   } = useApp();
+
+  const [isWarmingUp, setIsWarmingUp] = useState(true);
+
+  useEffect(() => {
+    let mounted = true;
+    const pingBackend = async () => {
+      try {
+        const res = await fetch(apiUrl('/healthz'));
+        if (res.ok) {
+          if (mounted) setIsWarmingUp(false);
+          return true;
+        }
+      } catch (err) {
+        // Backend sleeping/starting
+      }
+      return false;
+    };
+
+    const attemptPing = async () => {
+      const success = await pingBackend();
+      if (!success && mounted) {
+        // Poll every 3 seconds until awake
+        setTimeout(attemptPing, 3000);
+      }
+    };
+
+    attemptPing();
+
+    return () => { mounted = false; };
+  }, []);
 
   const renderShopperView = () => {
     switch (shopperRoute) {
@@ -104,6 +136,13 @@ const AppContent: React.FC = () => {
   return (
     <div className="min-h-screen flex flex-col bg-[#F7F9FB] text-slate-900 font-sans selection:bg-teal-500 selection:text-white">
       <Navbar />
+      
+      {isWarmingUp && (
+        <div className="bg-amber-500 text-white px-4 py-2 text-sm font-medium flex items-center justify-center shadow-md z-50 animate-pulse">
+          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+          Warming up agent backend... This may take up to 30 seconds on Render's free tier.
+        </div>
+      )}
 
       {/* Main View Area */}
       {isMobileSimulator ? (
